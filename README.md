@@ -1,6 +1,6 @@
-# AWS Builders Fair Project Sample Code
+# AWS Builder's Fair Project Sample Code
 
-The aws-builders-fair-projects repo contains sample code and infrastructure template projects from AWS Builders Fair events. The project sample code is intended to help you replicate what you may have seen in a Builders Fair project demo at an event, and to set up AWS infrastructure for further experimentation.
+The aws-builders-fair-projects repo contains sample code and infrastructure template projects from AWS Builder's Fair events. The project sample code is intended to help you replicate what you may have seen in a Builder's Fair project demo at an event, and to set up AWS infrastructure for further experimentation.
 
 ## Prerequisites
 
