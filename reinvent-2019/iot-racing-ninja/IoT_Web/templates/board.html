@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="static/customize/tictactoe.css">
+
+    <script lang="text/javascript">
+        // the first time thru, we get these off the URL from the render_template
+        // eternally afterward :), we loop thru the interval function below and update
+        var gameId = '{{gameId}}';
+        var username = '{{username}}';
+        var round = '{{round}}';
+        var it = '{{it}}';
+        var blackScore = '{{blackScore}}';
+        var blueScore = '{{blueScore}}';
+        var redScore = '{{redScore}}';
+        var whiteScore = '{{whiteScore}}';
+        var oneone = '{{OneOne|safe}}';
+        var onetwo = '{{OneTwo|safe}}';
+        var onethree = '{{OneThree|safe}}';
+        var onefour = '{{OneFour|safe}}';
+        var onefive = '{{OneFive|safe}}';
+        var onesix = '{{OneSix|safe}}';
+        var twoone = '{{TwoOne|safe}}';
+        var twotwo = '{{TwoTwo|safe}}';
+        var twothree = '{{TwoThree|safe}}';
+        var twofour = '{{TwoFour|safe}}';
+        var twofive = '{{TwoFive|safe}}';
+        var twosix = '{{TwoSix|safe}}';
+        var threeone = '{{ThreeOne|safe}}';
+        var threetwo = '{{ThreeTwo|safe}}';
+        var threethree = '{{ThreeThree|safe}}';
+        var threefour = '{{ThreeFour|safe}}';
+        var threefive = '{{ThreeFive|safe}}';
+        var threesix = '{{ThreeSix|safe}}';
+        var fourone = '{{FourOne|safe}}';
+        var fourtwo = '{{FourTwo|safe}}';
+        var fourthree = '{{FourThree|safe}}';
+        var fourfour = '{{FourFour|safe}}';
+        var fourfive = '{{FourFive|safe}}';
+        var foursix = '{{FourSix|safe}}';
+        var fiveone = '{{FiveOne|safe}}';
+        var fivetwo = '{{FiveTwo|safe}}';
+        var fivethree = '{{FiveThree|safe}}';
+        var fivefour = '{{FiveFour|safe}}';
+        var fivefive = '{{FiveFive|safe}}';
+        var fivesix = '{{FiveSix|safe}}';
+        var sixone = '{{SixOne|safe}}';
+        var sixtwo = '{{SixTwo|safe}}';
+        var sixthree = '{{SixThree|safe}}';
+        var sixfour = '{{SixFour|safe}}';
+        var sixfive = '{{SixFive|safe}}';
+        var sixsix = '{{SixSix|safe}}';
+
+    </script>
+
+    <script>
+        $(document).ready(
+            function() {
+                setInterval(function() {
+                    // this is the loop that gets JSON data from API and uses JQuery to update fields
+                    $('#gameid').html(gameId).show();
+                    $('#round').html(round).show();
+                    $('#it').html(it).show();
+                    $('#blackscore').html(blackScore).show();
+                    $('#redscore').html(redScore).show();
+                    $('#bluescore').html(blueScore).show();
+                    $('#whitescore').html(whiteScore).show();
+                    $('#OneOne').html(oneone).show();
+                    $('#OneTwo').html(onetwo).show();
+                    $('#OneThree').html(onethree).show();
+                    $('#OneFour').html(onefour).show();
+                    $('#OneFive').html(onefive).show();
+                    $('#OneSix').html(onesix).show();
+                    $('#TwoOne').html(twoone).show();
+                    $('#TwoTwo').html(twotwo).show();
+                    $('#TwoThree').html(twothree).show();
+                    $('#TwoFour').html(twofour).show();
+                    $('#TwoFive').html(twofive).show();
+                    $('#TwoSix').html(twosix).show();
+                    $('#ThreeOne').html(threeone).show();
+                    $('#ThreeTwo').html(threetwo).show();
+                    $('#ThreeThree').html(threethree).show();
+                    $('#ThreeFour').html(threefour).show();
+                    $('#ThreeFive').html(threefive).show();
+                    $('#ThreeSix').html(threesix).show();
+                    $('#FourOne').html(fourone).show();
+                    $('#FourTwo').html(fourtwo).show();
+                    $('#FourThree').html(fourthree).show();
+                    $('#FourFour').html(fourfour).show();
+                    $('#FourFive').html(fourfive).show();
+                    $('#FourSix').html(foursix).show();
+                    $('#FiveOne').html(fiveone).show();
+                    $('#FiveTwo').html(fivetwo).show();
+                    $('#FiveThree').html(fivethree).show();
+                    $('#FiveFour').html(fivefour).show();
+                    $('#FiveFive').html(fivefive).show();
+                    $('#FiveSix').html(fivesix).show();
+                    $('#SixOne').html(sixone).show();
+                    $('#SixTwo').html(sixtwo).show();
+                    $('#SixThree').html(sixthree).show();
+                    $('#SixFour').html(sixfour).show();
+                    $('#SixFive').html(sixfive).show();
+                    $('#SixSix').html(sixsix).show();
+
+                    var req = new XMLHttpRequest();
+                    req.responseType = 'json';
+                    req.open('GET', '/gameData', true);
+                    req.onload  = function() {
+                    var jsonResponse = req.response;
+                    gameId = jsonResponse['gameId'];
+                    username = jsonResponse['gameId'];
+                    round = jsonResponse['round'];
+                    it = jsonResponse['it'];
+
+                    blackScore = jsonResponse['blackScore'];
+                    blueScore = jsonResponse['blueScore'];
+                    redScore = jsonResponse['redScore'];
+                    whiteScore = jsonResponse['whiteScore'];
+                    oneone = jsonResponse['OneOne'];
+                    onetwo = jsonResponse['OneTwo'];
+                    onethree = jsonResponse['OneThree'];
+                    onefour = jsonResponse['OneFour'];
+                    onefive = jsonResponse['OneFive'];
+                    onesix = jsonResponse['OneSix'];
+                    twoone = jsonResponse['TwoOne'];
+                    twotwo = jsonResponse['TwoTwo'];
+                    twothree = jsonResponse['TwoThree'];
+                    twofour = jsonResponse['TwoFour'];
+                    twofive = jsonResponse['TwoFive'];
+                    twosix = jsonResponse['TwoSix'];
+                    threeone = jsonResponse['ThreeOne'];
+                    threetwo = jsonResponse['ThreeTwo'];
+                    threethree = jsonResponse['ThreeThree'];
+                    threefour = jsonResponse['ThreeFour'];
+                    threefive = jsonResponse['ThreeFive'];
+                    threesix = jsonResponse['ThreeSix'];
+                    fourone = jsonResponse['FourOne'];
+                    fourtwo = jsonResponse['FourTwo'];
+                    fourthree = jsonResponse['FourThree'];
+                    fourfour = jsonResponse['FourFour'];
+                    fourfive = jsonResponse['FourFive'];
+                    foursix = jsonResponse['FourSix'];
+                    fiveone = jsonResponse['FiveOne'];
+                    fivetwo = jsonResponse['FiveTwo'];
+                    fivethree = jsonResponse['FiveThree'];
+                    fivefour = jsonResponse['FiveFour'];
+                    fivefive = jsonResponse['FiveFive'];
+                    fivesix = jsonResponse['FiveSix'];
+                    sixone = jsonResponse['SixOne'];
+                    sixtwo = jsonResponse['SixTwo'];
+                    sixthree = jsonResponse['SixThree'];
+                    sixfour = jsonResponse['SixFour'];
+                    sixfive = jsonResponse['SixFive'];
+                    sixsix = jsonResponse['SixSix'];
+                    };
+                    req.send(null);
+
+                }, 2000);
+                // interval is 2 seconds
+            });
+    </script>
+
+    <div class="jumbotron">
+        <center>
+        <div id="gameboard" class="TTTBoard" >
+            <table>
+
+                <tr>
+                    <td>
+                        <table>
+                       <tr>
+                          <td>
+                              <div style='width: 350px;' align="left"><center><img width="100" src="../static/images/aws_ninja.jpg"/> </center></div>
+                          </td>
+                       </tr>
+
+                        <tr>
+                            <td>
+                                <div style='width: 350px;' align="left"><center><p><b>Game Info: </b></p>
+                                        <br/> <b>GameId:</b> <div style="display: inline" id="gameid">{{gameId}}</div>
+                                        <br/> <b>Round:</b> <div style="display: inline" id="round">{{round}}</div>
+                                        <br/> <b>Black Ninja Racer Score:</b> <div style="display: inline" id="blackscore">{{blackScore}}</div>
+                                        <br/> <b>Red Ninja Racer Score:</b> <div style="display: inline" id="redscore">{{redScore}}</div>
+                                        <br/> <b>White Ninja Racer Score:</b> <div style="display: inline" id="whitescore">{{whiteScore}}</div>
+                                        <br/> <b>Blue Ninja Racer Score:</b> <div style="display: inline" id="bluescore">{{blueScore}}</div>
+                                        <br/> <b>It:</b> <div style="display: inline" id="it">{{it}}</div>
+                                </center></div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                    <td>
+                        <div>
+
+                <table style="position:relative;">
+
+                <tr>
+                    <td class="square v h" > <div id="OneOne"> {{OneOne|safe}} </div></td>
+                    <td class="square v h"> <div id="OneTwo">{{OneTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="OneThree">{{OneThree|safe}}</div></td>
+                   <td class="square v h">  <div id="OneFour">{{OneFour|safe}}</div></td>
+                   <td class="square v h"> <div id="OneFive">{{OneFive|safe}}</div></td>
+                   <td class="square v h"> <div id="OneSix">{{OneSix|safe}}</div></td>
+                </tr>
+                 <tr>
+                    <td class="square v h" ><div id="TwoOne"> {{TwoOne|safe}} </div> </td>
+                    <td class="square v h"> <div id="TwoTwo">{{TwoTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="TwoThree">{{TwoThree|safe}}</div></td>
+                   <td class="square v h"> <div id="TwoFour">{{TwoFour|safe}}</div></td>
+                   <td class="square v h"> <div id="TwoFive">{{TwoFive|safe}}</div></td>
+                   <td class="square v h"> <div id="TwoSix">{{TwoSix|safe}}</div></td>
+                </tr>
+                <tr>
+                    <td class="square v h" > <div id="ThreeOne"> {{ThreeOne|safe}} </div> </td>
+                    <td class="square v h"> <div id="ThreeTwo">{{ThreeTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="ThreeThree">{{ThreeThree|safe}}</div></td>
+                   <td class="square v h"> <div id="ThreeFour">{{ThreeFour|safe}}</div></td>
+                   <td class="square v h"> <div id="ThreeFive">{{ThreeFive|safe}}</div></td>
+                   <td class="square v h"> <div id="ThreeSix">{{ThreeSix|safe}}</div></td>
+                </tr>
+                    
+                <tr>
+                    <td class="square v h" ><div id="FourOne"> {{FourOne|safe}} </div> </td>
+                    <td class="square v h" > <div id="FourTwo">{{FourTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="FourThree">{{FourThree|safe}}</div></td>
+                   <td class="square v h"> <div id="FourFour">{{FourFour|safe}}</div></td>
+                   <td class="square v h"> <div id="FourFive">{{FourFive|safe}}</div></td>
+                   <td class="square v h"> <div id="FourSix">{{FourSix|safe}}</div></td>
+                </tr>
+
+                 <tr>
+                    <td class="square v h" ><div id="FiveOne"> {{FiveOne|safe}} </div> </td>
+                    <td class="square v h" > <div id="FiveTwo">{{FiveTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="FiveThree">{{FiveThree|safe}}</div></td>
+                   <td class="square v h"> <div id="FiveFour">{{FiveFour|safe}}</div></td>
+                   <td class="square v h"> <div id="FiveFive">{{FiveFive|safe}}</div></td>
+                   <td class="square v h"> <div id="FiveSix">{{FiveSix|safe}}</div></td>
+                </tr>
+
+                <tr>
+                    <td class="square v h" ><div id="SixOne"> {{SixOne|safe}} </div> </td>
+                    <td class="square v h" > <div id="SixTwo">{{SixTwo|safe}}</div></td>
+                    <td class="square v h"> <div id="SixThree">{{SixThree|safe}}</div></td>
+                   <td class="square v h"> <div id="SixFour">{{SixFour|safe}}</div></td>
+                   <td class="square v h"> <div id="SixFive">{{SixFive|safe}}</div></td>
+                   <td class="square v h"> <div id="SixSix">{{SixSix|safe}}</div></td>
+                </tr>
+
+            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+         </div>
+         {% block addon %} {% endblock %}
+         </center>
+    </div>
+{% endblock %} 

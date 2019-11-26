@@ -1,0 +1,187 @@
+<div class="container-fluid">
+
+    <!-- stage info header  -->
+    <div class="row align-items-center mt-2 mb-2">
+      <div class="col-2"></div>
+      <div class="col-1 text-center">
+        <h5>S T A G E</h5>
+        <div class="label-rounded container">
+          <h1 class="display-4">{{ stageId }}</h1>
+        </div>
+      </div>
+      <div class="col-2"></div>
+      <div class="col-2 text-center">
+        <h5>P L A Y  T I M E</h5>
+        <div class="timer-rounded container">
+          <h1 class="display-4">{{ seconds | number }}</h1>  
+        </div>    
+      </div>
+      <div class="col-2"></div>
+      <div class="col-2 text-center">
+        <h5>S C O R E</h5>
+        <div class="label-rounded container">
+          <h1 class="display-4">{{ totalScore }}</h1>  
+        </div> 
+      </div>
+      <div class="col-1"></div>
+    </div>
+  
+    <!-- game play screen -->
+    <div class="row text-right">
+      <div class="col-3">
+        <img src="../../../assets/images/root/playing.png" height="630">
+      </div>
+    
+      <div class="col-9">
+  
+        <div class="container mt-5">
+          <div class="row">
+            <!-- left: webcam pane -->
+            <div class="col-7">
+  
+                <div class="text-center">
+                  <webcam [height]="520" [width]="650" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam"
+                          [allowCameraSwitch]="allowCameraSwitch" [switchCamera]="nextWebcamObservable"
+                          [videoOptions]="videoOptions"
+                          (cameraSwitched)="cameraWasSwitched($event)"
+                          (initError)="handleInitError($event)">
+                  </webcam>
+                  
+                  <br/>
+                  <button id="buttonSnapshot" class="btn btn-primary btn-lg mr-2" 
+                    (click)="triggerSnapshot();" *ngIf="gameStarted">
+                    <i fa name="camera"></i> Press "BIG ENTER"
+                  </button>
+                  <!-- <button class="btn btn-secondary btn-lg" (click)="toggleWebcam();" *ngIf="action_type!='NoMoreAction'">
+                    <i fa name="toggle-on"></i> Toggle Webcam
+                  </button> -->
+                        
+                </div>
+            </div>
+            <!-- left: webcam pane -->
+  
+            <!-- right: result pane -->
+            <div class="col-5 text-right">
+              <div class="container" *ngIf="webcamImage">
+                  <div class="snapshot card pull-right" style="width: 20rem;">
+                    <img class="card-img-top" [src]="webcamImage.imageAsDataUrl" alt="Card image cap">
+                    <div class="card-body" style="height:130px">
+                      <h3 class="card-title text-center" *ngIf="isWaiting">Working on it...</h3>
+                      <h1 class="card-text text-center display-4" *ngIf="gameStarted">{{ message }}</h1>
+                    </div>
+                  </div>
+                  <br/>
+              </div>
+            </div>
+            <!-- right: result pane -->
+  
+          </div>
+        </div>
+  
+      </div>
+      
+    </div>
+  
+  </div>
+  
+  <!-- object list -->
+  <div class="row text-center mt-1">
+    <div class="container object-list">
+      <div class="col-1"></div>
+      <div class="col-10">
+        <div>
+        <h3>Please find the following picture cards. (Found : {{ foundObjectCount }} / {{ totalObjectCount }})</h3>
+        </div>
+        <div class="container-fluid text-center" *ngIf="displayObjectList">
+            <button *ngFor="let object of objects" id="{{object.object_name}}" type="button" class="btn btn-warning btn-lg mr-4 mb-1 object-font">{{ object.object_display_name }}</button>
+        </div> 
+      </div>
+      <div class="col-1"></div>
+    </div>
+  </div>
+  
+  <!-- Modal : modalStageStart -->
+  <div class="modal" id="modalStageStart" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStageStartModal}">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalStageStart" class="display-3">Stage {{ stageId }}</h2>
+        </div>
+        <div class="modal-body">
+          <h2 class="display-5">Find {{ objects.length }} picture cards in {{ seconds }} seconds.</h2>
+          <br>
+          <div>Difficulty : {{ difficulty }}</div>
+          <br>
+          <h1 class="display-1 text-primary text-bold text-center">{{ modalTimer }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+  <!-- Modal : modalStageClear -->
+  <div class="modal" id="modalStageClear" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStageClearModal}">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalStageStart" class="display-3">STAGE CLEAR</h2>
+        </div>
+        <div class="modal-body">
+          <h2 class="display-5">You found {{ foundObjectCount }} picture cards.</h2>
+          <br>
+          <div class="row">
+            <div class="col ml-6">
+              <div>Found Score : {{ objectsScore }}</div>
+              <div>Clear Bonus : {{ clearScore }}</div>
+              <div>Time Bonus : {{ timeScore }}</div>
+              <br>
+              <div><h5>Stage Total Score : {{ stageScore }}</h5></div>
+            </div>
+            <div class="col text-center">
+              <h4>Total Score</h4>
+              <h1 class="display-4">{{ totalScore }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="onStageEnd()">O K</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal : modalStageFailed -->
+  <div class="modal" id="modalStageFailed" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStageFailedModal}">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="modalStageStart" class="display-3">TIME IS OVER</h2>
+        </div>
+        <div class="modal-body">
+          <h2 class="display-5">You found {{ foundObjectCount }} image cards.</h2>
+          <br>
+          <div class="row">
+            <div class="col ml-6">
+              <div>Found Score : {{ objectsScore }}</div>
+              <div>Clear Bonus : {{ clearScore }}</div>
+              <br>
+              <div><h5>Stage Score : {{ stageScore }}</h5></div>
+            </div>
+            <div class="col text-center">
+              <h4>Total Score</h4>
+              <h1 class="display-4">{{ totalScore }}</h1>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="gameEnd()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+  <h4 *ngIf="errors.length > 0">Messages:</h4>
+  <ul *ngFor="let error of errors">
+    <li>{{error | json}}</li>
+  </ul>
+  
+  

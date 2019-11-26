@@ -1,0 +1,41 @@
+<div id="holder">
+    <br>
+    <h1 class="text-secondary text-center">Leaderboard</h1>
+    <br>
+  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3 text-right mr-2">
+          <img src="../../assets/images/trophy.jpeg">
+        </div>
+  
+        <div class="col-7 mt-3">
+          <div class="row">
+            <table class="table">
+              <tr class="thead-light h4">
+                <th class="text-center">Ranking</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Found Cards</th>
+                <th class="text-center">Total Playtime</th>
+                <th class="text-center">Total Score</th>
+              </tr>
+              <tr *ngFor="let ranking of rankings" class="h4">
+                <td class="text-center"><kbd>{{ ranking.total_rank }}</kbd></td>
+                <td>{{ ranking.name }}</td>
+                <td class="text-center">{{ ranking.total_found_objects }}</td>
+                <td class="text-center">{{ ranking.total_playtime }}"</td>
+                <td class="text-center">{{ ranking.total_score }}</td>
+              </tr>
+            </table>
+          </div>
+  
+      </div>
+  
+    </div>
+  
+    <br><br><br>
+  
+    <div id="footer" class="footer container navbar-fixed-bottom text-right">
+      <img src="../../assets/images/leaderboard-footer.png">
+    </div>
+  </div>

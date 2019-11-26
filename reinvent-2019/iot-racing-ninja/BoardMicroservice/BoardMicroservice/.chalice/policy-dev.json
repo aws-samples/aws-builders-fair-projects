@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+	"dynamodb:PutItem"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Sid": "19a922ba4be94b798cfb0b91d8864310"
+    }
+  ]
+}
+

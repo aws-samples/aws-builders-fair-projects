@@ -1,0 +1,53 @@
+<br>
+<h1 class="text-secondary text-center">TTS with AWS Polly</h1>
+<br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-8">
+
+        <div class="text-center">
+          <div class="input-group">
+            <div class="input-group-prepend tts-text">
+              <span class="input-group-text">Text</span>
+            </div>
+            <textarea ng-model="texttospeech" class="form-control" aria-label="With textarea">Learn languages with AWS AI/ML</textarea>
+          </div>
+        
+          <br/><br/>
+
+          <button id="buttonSpeech" class="btn btn-primary mr-2" (click)="speech();">Listen to Speech</button>
+          <br/>
+        
+        </div>
+      </div>
+      <div class="col-4">
+        
+        <div>
+          <label>Language & Region :&nbsp;</label>
+          <select id="selectLanguages" (change)="selectPollyLanguage($event.target.value)">
+            <option *ngIf="!pollyLanguages" value="0">Loading...</option>
+            <option *ngFor="let language of pollyLanguages" value="{{language.language_code}}" [attr.selected]="language.language_code == 'en-US' ? true : null">
+              {{language.language_name}}
+            </option>
+          </select>
+        </div>
+
+        <div>Voice : </div>
+        <div class="container" *ngIf=pollyVoices>
+            <div class="radio" *ngFor="let voice of pollyVoices; let isFirst = first">
+                <label>
+                  <input type="radio" name="survey" id="Radios1" value="{{voice.voice_name}}" [attr.checked]="isFirst == true ? 'checked' : null">
+                  {{voice.voice_name}}, {{voice.gender}}, {{isFirst}}
+                </label>
+              </div>
+        </div>
+        <div *ngIf=!pollyVoices>&nbsp;&nbsp;&nbsp;&nbsp;Loading ...</div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+

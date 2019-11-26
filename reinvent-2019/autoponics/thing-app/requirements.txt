@@ -1,0 +1,5 @@
+Adafruit-Blinka==2.6.0
+adafruit-circuitpython-mcp3xxx==1.1.2
+adafruit-circuitpython-veml6075==1.0.3
+Adafruit-DHT==1.4.0
+AWSIoTPythonSDK==1.4.7

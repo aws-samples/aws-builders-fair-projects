@@ -1,0 +1,22 @@
+{
+  "manage_iam_role": false,
+  "iam_role_arn": "arn:aws:iam:::role/VehicleMicroservice-dev",
+  "environment_variables": {
+    "region": "us-east-1",
+    "table_name": "iot_racer",
+    "num_vehicles": "4",
+    "vehicle_moved_topic": "vehicle_moved",
+    "new_round_topic": "new_round",
+    "moves_to_process_topic": "moves_to_process",
+    "moves_topic": "moves_to_process",
+    "unlock_topic": "vehicle_unlock",
+    "vehicle_location_topic": "vehicle_location"
+  },
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api"
+    }
+  },
+  "version": "2.0",
+  "app_name": "VechicleMicroservice"
+}

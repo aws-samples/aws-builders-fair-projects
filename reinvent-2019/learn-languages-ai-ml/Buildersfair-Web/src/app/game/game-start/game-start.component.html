@@ -1,0 +1,82 @@
+<div class="bgimg-1">
+    <div class="row">
+      <div class="col-3">
+        <img src="../../../assets/images/root/hello.png">
+      </div>
+  
+      <div class="col-8">
+        <br><br>
+        <div id="section_2">
+          <h1 class="text-black">How to play game</h1>
+
+          <div class="card-group">
+            <div class="card mt-2 mr-4">
+              <img class="card-img-top" src="../../../assets/images/howto/play-step1.jpg" alt="Pick a card">
+              <div class="card-body">
+                <h2 class="card-title">Step 1</h2>
+                <h4 class="card-text">Please pick a card that matches words on the screen.</h4>
+              </div>
+            </div>
+            <div class="card mt-2 mr-4">
+              <img class="card-img-top" src="../../../assets/images/howto/play-step2.jpg" alt="Card image cap">
+              <div class="card-body">
+                <h2 class="card-title">Step 2</h2>
+                <h4 class="card-text">Place the card in front of camera within given time.</h4>
+              </div>
+            </div>
+            <div class="card">
+              <img class="card-img-top" src="../../../assets/images/howto/play-step3.jpg" alt="Card image cap">
+              <div class="card-body">
+                <h2 class="card-title">Step 3</h2>
+                <h4 class="card-text">Press “BIG ENTER” to take photo of the card.</h4>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-1"></div>
+
+          <br><br>
+          <div id="section_3" class="alert alert-info col">
+            <div class="ml-10 mr-10">
+              <br>
+              <h3>Let's begin with your name.</h3>
+              <br>
+
+              <form [formGroup]="gameForm" (ngSubmit)="createGame()">
+                  <div class="input-group input-group-lg">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">
+                          <i fa name="user"></i>&nbsp;Name
+                        </span>
+                      </div>
+                      <input type="text" autofocus formControlName="userName" class="form-control" [autofocus]
+                        [ngClass]="{'is-invalid': gameForm.get('userName').errors && gameForm.get('userName').touched}"
+                        aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Username">
+                      <div class="invalid-feedback" 
+                        *ngIf="gameForm.get('userName').hasError('required') && gameForm.get('userName').touched">
+                        Username is required
+                      </div>            
+                      <div class="invalid-feedback" 
+                        *ngIf="gameForm.get('userName').hasError('minlength') && gameForm.get('userName').touched">
+                        Username must be at least 3 characters
+                      </div>
+                      <div class="invalid-feedback" 
+                      *ngIf="gameForm.get('userName').hasError('maxlength') && gameForm.get('userName').touched">
+                      Username cannot exceed 50 characters
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="text-center">
+                        <button [disabled]="!gameForm.valid" type="submit" class="btn btn-primary btn-lg">
+                          <i fa name="gamepad"></i> Play Game!
+                        </button>
+                    </div>
+                </form>
+                <br>
+              </div>
+          </div>
+      </div>
+  
+    </div>
+  
+  </div>

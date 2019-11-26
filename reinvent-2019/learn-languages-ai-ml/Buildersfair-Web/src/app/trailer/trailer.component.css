@@ -1,0 +1,22 @@
+.jumbotron {
+    position: relative;
+    overflow: hidden;
+    background-color:black;
+    width:100%;
+    height:100%;
+  }
+  .jumbotron video {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width:100%;
+    height:100%;
+    /*  object-fit is not supported on IE  */
+    object-fit: cover;
+    opacity:0.5;
+  }
+  .jumbotron .container {
+    z-index: 2;
+    position: relative;
+  }
+  

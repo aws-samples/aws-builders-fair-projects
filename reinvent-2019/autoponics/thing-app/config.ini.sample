@@ -1,0 +1,34 @@
+[default]
+deviceId = xxxxxx
+endpoint = xxxxxx.iot.us-west-2.amazonaws.com
+port = 443
+offlinePublishQueueing = -1
+drainingFrequency = 2
+connectDisconnectTimeout = 10
+MQTTOperationTimeout = 5
+topic = /autoponics/sensors
+
+[security]
+rootCA = certs/AmazonRootCA1.pem
+certificate = certs/certificate.pem.crt
+privateKey = certs/private.pem.key
+
+[soil]
+min = 34688
+max = 63360
+
+[uv]
+min = 0.0
+max = 0.24
+integration_time = 50
+
+[gpio]
+pump0 = 6
+pump1 = 13
+pump2 = 19
+pump3 = 26
+pump4 = 21
+pump5 = 20
+pump6 = 16
+pump7 = 12
+light = 5
