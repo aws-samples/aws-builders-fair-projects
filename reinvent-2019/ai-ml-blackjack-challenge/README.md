@@ -8,6 +8,8 @@ This project contains an architecture diagram and FAQ for the project. Source-co
 ## Architecture ##
 [Architecture Diagram](./Architecture.png)
 
+![Architecture Diagram](./Architecture.png)
+
 ### Further Information ###
 Under construction.
 
