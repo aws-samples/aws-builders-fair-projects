@@ -1,4 +1,0 @@
-<app-game-splash *ngIf="this.stage === 'splash'" (go)="goStage($event)"></app-game-splash>
-<app-game-start *ngIf="this.stage === 'start'" [gameId]="gameId" (gameCreated)="onGameCreated($event)"></app-game-start>
-<app-game-stage *ngIf="this.stage === 'stage'" [gameId]="gameId" [stageId]="stageId" (stageCompleted)="onStageCompleted($event)"></app-game-stage>
-<app-game-result *ngIf="this.stage === 'result'" [gameId]="gameId" (go)="goStage($event)"></app-game-result>

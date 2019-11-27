@@ -1,3 +1,0 @@
-requests
-Flask==0.10
-boto==2.39.0

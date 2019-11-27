@@ -1,6 +1,0 @@
-bin
-obj
-*.db
-
-# ignore appsettings configuration files
-**/appsettings.development.json
