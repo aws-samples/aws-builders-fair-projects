@@ -7,11 +7,11 @@ This readme will walk through all the steps that you need to follow to create th
 3. 2 [Raspberry Pi 3 Model B+ case](https://www.amazon.com/gp/product/B079M96KWZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
 4. 2 [Raspberry Pi 3 Model B+ power supply](https://www.amazon.com/CanaKit-Raspberry-Supply-Adapter-Listed/dp/B00MARDJZ4/ref=sr_1_5?crid=2BSCPTVZN7184&keywords=raspberry+pi+3+b%2B+power+supply&qid=1573661825&s=electronics&sprefix=raspberry+pi+3+b%2B+power%2Celectronics%2C186&sr=1-5)
 5. 1 [Hikig 4 Player Joystick Kit](https://www.amazon.com/gp/product/B07KFWRPF7/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-6. 4 [Traffic Lights]()
-7. 2 [Breadboards]()
+6. 4 [Traffic Lights](https://www.amazon.com/gp/product/B0765NKCZ4/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1)
+7. 4 [Breadboards](https://www.amazon.com/DEYUE-breadboard-Set-Prototype-Board/dp/B07LFD4LT6/ref=sr_1_9?crid=9BAJWZM1A2YH&keywords=raspberry+pi+breadboard&qid=1574890881&sprefix=raspberry+pi+bread+%2Caps%2C238&sr=8-9)
 8. 2 2' x 1' x .5" MDF Boards (~1 foot per joystick)
 9. 8' 1" x 2" board for base
-10. 16 bolts and nuts
+10. 16 1/8" bolts and nuts
 
 ## Raspberry Pi Setup ##
 1. Install Noobs onto the memory card following directions on the [Raspberrypi.org site](https://www.raspberrypi.org/documentation/installation/noobs.md).  We used Noobs v 3.0.1 for this project.
@@ -151,7 +151,7 @@ Add the following line to /etc/rc.local as sudo
 3. Place the joystick in the area where you will be mounting it and mark the areas for mounting it using the base
 
 4. Remove the joystick and drill your mounting holes
-* Holes for the joystick mounts should be ??" and you will need 4 of them
+* Holes for the joystick mounts should be 1/8" and you will need 4 of them
 
 5. Replace the joystick in the hole and connect it to the board using bolts and nuts through the 4 mounting holes you just drilled
 
