@@ -19,6 +19,7 @@ This readme will walk through all the steps that you need to follow to create th
 3. Follow the on-screen prompts for a full Raspian installation to continue the installation and reboot the device.  Once reboot is complete, follow the prompts to:
 * Set the country inputs and timezone appropriate to your location
 * Set the password to something you will remember.
+* Set the option for Wait for Network on Boot to Yes.
 * Connect the Pi to a Network.  Note the IP address of the Pi so that you can ssh to it later.
 * Update the system software
 4. [Enable SSH to the Raspberry Pi](https://www.raspberrypi.org/documentation/remote-access/ssh/)
