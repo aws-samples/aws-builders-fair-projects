@@ -14,7 +14,7 @@ For most projects you will require an AWS account. If you haven't already done s
 
 | Title | Description |
 |---------|-------------|
-| [re:Invent 2019](reinvent-2019) | Las Vegas, NV - December 2019 |
+| [Sample Event](sample-event) | Las Vegas, NV - December 2019 |
 
 # License
 
