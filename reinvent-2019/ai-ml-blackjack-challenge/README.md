@@ -6,16 +6,8 @@ AI/ML Blackjack Challenge is an Amazon SageMaker, IoT, and Serverless project th
 This project contains an architecture diagram and FAQ for the project. Source-code and deployment mechanisms will be soon-to-follow after re:Invent 2019.
 
 ## Architecture ##
-[Architecture Diagram](./Architecture.png)
 
 ![Architecture Diagram](./Architecture.png)
-
-### Further Information ###
-Under construction.
-
-## Deploying the project ##
-Under construction
-
 
 ## FAQ ##
 __Q: What language(s) were used for this project?__
