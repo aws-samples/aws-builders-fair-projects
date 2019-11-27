@@ -1,0 +1,42 @@
+{
+  "schema_version": "2.0",
+  "resources": [
+    {
+      "role_name": "GameMicroservice-dev-handle_sns_message",
+      "role_arn": "arn:aws:iam::363844275177:role/GameMicroservice-dev-handle_sns_message",
+      "name": "handle_sns_message_role",
+      "resource_type": "iam_role"
+    },
+    {
+      "lambda_arn": "arn:aws:lambda:us-east-1:363844275177:function:GameMicroservice-dev-handle_sns_message",
+      "name": "handle_sns_message",
+      "resource_type": "lambda_function"
+    },
+    {
+      "topic": "new_round",
+      "topic_arn": "arn:aws:sns:us-east-1:363844275177:new_round",
+      "name": "handle_sns_message-sns-subscription",
+      "lambda_arn": "arn:aws:lambda:us-east-1:363844275177:function:GameMicroservice-dev-handle_sns_message",
+      "resource_type": "sns_event",
+      "subscription_arn": "arn:aws:sns:us-east-1:363844275177:new_round:87bfd0b2-aef4-456a-8927-27b0ec27a811"
+    },
+    {
+      "role_name": "GameMicroservice-dev-api_handler",
+      "role_arn": "arn:aws:iam::363844275177:role/GameMicroservice-dev-api_handler",
+      "name": "api_handler_role",
+      "resource_type": "iam_role"
+    },
+    {
+      "lambda_arn": "arn:aws:lambda:us-east-1:363844275177:function:GameMicroservice-dev",
+      "name": "api_handler",
+      "resource_type": "lambda_function"
+    },
+    {
+      "name": "rest_api",
+      "rest_api_id": "y9w9gjxdha",
+      "rest_api_url": "https://y9w9gjxdha.execute-api.us-east-1.amazonaws.com/api/",
+      "resource_type": "rest_api"
+    }
+  ],
+  "backend": "api"
+}

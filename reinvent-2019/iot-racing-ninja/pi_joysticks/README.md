@@ -17,12 +17,13 @@ This readme will walk through all the steps that you need to follow to create th
 1. Install Noobs onto the memory card following directions on the [Raspberrypi.org site](https://www.raspberrypi.org/documentation/installation/noobs.md).  We used Noobs v 3.0.1 for this project.
 2. Install the memory card into the Raspberry Pi 3B+ motherboard, connect a mouse, keyboard, and monitor, and connect a power supply to it to boot it up.
 3. Follow the on-screen prompts for a full Raspian installation to continue the installation and reboot the device.  Once reboot is complete, follow the prompts to:
-* Set the country inputs and timezone
+* Set the country inputs and timezone appropriate to your location
 * Set the password to something you will remember.
 * Connect the Pi to a Network.  Note the IP address of the Pi so that you can ssh to it later.
 * Update the system software
 4. [Enable SSH to the Raspberry Pi](https://www.raspberrypi.org/documentation/remote-access/ssh/)
-5. On the Raspberry Pi, open a Terminal session and type 
+5. [Enable Boot Option for Wait on Network](https://raspberrypi.stackexchange.com/questions/45769/how-to-wait-for-networking-on-login-after-reboot)
+6. On the Raspberry Pi, open a Terminal session and type 
 ```
 sudo apt-get update -y
 ```
@@ -122,7 +123,7 @@ These connections in the example are done via a breadboard.
 The USB slot each joystick is connected to identifies the color of the car that joystick will control.  With the Pi's ports facing you, the settings are:
 
 | Network Port | USB Port: BLACK   | USB Port: RED |
-|  |USB Port: WHITE | USB Port: BLUE |
+| Network Port | USB Port: WHITE   | USB Port: BLUE |
 
 ## Installation of IoTRacer.Ninja ##
 1. Download the joy.py file from this repository and place it in the home/pi directory.

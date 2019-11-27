@@ -2,14 +2,16 @@
 from rpi_ws281x import *
 import math
 import logging
+
 strip = None
 colors = {
-    "blue":     Color(0,0,255),
-    "red":      Color(255,0,0),
-    "green":    Color(0,255,0),
+    "blue":     Color(0,0,150),
+    "red":      Color(100,0,0),
+    "green":    Color(0,100,0),
     "yellow":   Color(207,245,66),
-    "amazon":   Color(102,17,0),
-    "gray":     Color(32,32,32),
+    "white":    Color(100,100,100),
+    "amazon":   Color(72,44,0),
+    "gray":     Color(16,16,16),
     "black":    Color(0,0,0)
 }
 
@@ -54,7 +56,7 @@ class Board:
         LED_PIN =           18
         LED_FREQ_HZ =       800000
         LED_DMA =           10
-        LED_BRIGHTNESS =    125
+        LED_BRIGHTNESS =    15
         LED_INVERT =        False
         LED_CHANNEL =       0
         self.strip = PixelStrip(LED_COUNT, 
@@ -65,10 +67,11 @@ class Board:
                                 LED_BRIGHTNESS, 
                                 LED_CHANNEL)
         self.strip.begin()
-        logging.info("Creating Border")
-        self.light(border,colors["amazon"])
+
         logging.info("Creating Grid")
         self.light(grid,colors["gray"])
+        logging.info("Creating Border")
+        self.light(border,colors["amazon"])
 
 
     def light(self, section, color):

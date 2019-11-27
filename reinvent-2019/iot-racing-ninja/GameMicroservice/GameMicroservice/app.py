@@ -93,7 +93,9 @@ def duplicate_request():
         ConsistentRead=True
         )
     if player_response['Count']==4:
+        app.log.debug('Not a duplicate round')
         return False
+    app.log.debug('Duplicate round found %s' + status)
     return True
 
 def trigger_players(subject):
