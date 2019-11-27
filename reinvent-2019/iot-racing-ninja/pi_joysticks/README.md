@@ -1,5 +1,5 @@
 # PI Joysticks for IOTRacer.Ninja #
-This readme will walk through all the steps that you need to follow to create the physical joysticks for IoTRacer.Ninja.  For re:Invent 2019, we are creating 2 joystick housings, each holding 2 joysticks.  This 
+This readme will walk through all the steps that you need to follow to create the physical joysticks for IoTRacer.Ninja.  For re:Invent 2019, we are creating 2 joystick housings, each holding 2 joysticks.  This
 
 ## Bill of Materials ##
 1. 2 [Raspberry Pi 3 Model B+](https://www.amazon.com/ELEMENT-Element14-Raspberry-Pi-Motherboard/dp/B07P4LSDYV/ref=sr_1_1_sspa?keywords=raspberry+pi+3+b%2B+motherboard&qid=1573661642&s=electronics&sr=1-1-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzMFJVSDdKM0ZEWjhDJmVuY3J5cHRlZElkPUEwNjg1MDUyMVlJTVdHSERGOFdHNCZlbmNyeXB0ZWRBZElkPUEwNzYyOTk2M09aSE0yNFA4QTBXWiZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
@@ -23,7 +23,7 @@ This readme will walk through all the steps that you need to follow to create th
 * Update the system software
 4. [Enable SSH to the Raspberry Pi](https://www.raspberrypi.org/documentation/remote-access/ssh/)
 5. [Enable Boot Option for Wait on Network](https://raspberrypi.stackexchange.com/questions/45769/how-to-wait-for-networking-on-login-after-reboot)
-6. On the Raspberry Pi, open a Terminal session and type 
+6. On the Raspberry Pi, open a Terminal session and type
 ```
 sudo apt-get update -y
 ```
@@ -121,7 +121,8 @@ These connections in the example are done via a breadboard.
 
 ## USB Connections for Joysticks ##
 The USB slot each joystick is connected to identifies the color of the car that joystick will control.  With the Pi's ports facing you, the settings are:
-
+| Back of PI | Back of PI | Back of Pi |
+|--------------|-------------------|----------------|
 | Network Port | USB Port: BLACK   | USB Port: RED |
 | Network Port | USB Port: WHITE   | USB Port: BLUE |
 
@@ -132,7 +133,8 @@ The USB slot each joystick is connected to identifies the color of the car that 
 4. Update the joy.py file to identify your IOT Endpoint on line 27 by modifying the value stored in ENDPOINT
 
 ## Configuration to Run Joy.py from startup ##
-In progress
+Add the following line to /etc/rc.local as sudo
+```python3.7 /home/pi/joy.py```
 
 ## Physical Build ##
 1. Measure where you will be drilling on the MDF for the Joystick and Button
@@ -144,7 +146,7 @@ In progress
 * Holes for the joysticks should be approximately 1" circle, to allow for movement
 * Holes for the buttons should be 1 1/8" circles
 * Holes for wiring should be 1/2" circles
-* 
+
 3. Place the joystick in the area where you will be mounting it and mark the areas for mounting it using the base
 
 4. Remove the joystick and drill your mounting holes
@@ -158,6 +160,6 @@ In progress
 
 8. Mount the Raspberry Pi and the Breadboard to the bottom of the MDF, using Velcro
 
-9. Feed the wires for the traffic lights through the holes that were drilled for lighting 
+9. Feed the wires for the traffic lights through the holes that were drilled for lighting
 
 10. Connect the traffic lights to the wires and mount them to the board or other mounting
