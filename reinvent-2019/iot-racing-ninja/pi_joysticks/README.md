@@ -121,6 +121,7 @@ These connections in the example are done via a breadboard.
 
 ## USB Connections for Joysticks ##
 The USB slot each joystick is connected to identifies the color of the car that joystick will control.  With the Pi's ports facing you, the settings are:
+
 | Back of PI | Back of PI | Back of Pi |
 |--------------|-------------------|----------------|
 | Network Port | USB Port: BLACK   | USB Port: RED |
