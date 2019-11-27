@@ -125,7 +125,7 @@ The USB slot each joystick is connected to identifies the color of the car that 
 | Back of PI | Back of PI | Back of Pi |
 |--------------|-------------------|----------------|
 | Network Port | USB Port: BLACK   | USB Port: RED |
-| Network Port | USB Port: WHITE   | USB Port: BLUE |
+|  | USB Port: WHITE   | USB Port: BLUE |
 
 ## Installation of IoTRacer.Ninja ##
 1. Download the joy.py file from this repository and place it in the home/pi directory.
