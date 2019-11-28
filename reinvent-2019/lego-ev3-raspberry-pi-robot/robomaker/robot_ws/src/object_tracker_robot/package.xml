@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>object_tracker_robot</name>
+  <version>0.1.1</version>
+  <description>
+    Deployment package for the Object Tracker RoboMaker sample application on the Turtlebot3
+  </description>
+  
+  <license>Apache 2.0</license>
+  <author email="ros-contributions@amazon.com">AWS RoboMaker</author>
+  <maintainer email="ros-contributions@amazon.com">AWS RoboMaker</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>python-boto3-pip</build_depend>
+  <build_depend>python-yaml</build_depend>
+
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>libopenjp2-7</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
+  <exec_depend>joy</exec_depend>
+  <depend>awsiotsdk-pip</depend>
+</package>

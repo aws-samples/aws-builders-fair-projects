@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>object_tracker_simulation</name>
+  <version>1.2.0</version>
+  <description>
+    Trains a TurtleBot to track an object using reinforcement learning.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="ros-contributions@amazon.com">AWS RoboMaker</author>
+  <maintainer email="ros-contributions@amazon.com">AWS RoboMaker</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_plugins</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf</depend>
+
+  <exec_depend>gazebo</exec_depend>
+</package>

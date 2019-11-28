@@ -1,0 +1,18 @@
+<launch>
+  <!-- Start getting images from the camera -->
+  <node type="usb_cam_node" pkg="usb_cam" name="usb_cam" output="screen">
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="framerate" value="2"/>
+    <param name="video_device" value="/dev/video0" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <!--Start the RL worker  -->
+  <node name="agent" pkg="object_tracker_robot" type="run_turtlebot_controller.sh" output="screen"/>
+  
+  <!-- Start the Joy node -->
+  <node name="joystick" pkg="joy" type="joy_node" output="screen"/>
+</launch>

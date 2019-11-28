@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="gui" default="false" />
+
+    <param name="MODEL_S3_BUCKET" value="$(env MODEL_S3_BUCKET)" />
+    <param name="MODEL_S3_PREFIX" value="$(env MODEL_S3_PREFIX)" />
+    <param name="ROS_AWS_REGION" value="$(env ROS_AWS_REGION)" />
+    <param name="JOB_TYPE" value="TRAINING" />
+
+    <include file="$(find object_tracker_simulation)/launch/create_world.launch">
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    <node name="agent" pkg="object_tracker_simulation" type="run_local_rl_agent.sh" output="screen" required="true"/>
+</launch>

@@ -1,0 +1,3 @@
+bucket_name: <bucket name>
+model_key: model-store/model/model.pb
+region_name: us-east-1

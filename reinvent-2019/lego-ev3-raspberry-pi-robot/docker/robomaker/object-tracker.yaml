@@ -1,0 +1,8 @@
+libopenjp2-7:                                                                                                                                                             
+  ubuntu:                                                                                                                                                              
+    xenial: [libopenjp2-7]
+
+awsiotsdk-pip:
+  ubuntu:                                                                                                                                                              
+    pip: 
+      packages: [AWSIoTPythonSDK]
