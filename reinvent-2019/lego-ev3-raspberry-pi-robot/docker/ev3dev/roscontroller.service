@@ -1,0 +1,12 @@
+[Unit]
+Description=EV3 ROS Controller
+After=multi-user.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/robot/
+User=robot
+ExecStart=/bin/bash --login -c '/home/robot/service.sh'

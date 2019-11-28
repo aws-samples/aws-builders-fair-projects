@@ -1,0 +1,141 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "my robot project",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "OperationMode",
+                    "slots": [
+                        {
+                            "name": "mode",
+                            "type": "ModeType",
+                            "samples": [
+                                "Let's do {mode}",
+                                "{mode}",
+                                "I want to drive it {mode}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "{mode}",
+                        "change to {mode} mode",
+                        "change to {mode}",
+                        "operational mode",
+                        "operation mode",
+                        "Change mode"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "ModeType",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "charge"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "snake"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "square"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "return"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "spin"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "halt"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "joystick",
+                                "synonyms": [
+                                    "manual",
+                                    "controller",
+                                    "stick"
+                                ]
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tracking",
+                                "synonyms": [
+                                    "auto",
+                                    "automated",
+                                    "automatic",
+                                    "autonomous"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "OperationMode",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "mode",
+                            "type": "ModeType",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.26657781443.1507198680263"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.26657781443.1507198680263",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Which mode do you want to changed to, tracking, joystick, snake, square, spin, charge, return or halt"
+                    }
+                ]
+            }
+        ]
+    }
+}

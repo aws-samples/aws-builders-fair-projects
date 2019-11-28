@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>turtlebot3_description_reduced_mesh</name>
+  <version>1.1.0</version>
+  <description>
+    A copy of the TurtleBot3 models with reduced poly counts. Based off turtlebot3_description package.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="aws-robomaker@amazon.com">AWS RoboMaker</author>
+  <maintainer email="aws-robomaker@amazon.com">AWS RoboMaker</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_plugins</depend>
+  <exec_depend>gazebo</exec_depend>
+</package>

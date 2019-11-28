@@ -1,0 +1,27 @@
+<launch>
+  <!-- Optional environment variable, default is "waffle_pi". Note that "burger" does not have a camera -->
+  <arg name="model" default="$(optenv TURTLEBOT3_MODEL waffle_pi)" doc="model type [burger, waffle, waffle_pi]"/>
+
+  <!-- You may override arg parmaters when including this launch file -->
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="0.0"/>
+  <arg name="z_pos" default="0.0"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0.0"/>
+
+  <!-- Spawn the robot into Gazebo with the turtlebot description -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description_reduced_mesh)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" 
+    args="-urdf -param robot_description -model turtlebot3_$(arg model)
+          -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) 
+          -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+  <!-- 
+       Publish robot and joint states. This allows rviz to display robot data, and in 
+       the robot's coordinate frame. These nodes could go into the robot application 
+       .launch files instead.
+    -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+</launch>
