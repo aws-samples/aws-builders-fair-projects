@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Polly;
 using Amazon.Rekognition;
@@ -15,10 +12,8 @@ using Amazon.TranscribeService;
 using Buildersfair_API.Utils;
 using BuildersFair_API.Data;
 using BuildersFair_API.DTOs;
-using BuildersFair_API.Models;
 using BuildersFair_API.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BuildersFair_API.Controllers
 {
@@ -29,11 +24,11 @@ namespace BuildersFair_API.Controllers
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
         IAmazonRekognition RekognitionClient { get; set; }
-        IAmazonTextract TextractClient { get; set; }   
+        IAmazonTextract TextractClient { get; set; }
         IAmazonPolly PollyClient { get; set; }
         IAmazonTranscribeService TranscribeClient { get; set; }
 
-        public TestController(DataContext context, IAmazonS3 s3Client, 
+        public TestController(DataContext context, IAmazonS3 s3Client,
             IAmazonRekognition rekognitionClient, IAmazonTextract textractClient,
             IAmazonPolly pollyClient, IAmazonTranscribeService transcribeClient)
         {
@@ -54,9 +49,9 @@ namespace BuildersFair_API.Controllers
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
-            guidString = guidString.Replace("=","");
-            guidString = guidString.Replace("+","");
-            guidString = guidString.Replace("/","");
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
 
             // Retrieving image data
             string keyName = string.Format("test/{0}.jpg", guidString);
@@ -67,14 +62,14 @@ namespace BuildersFair_API.Controllers
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
                 // call Rekonition API
-                labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms);   
-                
+                labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms);
+
                 // Upload image to S3 bucket
                 // await Task.Run(() => S3Util.UploadToS3(this.S3Client, "S3_BUCKET_NAME_HERE", "KEY_NAME_HERE", ms));
             }
-            
-            return Ok(labels);            
-        } 
+
+            return Ok(labels);
+        }
 
         // POST api/test/textract
         [Route("textract")]
@@ -85,9 +80,9 @@ namespace BuildersFair_API.Controllers
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
-            guidString = guidString.Replace("=","");
-            guidString = guidString.Replace("+","");
-            guidString = guidString.Replace("/","");
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
 
             // Retrieving image data
             string keyName = string.Format("test/{0}.jpg", guidString);
@@ -98,14 +93,14 @@ namespace BuildersFair_API.Controllers
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
                 // call Textract API
-                blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms);   
-                
+                blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms);
+
                 // Upload image to S3 bucket
                 // await Task.Run(() => S3Util.UploadToS3(this.S3Client, "S3_BUCKET_NAME_HERE", "KEY_NAME_HERE", ms));
             }
-            
-            return Ok(blocks);            
-        } 
+
+            return Ok(blocks);
+        }
 
         // POST api/test/polly
         [Route("polly")]
@@ -116,16 +111,24 @@ namespace BuildersFair_API.Controllers
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
-            guidString = guidString.Replace("=","");
-            guidString = guidString.Replace("+","");
-            guidString = guidString.Replace("/","");
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
 
             // Validation check
+            if (string.IsNullOrWhiteSpace(dto.language_code) == true)
+                return BadRequest("Language code is empty.");
+
             if (string.IsNullOrWhiteSpace(dto.text) == true)
                 return BadRequest("Text is empty.");
 
+            if (string.IsNullOrWhiteSpace(dto.voice_name) == true)
+                return BadRequest("Voice name is empty.");                
+
+            // Console.WriteLine(dto.voice_name);
+
             // call Polly API
-            result.mediaUri = await PollyUtil.PollyDemo(this.PollyClient, this.S3Client, dto.text);
+            result.mediaUri = await PollyUtil.PollyDemo(this.PollyClient, this.S3Client, dto.language_code, dto.text, dto.voice_name);
 
             return Ok(result);
         }
@@ -146,29 +149,43 @@ namespace BuildersFair_API.Controllers
         {
             var voices = await PollyUtil.GetVoiceList(this.PollyClient, languageCode);
             return Ok(voices);
-        }       
+        }
 
         // POST api/test/transcribe
         [Route("transcribe")]
         [HttpPost]
-        public async Task<IActionResult> TranscribeTest([FromBody] TranscribeTestDTO dto)
+        //public async Task<IActionResult> TranscribeTest([FromBody] TranscribeTestDTO dto)
+        public async Task<IActionResult> TranscribeTest([FromForm] TranscribeTestDTO dto)
         {
             string transcriptionUri = null;
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
-            guidString = guidString.Replace("=","");
-            guidString = guidString.Replace("+","");
-            guidString = guidString.Replace("/","");
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
 
             // Validation check
-            if (string.IsNullOrWhiteSpace(dto.mediaUri) == true)
-                return BadRequest("mediaURI is empty.");
+            if (string.IsNullOrWhiteSpace(dto.language_code) == true)
+                return BadRequest("language_code is empty.");
+
+            if (dto.WAVblob == null || dto.WAVblob.Length <= 0)
+                return BadRequest("WAVblob is empty.");
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                dto.WAVblob.CopyTo(ms);
+
+                // Upload image to S3 bucket
+                await Task.Run(() => S3Util.UploadToS3(this.S3Client, "reinvent-indiamazones", "transcribe_test/mytest.wav", ms));
+            }
+
+            string mediaUri = "https://reinvent-indiamazones.s3-us-west-2.amazonaws.com/transcribe_test/mytest.wav";
 
             // call Transcribe API
-            transcriptionUri = await TranscribeUtil.TranscribeDemo(this.TranscribeClient, dto.mediaUri);
-            
-            return Ok(transcriptionUri);            
+            transcriptionUri = await TranscribeUtil.TranscribeDemo(this.TranscribeClient, dto.language_code, mediaUri);
+
+            return Ok(transcriptionUri);
         }
 
         // GET api/test/transcribe/languages

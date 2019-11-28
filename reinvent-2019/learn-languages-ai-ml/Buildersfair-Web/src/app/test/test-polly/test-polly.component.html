@@ -11,7 +11,7 @@
             <div class="input-group-prepend tts-text">
               <span class="input-group-text">Text</span>
             </div>
-            <textarea ng-model="texttospeech" class="form-control" aria-label="With textarea">Learn languages with AWS AI/ML</textarea>
+            <textarea id="texttospeech" ng-model="texttospeech" class="form-control" aria-label="With textarea">Learn languages with AWS AI/ML</textarea>
           </div>
         
           <br/><br/>
@@ -37,8 +37,8 @@
         <div class="container" *ngIf=pollyVoices>
             <div class="radio" *ngFor="let voice of pollyVoices; let isFirst = first">
                 <label>
-                  <input type="radio" name="survey" id="Radios1" value="{{voice.voice_name}}" [attr.checked]="isFirst == true ? 'checked' : null">
-                  {{voice.voice_name}}, {{voice.gender}}, {{isFirst}}
+                  <input type="radio" name="radioVoices" id="{{voice.voice_name}}" value="{{voice.voice_name}}" [attr.checked]="isFirst == true ? 'checked' : null">
+                  {{voice.voice_name}}, {{voice.gender}}
                 </label>
               </div>
         </div>

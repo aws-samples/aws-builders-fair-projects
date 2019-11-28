@@ -35,7 +35,7 @@ export class TestService {
   }
 
   transcribeTest(body): Observable<any> {
-    return this.http.post<any>(this.baseUrl + 'test/transcribe', body);
+    return this.http.post(this.baseUrl + 'test/transcribe', body);
   }
 
   getTranscribeLanguageList(): Observable<TranscribeLanguage[]> {

@@ -13,17 +13,17 @@ namespace Buildersfair_API.Utils
 {
     public class PollyUtil
     {
-        public async static Task<string> PollyDemo(IAmazonPolly pollyClient, IAmazonS3 S3Client, string text)
+        public async static Task<string> PollyDemo(IAmazonPolly pollyClient, IAmazonS3 S3Client, string languageCode, string text, string voiceName)
         {
             string result = null;
             SynthesizeSpeechRequest  synthesizeRequest = new SynthesizeSpeechRequest()
             {
-                LanguageCode = LanguageCode.EnUS,
+                LanguageCode = GetPollyLanguageCode(languageCode),
                 OutputFormat = "mp3",
                 SampleRate = "8000",
                 Text = text,
                 TextType = "text",
-                VoiceId = "Joanna"
+                VoiceId = voiceName
             };
 
             try
@@ -134,6 +134,106 @@ namespace Buildersfair_API.Utils
             } while (nextToken != null);
 
             return result;
+        }
+
+        static LanguageCode GetPollyLanguageCode(string languageCode)
+        {
+            LanguageCode pollyLanguageCode = LanguageCode.EnUS;
+            switch (languageCode)
+            {
+                case "arb":
+                    pollyLanguageCode = LanguageCode.Arb;
+                    break;
+                case "cmn-CN":
+                    pollyLanguageCode = LanguageCode.CmnCN;
+                    break;
+                case "cy-GB":
+                    pollyLanguageCode = LanguageCode.CyGB;
+                    break;
+                case "da-DK":
+                    pollyLanguageCode = LanguageCode.DaDK;
+                    break;
+                case "de-DE":
+                    pollyLanguageCode = LanguageCode.DeDE;
+                    break;
+                case "en-AU":
+                    pollyLanguageCode = LanguageCode.EnAU;
+                    break;
+                case "en-GB":
+                    pollyLanguageCode = LanguageCode.EnGB;
+                    break;
+                case "en-GB-WLS":
+                    pollyLanguageCode = LanguageCode.EnGBWLS;
+                    break;
+                 case "en-IN":
+                    pollyLanguageCode = LanguageCode.EnIN;
+                    break;
+                case "en-US":
+                    pollyLanguageCode = LanguageCode.EnUS;
+                    break;
+                case "es-ES":
+                    pollyLanguageCode = LanguageCode.EsES;
+                    break;
+                case "es-MX":
+                    pollyLanguageCode = LanguageCode.EsMX;
+                    break;
+                case "es-US":
+                    pollyLanguageCode = LanguageCode.EsUS;
+                    break;
+                case "fa-CA":
+                    pollyLanguageCode = LanguageCode.FrCA;
+                    break;
+                case "fr-FR":
+                    pollyLanguageCode = LanguageCode.FrFR;
+                    break;
+                case "hi_IN":
+                    pollyLanguageCode = LanguageCode.HiIN;
+                    break;
+                case "is-IS":
+                    pollyLanguageCode = LanguageCode.IsIS;
+                    break;
+                case "it-IT":
+                    pollyLanguageCode = LanguageCode.ItIT;
+                    break;
+                case "ja-JP":
+                    pollyLanguageCode = LanguageCode.JaJP;
+                    break;
+                case "ko-KR":
+                    pollyLanguageCode = LanguageCode.KoKR;
+                    break;
+                case "nb-NO":
+                    pollyLanguageCode = LanguageCode.NbNO;
+                    break;
+                case "ni-NL":
+                    pollyLanguageCode = LanguageCode.NlNL;
+                    break;
+                case "pi-PL":
+                    pollyLanguageCode = LanguageCode.PlPL;
+                    break;
+                case "pt-BR":
+                    pollyLanguageCode = LanguageCode.PtBR;
+                    break; 
+                case "pt-PT":
+                    pollyLanguageCode = LanguageCode.PtPT;
+                    break;
+                case "ro-RO":
+                    pollyLanguageCode = LanguageCode.RoRO;
+                    break;
+                case "ru-RU":
+                    pollyLanguageCode = LanguageCode.RuRU;
+                    break;
+                case "sv-SE":
+                    pollyLanguageCode = LanguageCode.SvSE;
+                    break;
+                case "tr-TR":
+                    pollyLanguageCode = LanguageCode.TrTR;
+                    break;
+                default:
+                    pollyLanguageCode = LanguageCode.EnUS;
+                    break;              
+            }
+
+            return pollyLanguageCode;
         }
     }
 }
