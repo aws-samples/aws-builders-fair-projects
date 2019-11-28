@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+ <html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>RhythmCloud 1.0</title>
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/design/images/drum.jpg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <link rel="stylesheet" href="/design/css/main.css">
+        <link rel="stylesheet" href="/design/css/docs.min.css">
+
+
+
+        <link rel="stylesheet" href="/design/js/DataTables/DataTables-1.10.20/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="/design/js/DataTables/Scroller-2.0.1/css/scroller.bootstrap4.min.css">
+
+        <link rel="stylesheet" href="/design/js/jqueryui/jquery-ui.css">
+        <script src="/design/js/jquery-3.3.1.min.js"></script>
+        <script src="/design/js/jqueryui/jquery-ui.min.js"></script>
+
+
+        <style>
+
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
+  height: 60px;
+  line-height: 60px;
+  background-color: #f5f5f5;
+  z-index: 1000;
+}
+
+.bd-sidebar .nav>li>a {
+    display: block;
+    padding: .25rem 1.5rem;
+    font-size: 90%;
+    color: #FF9900;
+}
+
+a:hover {
+    color: #343a40 !important;
+    text-decoration: underline;
+}
+
+footer a:hover {
+    color: #FF9900 !important;
+    text-decoration: underline;
+}
+
+main{margin-top:15px;}
+
+.custom-select {background:none}
+.tempo,.duration  { margin: 5px; }
+
+
+.min, .max {
+    width: 5px;
+    font-size: 12px;
+    margin-bottom:0;
+    padding-bottom:0;
+    text-align: center;
+}
+.wrapper{height:70px;}
+
+
+.page-item.active .page-link {
+    z-index: 1;
+    color: #FF9900;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.page-link:hover {
+    z-index: 2;
+    color: #343a40 !important;
+    text-decoration: none;
+    background-color: #FF9900;
+    border-color: #FF9900;
+}
+</style>
+    </head>
+    <body>
+
+
+        <div class="d-flex flex-column flex-md-row align-items-center p-1 px-md-4 bg-white border-bottom shadow-sm w-100 nav-index">
+
+            <div class="container">
+
+                <div class="d-flex flex-column flex-md-row">
+
+                    <a href="/" class="my-0 mt-2 mr-md-auto font-weight-normal">
+                       <img src="/design/images/drum.jpg" height="65px" style="margin-left:50px">
+                       <!--image from: https://pixabay.com/vectors/drum-drum-club-christmas-1893996/ -->
+                    </a>
+
+                    <nav class="my-2 my-md-0 pt-2 text-center">
+
+                        <a class="p-2 text-uppercase text-dark  font-weight-bold" href="/">
+                          Home
+                        </a>
+
+
+
+                        <a  class="text-uppercase"
+                            href="/docs/index.html"
+                            id="navbarDocumentation"
+                            role="button"
+                            aria-haspopup="true" >
+                            Documentation
+                        </a>
+                        <a  class="text-uppercase"
+                            href="dashboard.html"
+                            id="navbarDocumentation"
+                            role="button"
+                            aria-haspopup="true" >
+                            Dashboard
+                        </a>
+
+                    </nav>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- /.main nav bar -->
+
+
+
+
+  <div class="container">
+
+      <div class="row flex-xl-nowrap">
+
+
+        <!--left side nav-->
+        <div class='col-12 col-md-3 col-lg-3 col-xl-2 bd-sidebar'
+             id='leftsideNav'>
+
+            <form class='bd-search d-flex align-items-center d-md-none'>
+
+                <button class='btn btn-link bd-search-docs-toggle p-0 ml-3'
+                        type='button'
+                        data-toggle='collapse'
+                        data-target='#bd-docs-nav'
+                        aria-controls='bd-docs-nav'
+                        aria-expanded='false'
+                        aria-label='Toggle docs navigation'>
+                          <svg xmlns='http://www.w3.org/2000/svg'
+                               width='30'
+                               height='30'
+                               viewBox='0 0 30 30'
+                               role='img'
+                               focusable='false'>
+                                <title>Menu</title>
+                                <path stroke='currentColor'
+                                      stroke-linecap='round'
+                                      stroke-miterlimit='10'
+                                      stroke-width='2'
+                                      d='M4 7h22M4 15h22M4 23h22' />
+                          </svg>
+                  </button>
+
+            </form>
+
+
+            <nav class='collapse bd-links mt-md-4 pt-0'
+                 id='bd-docs-nav'>
+
+                <div class='bd-toc-item active'>
+
+                    <ul class='nav bd-sidenav'>
+
+
+
+                        <li class='bd-sidenav-active' >
+
+                          <a class='nav-link border-sidenav-li actionItem'
+                             href="list.html?v=a">
+                            Pick a song to play
+                          </a>
+
+                        </li>
+
+                        <li class='bd-sidenav-active' >
+
+                          <a class='nav-link border-sidenav-li actionItem'
+                             href="uploadSong.html?v=a">
+                            Upload a song
+                          </a>
+
+                        </li>
+
+
+
+                      </ul>
+                </div>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <div class="col-md-9">
+
+
+          <main role="main">
+            <h1 style='color:#343a40 '>  RhythmCloud 1.0 Drum Learning System </h1>
+
+            <div id="responseTarget">
+
+            </div>
+            </br>
+            </br>
+            </br>
+            </br>
+
+
+          </main>
+
+
+
+        </div>
+
+      </div>
+    </div>
+</main>
+
+
+<footer class="py-3 mb-0 bg-dark">
+    <div class="container">
+        <div class="row text-white">
+            <div class="col-md-6 text-md-left text-center">
+                &copy; 2019 RhythemCloud
+            </div>
+
+
+            <div class="col-md-6 text-md-right text-center">
+                <a href="https://aws.amazon.com/whitepapers/"
+                   target="_blank" class="text-white">
+                   AWS Whitepapers |
+                </a>
+
+                <a href="https://aws.amazon.com/iot/" target="_blank" class="text-white">
+                  AWS IoT |
+                </a>
+
+                <a href="https://www.raspberrypi.org/" target="_blank" class="text-white">
+                  Raspberry PI
+                </a>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+      <script type="text/javascript" src="/design/js/DataTables/datatables.min.js"></script>
+      <script type="text/javascript" src="/design/js/DataTables/Scroller-2.0.1/js/scroller.bootstrap4.min.js"></script>
+
+      <script src="/design/js/bootstrap.bundle.min.js"></script>
+      <script src="/design/js/main.js?v=3"></script>
+
+
+      <script>
+      function replaceQueryString( queryString, keys, newValues ) {
+          var parts = queryString.split('&');
+
+          // We're going to make an array of querystring key=value strings
+          var new_parts = [];
+
+          for( i in parts ) {
+              var keyValue = parts[i].split('=');
+
+              // Use jQuery to see if this key is in our desired set
+              var replacePos = $.inArray(keyValue[0],keys);
+
+              // If it is, it will give a non-negative integer, if not it'll give -1
+              if( replacePos >= 0 )
+                  // We want to replace this key so make a new string for the key/value pair
+                  new_parts.push( keyValue[0] + '=' + newValues[replacePos] );
+              else {
+                  // This isn't the key we want to replace, so leave it alone
+                  new_parts.push( parts[i] );
+              }
+          }
+
+          // glue all the parts together and return them
+          return new_parts.join('&');
+      }
+
+      </script>
+
+
+    </body>
+</html>

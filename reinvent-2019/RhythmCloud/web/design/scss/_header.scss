@@ -1,0 +1,95 @@
+//_header.scss for custom header style
+header{
+    .dropdown-toggle::after{
+        display: none;
+    }
+    .dropdown{
+        a{
+            color: $info-color; 
+        }
+        .dropdown-menu {   
+            min-width: auto !important;      
+        }
+    }    
+}
+
+.header-border{
+    border-bottom: 4px solid $primary-color !important;
+}
+
+#nav{
+    ul{
+        li{
+            a{
+                color: $info-color;
+            }
+        }
+    }
+}
+
+#navbar{
+ul{
+    li{
+        ul{
+            margin: $dropdown-margin;
+        }
+    }
+}
+ul{
+    li{
+
+        ul{
+            li{
+                ul{
+                    position: absolute !important;   
+                    left: 100% !important;
+                    top: -3px !important;
+                    z-index: 9999 !important;
+                }
+            }
+        }
+    }
+}
+.dropdown-menu {  
+    border: 1px solid rgba(0, 0, 0, 0.10) !important;
+    border-radius: 0rem;
+    border-bottom: 4px solid #9aca3c !important;
+}
+.dropdown-menu {
+    a{     
+    font-size: 14px !important;
+    line-height: 25px !important;
+    border-bottom: 1px solid #dee2e6 !important;
+ }
+}
+}
+
+.login-dropdown{    
+    .dropdown-menu{
+        margin: $dropdown-margin;
+    }
+}
+
+.login-icon, .login-dropdown{
+    position: absolute !important;
+    right: 0px;
+    font-size: 21px !important;
+}
+
+.mobile-nav-logo{
+    img{
+        height:38px;
+        margin-top: 4px;
+    }
+}
+
+.google-btn{
+    background-color: $google-btn;
+    border-color: $google-btn;    
+}
+
+.google-btn-icon{
+    height: 44px;
+    position: absolute;  
+    margin-top: -1px;   
+}

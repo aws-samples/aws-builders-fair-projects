@@ -1,0 +1,93 @@
+//variables
+$primary-color: #9aca3c;
+$primary-border-color:#769c2a;
+$primary-hover-background:#85b030;
+$primary-hover-border-color:#7da62d;
+$secondary-color: #284C61;
+$info-color: #417488;
+$white-color: white;
+$aside-bg-color: #325F74;
+$google-btn: #4285F4 !important;
+$card-decorator-border-color: #c5c7c1 !important;
+$dropdown-margin: 20px 0 0 !important;
+$btn-border-radius:0.25rem !important;
+$card-header-border:2px solid rgba(0,0,0,.125) !important;
+$padding-x-axis:0rem 1.25rem !important;
+$dpLogCreation-color:#D1E6FC !important;
+$dpLogClone-color:#FEFED1 !important;
+$dpLogPublicComment-color:#F0B4B4 !important;
+$dpLogPrivateComment-color: #E5D5FC !important;
+$dpLogStatus-color: #BEEDB7 !important;
+$dpLogFields-color: #F1D563 !important;
+$wizard-color:#9D382C !important;
+$gray-color:#939292 !important;
+$danger-color: #dc3545 !important;
+
+
+  /*===== custom common classes  =====*/
+.text-break{
+  word-break: break-all !important;
+}
+.yubikey-input{
+  opacity: 0;
+  width: 0;
+ }
+ .btn-primary, .btn-primary:hover{
+   color: white !important;
+ }
+
+//Extend/Inheritance
+%log-panel {
+    font-size: small;
+    font-weight: bold;
+    margin: 3px;
+    cursor: pointer;
+  }
+
+  /*===== custom for Index Page  =====*/
+  .wizard-button{
+    border: 3px solid $wizard-color;
+    padding: 12px 18px;
+    color: $wizard-color;
+  }
+  .wizard-color{
+    color: $wizard-color;
+  }
+  .wizard-border{
+    border: 3px solid $wizard-color;
+    top: 14px;
+  }
+.question-section a:hover{
+  color: white !important;
+}
+/*===== custom for ios_app_registration  =====*/
+.ol-list-style{
+  ol{
+    li{
+      ul{
+        list-style-type: lower-alpha !important;
+      }
+    }
+  }
+}
+
+/*===== for custom footer style =====*/
+footer{
+    background-color: $aside-bg-color;
+    .globe-icon{
+        position: absolute;
+        top: 11px;
+        left: -2px;
+}
+}
+/*===== @media queries for screen =====*/
+@media(min-width:300px) and (max-width:575.98px){
+    .btn-primary, .qq-upload-button{
+        width:100% !important;
+    }
+    .display-4{
+      font-size: 2.75rem !important;
+    }
+} 
+
+@import "header";  //import _header.scss file

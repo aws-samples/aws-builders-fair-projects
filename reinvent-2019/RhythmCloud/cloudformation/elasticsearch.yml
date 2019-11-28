@@ -1,0 +1,126 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "AWS CloudFormation templates to create AWS Elasticsearch Service domain. **WARNING** This template creates an Amazon Elasticsearch domain. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Parameters": {
+        "NodeType": {
+            "Description": "The node type to be provisioned for the Elasticsearch cluster",
+            "Type": "String",
+            "Default": "t2.small.elasticsearch",
+            "AllowedValues": [
+                "t2.small.elasticsearch",
+                "m4.large.elasticsearch",
+                "m4.xlarge.elasticsearch",
+                "c4.large.elasticsearch",
+                "c4.xlarge.elasticsearch",
+                "r4.large.elasticsearch",
+                "r4.xlarge.elasticsearch"
+            ],
+            "ConstraintDescription": "must be a valid Elasticsearch node type."
+        },
+        "NodeCount": {
+            "Description": "The number of nodes in the Elasticsearch cluster.",
+            "Type": "Number",
+            "Default": "1"
+        },
+        "NAT1ElasticIP": {
+            "Type": "String",
+            "Description": "NAT1 elastic IP"
+        },
+        "NAT2ElasticIP": {
+            "Type": "String",
+            "Description": "NAT2 elastic IP"
+        }
+    },
+    "Resources": {
+        "ElasticsearchDomain": {
+            "Type": "AWS::Elasticsearch::Domain",
+            "Properties": {
+                "DomainName": "gitlab-quickstart",
+                "ElasticsearchClusterConfig": {
+                    "DedicatedMasterEnabled": "false",
+                    "InstanceCount": { "Ref": "NodeCount" },
+                    "ZoneAwarenessEnabled": "false",
+                    "InstanceType": { "Ref": "NodeType" }
+                },
+                "ElasticsearchVersion": "5.1",
+                "AccessPolicies": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": [
+                                "es:ESHttpGet",
+                                "es:ESHttpPut",
+                                "es:ESHttpPost",
+                                "es:ESHttpHead"
+                            ],
+                            "Principal": "*",
+                            "Effect": "Allow",
+                            "Condition": {
+                                "IpAddress": {
+                                    "aws:SourceIp": [
+                                        {
+                                            "Ref": "NAT1ElasticIP"
+                                        },
+                                        {
+                                            "Ref": "NAT2ElasticIP"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                "EBSOptions": {
+                    "EBSEnabled": true,
+                    "Iops": 0,
+                    "VolumeSize": 10,
+                    "VolumeType": "gp2"
+                },
+                "SnapshotOptions": {
+                    "AutomatedSnapshotStartHour": "0"
+                },
+                "AdvancedOptions": {
+                    "rest.action.multi.allow_explicit_index": "true"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "KibanaURL": {
+            "Description": "Kibana URL",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        {
+                            "Fn::GetAtt": [
+                                "ElasticsearchDomain",
+                                "DomainEndpoint"
+                            ]
+                        },
+                        "/_plugin/kibana/"
+                    ]
+                ]
+            }
+        },
+        "ElasticsearchEndpoint": {
+            "Description": "Elasticsearch domain endpoint",
+            "Value": {
+                "Fn::GetAtt": [
+                    "ElasticsearchDomain",
+                    "DomainEndpoint"
+                ]
+            }
+        },
+        "ElasticsearchDomainARN": {
+            "Description": "Elasticsearch domain ARN",
+            "Value": {
+                "Fn::GetAtt": [
+                    "ElasticsearchDomain",
+                    "DomainArn"
+                ]
+            }
+        }
+    }
+}
+

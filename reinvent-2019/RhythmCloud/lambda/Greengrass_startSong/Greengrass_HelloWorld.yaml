@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  GreengrassHelloWorld:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: greengrassHelloWorld.function_handler
+      Runtime: python3.7
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Role: >-
+        arn:aws:iam::769288830335:role/service-role/Greengrass_HelloWorld-role-hzuhpa8t

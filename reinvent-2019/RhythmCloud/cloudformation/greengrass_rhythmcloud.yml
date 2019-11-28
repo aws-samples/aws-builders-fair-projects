@@ -1,0 +1,867 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Description: Create Greengrass resources and group, with supporting AWS services
+
+Parameters:
+  CoreName:
+    Description: Green Core name to be created. A "Thing" with be created with _Core appended to the name
+    Type: String
+    Default: rhythmcloud
+  S3BucketName:
+    Description: S3 Bucket that contains the zip deployment files for the lambda functions
+    Type: "String"
+  S3BucketPrefix:
+    Description: S3 Bucket that contains the zip deployment files for the lambda functions
+    Type: "String"
+  WebUIS3Bucket:
+    Description: S3 Bucket that hosts the Web UI for RhythmCloud
+    Type: "String"
+
+Resources:
+  LambdaZipsBucket:
+        Type: AWS::S3::Bucket
+  CopyZips:
+        Type: Custom::CopyZips
+        Properties:
+          ServiceToken: !GetAtt 'CopyZipsFunction.Arn'
+          DestBucket: !Ref 'LambdaZipsBucket'
+          SourceBucket: !Ref 'S3BucketName'
+          Prefix: !Ref 'S3BucketPrefix'
+          Objects:
+            - Greengrass_play.zip
+            - StartSong.zip
+            - GetSongs.zip
+            - UploadSong.zip
+            - CreateThingFunction.zip
+  #############################################################################
+  # GREENGRASS RESOURCES SECTION
+  # This section contains all the Greengrass related resources
+  #############################################################################
+  GreengrassGroup:
+    Type: AWS::Greengrass::Group
+    Properties:
+      Name: !Ref CoreName
+      RoleArn: !GetAtt GreengrassResourceRole.Arn
+      InitialVersion:
+        CoreDefinitionVersionArn: !Ref GreengrassCoreDefinitionVersion
+        FunctionDefinitionVersionArn: !GetAtt FunctionDefinition.LatestVersionArn
+        SubscriptionDefinitionVersionArn: !GetAtt SubscriptionDefinition.LatestVersionArn
+        # Other Greengrass resources that can be included in a group
+        # not used in this example
+        #
+        # DeviceDefinitionVersionArn: !Ref ExampleDeviceDefinitionVersion
+        # LoggerDefinitionVersionArn: !Ref ExampleLoggerDefinitionVersion
+        # ResourceDefinitionVersionArn: !Ref ExampleResourceDefinitionVersion
+        # ConnectorDefinitionVersionArn: !Ref ExampleConnectorDefinitionVersion
+  GreengrassCoreDefinition:
+    Type: AWS::Greengrass::CoreDefinition
+    Properties:
+      # use CoreName + "_Core" as "thingName"
+      Name: !Join ["_", [!Ref CoreName, "Core"] ]
+  GreengrassCoreDefinitionVersion:
+    # Example of using GreengrassCoreDefinition referring to this
+    # "Version" resource
+    Type: AWS::Greengrass::CoreDefinitionVersion
+    Properties:
+      CoreDefinitionId: !Ref GreengrassCoreDefinition
+      Cores:
+        - Id: !Join ["_", [!Ref CoreName, "Core"] ]
+          ThingArn: !Join
+                      - ":"
+                      - - "arn:aws:iot"
+                        - !Ref AWS::Region
+                        - !Ref AWS::AccountId
+                        - !Join
+                          - "/"
+                          - - "thing"
+                            - !Join ["_", [!Ref CoreName, "Core"] ]
+          CertificateArn: !Join
+                            - ":"
+                            - - "arn:aws:iot"
+                              - !Ref AWS::Region
+                              - !Ref AWS::AccountId
+                              - !Join
+                                - "/"
+                                - - "cert"
+                                  - !GetAtt IoTThing.certificateId
+          SyncShadow: "false"
+  FunctionDefinition:
+    # Example of using "InitialVersion" to not have to reference a separate
+    # "Version" resource
+    Type: 'AWS::Greengrass::FunctionDefinition'
+    Properties:
+      Name: FunctionDefinition
+      InitialVersion:
+        DefaultConfig:
+          Execution:
+# we run as 0 (root) because we need direct access to the GPIO pins for lights and the A/D Converter
+            IsolationMode: NoContainer
+        Functions:
+          - Id: !Join ["_", [!Ref CoreName, "sample"] ]
+            FunctionArn: !Ref GGSampleFunctionVersion
+            FunctionConfiguration:
+              Pinned: 'false'
+              Timeout: '300'
+              EncodingType: json
+              Environment:
+                Variables:
+                  CORE_NAME: !Ref CoreName
+                Execution:
+                  IsolationMode: NoContainer
+                  RunAs:
+                    Uid: '0'
+                    Gid: '0'
+  SubscriptionDefinition:
+    Type: 'AWS::Greengrass::SubscriptionDefinition'
+    Properties:
+      Name: SubscriptionDefinition
+      InitialVersion:
+        # Example of one-to-many subscriptions in single definition version
+        Subscriptions:
+          - Id: Subscription1
+            Source: 'cloud'
+            Subject: !Join
+                        - "/"
+                        - - !Ref CoreName
+                          - "$aws/things/pi4/shadow/update/accepted"
+            Target: !Ref GGSampleFunctionVersion
+          - Id: Subscription2
+            Source: !Ref GGSampleFunctionVersion
+            Subject: !Join
+                        - "/"
+                        - - !Ref CoreName
+                          - "$aws/things/pi4/shadow/update"
+            Target: 'GGShadowService'
+
+  GGSampleFunction:
+    # Lambda function deployed by Greengrass
+    DependsOn: CopyZips
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: Greengrass_HelloWorld
+      Description: Greengrass Lambda that starts song or beat playback
+      Handler: greengrassHelloWorld.function_handler
+      Runtime: python2.7
+      # Role and Timeout not used when deployed to Lambda, but required for creation
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 60
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub 'Greengrass_play.zip'
+
+  StartSongLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ApiGatewayApi
+    - StartSongFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref StartSongFunction
+      Principal: apigateway.amazonaws.com
+
+  StartSongFunction:
+    # Lambda function deployed by Greengrass
+    DependsOn: CopyZips
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: StartSong
+      Description: Lambda that starts song or beat playback
+      Handler: start_song.lambda_handler
+      Runtime: python3.7
+      # Role and Timeout not used when deployed to Lambda, but required for creation
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 60
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub 'StartSong.zip'
+# this gives api gateway permission to execute the lambda
+  GetSongsLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ApiGatewayApi
+    - GetSongsFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetSongsFunction
+      Principal: apigateway.amazonaws.com
+  GetSongsFunction:
+     # Lambda function deployed by Greengrass
+     DependsOn: CopyZips
+     Type: AWS::Lambda::Function
+     Properties:
+       FunctionName: GetSong
+       Description: Lambda that list songs in dynamodb
+       Handler: lambda_function.lambda_handler
+       Runtime: python3.7
+       # Role and Timeout not used when deployed to Lambda, but required for creation
+       Role: !GetAtt LambdaExecutionRole.Arn
+       Timeout: 60
+       Code:
+         S3Bucket: !Ref 'LambdaZipsBucket'
+         S3Key: !Sub 'GetSongs.zip'
+
+
+  UploadSongLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ApiGatewayApi
+    - UploadSongFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UploadSongFunction
+      Principal: apigateway.amazonaws.com
+
+
+  UploadSongFunction:
+       # Lambda function deployed by Greengrass
+       DependsOn: CopyZips
+       Type: AWS::Lambda::Function
+       Properties:
+         FunctionName: UploadSong
+         Description: Uploads a song or beat
+         Handler: lambda_function.lambda_handler
+         Runtime: python3.7
+         # Role and Timeout not used when deployed to Lambda, but required for creation
+         Role: !GetAtt LambdaExecutionRole.Arn
+         Timeout: 60
+         Code:
+           S3Bucket: !Ref 'LambdaZipsBucket'
+           S3Key: !Sub 'UploadSong.zip'
+
+  # Functions need to be versioned for use in a Group config
+  GGSampleFunctionVersion:
+    # Example of using FunctionVersion
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName : !GetAtt GGSampleFunction.Arn
+
+  #############################################################################
+  # SUPPORTING RESOURCES SECTION
+  # This section contains all the resources that support the Greengrass
+  # section above. The VPC and EC2 instance to run Greengrass core software, the
+  # AWS IoT Thing, Certificate, and IoT Policy required for the Greengrass
+  # Core definition, and finally custom resources to assist with CloudFormation
+  # stack setup and teardown.
+  #############################################################################
+
+  # Supporting resources from VPC, EC2 Instance, AWS IoT Core
+
+  IoTThing:
+    # Resource creates thing, certificate key pair, and IoT policy
+    Type: Custom::IoTThing
+    Properties:
+      ServiceToken: !GetAtt CreateThingFunction.Arn
+      ThingName: !Join ["_", [!Ref CoreName, "Core"] ]
+      s3bucketname: !Ref 'S3BucketName'
+  CreateThingFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Create thing, certificate, and policy, return cert and private key
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 60
+      Code:
+          S3Bucket: !Ref 'LambdaZipsBucket'
+          S3Key: !Sub 'CreateThingFunction.zip'
+  GroupDeploymentReset:
+    # Allows for deletion of Greengrass group if the deployment status is not
+    # reset manually via the console or API
+    Type: Custom::GroupDeploymentReset
+    DependsOn: GreengrassGroup
+    Properties:
+      ServiceToken: !GetAtt GroupDeploymentResetFunction.Arn
+      Region: !Ref "AWS::Region"
+      ThingName: !Join ["_", [!Ref CoreName, "Core"] ]
+  GroupDeploymentResetFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Resets any deployments during stack delete and manages Greengrass service role needs
+      Handler: index.handler
+      Runtime: python3.6
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 60
+      Environment:
+        Variables:
+          STACK_NAME: !Ref "AWS::StackName"
+      Code:
+        ZipFile: |
+          import os
+          import sys
+          import json
+          import logging
+          import cfnresponse
+          import boto3
+          from botocore.exceptions import ClientError
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          c = boto3.client('greengrass')
+          iam = boto3.client('iam')
+          role_name = 'greengrass_cfn_{}_ServiceRole'.format(os.environ['STACK_NAME'])
+
+          def find_group(thingName):
+              response_auth = ''
+
+              response = c.list_groups()
+              for group in response['Groups']:
+                  thingfound = False
+                  group_version = c.get_group_version(
+                      GroupId=group['Id'],
+                      GroupVersionId=group['LatestVersion']
+                  )
+
+                  core_arn = group_version['Definition'].get('CoreDefinitionVersionArn', '')
+                  if core_arn:
+                      core_id = core_arn[core_arn.index('/cores/')+7:core_arn.index('/versions/')]
+                      core_version_id = core_arn[core_arn.index('/versions/')+10:len(core_arn)]
+                      thingfound = False
+                      response_core_version = c.get_core_definition_version(
+                          CoreDefinitionId=core_id,
+                          CoreDefinitionVersionId=core_version_id
+                      )
+                      if 'Cores' in response_core_version['Definition']:
+                          for thing_arn in response_core_version['Definition']['Cores']:
+                              if thingName == thing_arn['ThingArn'].split('/')[1]:
+                                  thingfound = True
+                                  break
+                  if(thingfound):
+                      logger.info('found thing: %s, group id is: %s' % (thingName, group['Id']))
+                      response_auth = group['Id']
+                      return(response_auth)
+
+
+          def manage_greengrass_role(cmd):
+              if cmd == 'CREATE':
+                  r = iam.create_role(
+                      RoleName=role_name,
+                      AssumeRolePolicyDocument='{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Principal": {"Service": "greengrass.amazonaws.com"},"Action": "sts:AssumeRole"}]}',
+                      Description='Role for CloudFormation blog post',
+                  )
+                  role_arn = r['Role']['Arn']
+                  iam.attach_role_policy(
+                      RoleName=role_name,
+                      PolicyArn='arn:aws:iam::aws:policy/service-role/AWSGreengrassResourceAccessRolePolicy'
+                  )
+                  c.associate_service_role_to_account(RoleArn=role_arn)
+                  logger.info('Created and associated role {}'.format(role_name))
+              else:
+                  try:
+                      r = iam.get_role(RoleName=role_name)
+                      role_arn = r['Role']['Arn']
+                      c.disassociate_service_role_from_account()
+                      iam.delete_role(RoleName=role_name)
+                      logger.info('Disassociated and deleted role {}'.format(role_name))
+                  except ClientError:
+                      return
+
+
+          def handler(event, context):
+              responseData = {}
+              try:
+                  logger.info('Received event: {}'.format(json.dumps(event)))
+                  result = cfnresponse.FAILED
+                  thingName=event['ResourceProperties']['ThingName']
+                  if event['RequestType'] == 'Create':
+                      try:
+                          c.get_service_role_for_account()
+                          result = cfnresponse.SUCCESS
+                      except ClientError as e:
+                          manage_greengrass_role('CREATE')
+                          logger.info('Greengrass service role created')
+                          result = cfnresponse.SUCCESS
+                  elif event['RequestType'] == 'Delete':
+                      group_id = find_group(thingName)
+                      logger.info('Group id to delete: %s' % group_id)
+                      if group_id:
+                          c.reset_deployments(
+                              Force=True,
+                              GroupId=group_id
+                          )
+                          result = cfnresponse.SUCCESS
+                          logger.info('Forced reset of Greengrass deployment')
+                          manage_greengrass_role('DELETE')
+                      else:
+                          logger.error('No group Id for thing: %s found' % thingName)
+              except ClientError as e:
+                  logger.error('Error: %s' % e)
+                  result = cfnresponse.FAILED
+              logger.info('Returning response of: %s, with result of: %s' % (result, responseData))
+              sys.stdout.flush()
+              cfnresponse.send(event, context, result, responseData)
+
+
+  # Roles
+  LambdaExecutionRole:
+    # Role used by CloudFormation created Lambda functions, used by the custom
+    # resource functions to perform their objectives.
+    # Overly permissive for iot:* and greengrass:* to reduce Statement complexity
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - greengrass:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - ec2:DescribeReservedInstancesOfferings
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - iam:CreateRole
+            - iam:GetRole
+            - iam:AttachRolePolicy
+            - iam:DeleteRole
+            - iam:PassRole
+            Resource: !Join ["", ["arn:aws:iam::", !Ref "AWS::AccountId", ":role/greengrass_cfn_", !Ref "AWS::StackName", "_ServiceRole"] ]
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource:
+              - !Sub 'arn:aws:s3:::*'
+          - Effect: Allow
+            Action:
+              - dynamodb:*
+            Resource:
+              -  "*"
+          - Effect: Allow
+            Action:
+              - lambda:*
+            Resource:
+              -  "*"
+  GreengrassResourceRole:
+    # Role for deployed Lambda functions to a Greengrass core to call other
+    # AWS services directly
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: greengrass.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+
+  CopyZipsFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZipsRole
+    Properties:
+      Description: Copies objects from a source S3 bucket to a destination
+      Handler: index.handler
+      Runtime: python2.7
+      Role: !GetAtt 'CopyZipsRole.Arn'
+      Timeout: 240
+      Code:
+        ZipFile: |
+          import json
+          import logging
+          import threading
+          import boto3
+          import cfnresponse
+          def copy_objects(source_bucket, dest_bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              for o in objects:
+                  key = o
+                  copy_source = {
+                      'Bucket': source_bucket,
+                      'Key': key
+                  }
+                  print('copy_source: %s' % copy_source)
+                  print('dest_bucket = %s'%dest_bucket)
+                  print('key = %s' %key)
+                  s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
+                        Key=key)
+          def delete_objects(bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              objects = {'Objects': [{'Key': o} for o in objects]}
+              s3.delete_objects(Bucket=bucket, Delete=objects)
+          def timeout(event, context):
+              logging.error('Execution is about to time out, sending failure response to CloudFormation')
+              cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+          def handler(event, context):
+              # make sure we send a failure to CloudFormation if the function
+              # is going to timeout
+              timer = threading.Timer((context.get_remaining_time_in_millis()
+                        / 1000.00) - 0.5, timeout, args=[event, context])
+              timer.start()
+              print('Received event: %s' % json.dumps(event))
+              status = cfnresponse.SUCCESS
+              try:
+                  source_bucket = event['ResourceProperties']['SourceBucket']
+                  dest_bucket = event['ResourceProperties']['DestBucket']
+                  prefix = event['ResourceProperties']['Prefix']
+                  objects = event['ResourceProperties']['Objects']
+                  if event['RequestType'] == 'Delete':
+                      delete_objects(dest_bucket, prefix, objects)
+                  else:
+                      copy_objects(source_bucket, dest_bucket, prefix, objects)
+              except Exception as e:
+                  logging.error('Exception: %s' % e, exc_info=True)
+                  status = cfnresponse.FAILED
+              finally:
+                  timer.cancel()
+                  cfnresponse.send(event, context, status, {}, None)
+
+  CopyZipsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: lambda-copier
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - !Sub "arn:aws:s3:::*"
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Sub 'arn:aws:s3:::*'
+
+
+  ApiGatewayApi:
+        Type: AWS::Serverless::Api
+        Properties:
+          StageName: "Prod"
+          MethodSettings:
+          - DataTraceEnabled: true
+            HttpMethod: "*"
+            LoggingLevel: INFO
+            ResourcePath: "/*"
+            MetricsEnabled: true
+          DefinitionBody:
+            swagger: 2.0
+            info:
+              title: !Sub "druminstructorProd"
+            basePath: !Sub "/Prod"
+            schemes:
+            - https
+            paths:
+              /song:
+                x-amazon-apigateway-any-method:
+                  produces:
+                  - application/json
+                  - text/html
+                  - application/javascript
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                  security: [] # Root path is open
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                    uri:
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetSongsFunction.Arn}/invocations
+                    passthroughBehavior: when_no_match
+                    httpMethod: POST
+                    type: aws
+                options:
+                  consumes:
+                  - application/json
+                  produces:
+                  - application/json
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: string
+                        Access-Control-Allow-Methods:
+                          type: string
+                        Access-Control-Allow-Headers:
+                          type: string
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    passthroughBehavior: when_no_match
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    type: "mock"
+              /playsong:
+                x-amazon-apigateway-any-method:
+                  produces:
+                  - application/json
+                  - text/html
+                  - application/javascript
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                  security: [] # Root path is open
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                    uri:
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${StartSongFunction.Arn}/invocations
+                    passthroughBehavior: when_no_match
+                    httpMethod: POST
+                    type: aws
+                options:
+                  consumes:
+                  - application/json
+                  produces:
+                  - application/json
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: string
+                        Access-Control-Allow-Methods:
+                          type: string
+                        Access-Control-Allow-Headers:
+                          type: string
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    passthroughBehavior: when_no_match
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    type: "mock"
+
+              /upload-song:
+                x-amazon-apigateway-any-method:
+                  produces:
+                  - application/json
+                  - text/html
+                  - application/javascript
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                  security: [] # Root path is open
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                    uri:
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UploadSongFunction.Arn}/invocations
+                    passthroughBehavior: when_no_match
+                    httpMethod: POST
+                    requestTemplates:
+                      multipart/form-data: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+                        ##  This template will pass through all parameters including path, querystring,\
+                        \ header, stage variables, and context through to the integration endpoint\
+                        \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+                        \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+                        \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+                        \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+                        \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+                        #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+                        \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+                        \ #if($foreach.hasNext),#end\n#end\n},\n\"headers\": {\n    #foreach($param\
+                        \ in $input.params().header.keySet())\n    \"$param\": \"$util.escapeJavaScript($input.params().header.get($param))\"\
+                        \ #if($foreach.hasNext),#end\n    \n    #end  \n},\n\"context\" : {\n\
+                        \    \"account-id\" : \"$context.identity.accountId\",\n    \"api-id\"\
+                        \ : \"$context.apiId\",\n    \"api-key\" : \"$context.identity.apiKey\"\
+                        ,\n    \"authorizer-principal-id\" : \"$context.authorizer.principalId\"\
+                        ,\n    \"caller\" : \"$context.identity.caller\",\n    \"cognito-authentication-provider\"\
+                        \ : \"$context.identity.cognitoAuthenticationProvider\",\n    \"cognito-authentication-type\"\
+                        \ : \"$context.identity.cognitoAuthenticationType\",\n    \"cognito-identity-id\"\
+                        \ : \"$context.identity.cognitoIdentityId\",\n    \"cognito-identity-pool-id\"\
+                        \ : \"$context.identity.cognitoIdentityPoolId\",\n    \"http-method\"\
+                        \ : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n  \
+                        \  \"source-ip\" : \"$context.identity.sourceIp\",\n    \"user\" : \"\
+                        $context.identity.user\",\n    \"user-agent\" : \"$context.identity.userAgent\"\
+                        ,\n    \"user-arn\" : \"$context.identity.userArn\",\n    \"request-id\"\
+                        \ : \"$context.requestId\",\n    \"resource-id\" : \"$context.resourceId\"\
+                        ,\n    \"resource-path\" : \"$context.resourcePath\"\n    }\n}\n"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: aws
+                options:
+                  consumes:
+                  - application/json
+                  produces:
+                  - application/json
+                  responses:
+                    "200":
+                      description: 200 response
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: string
+                        Access-Control-Allow-Methods:
+                          type: string
+                        Access-Control-Allow-Headers:
+                          type: string
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    passthroughBehavior: when_no_match
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    type: "mock"
+
+            x-amazon-apigateway-binary-media-types:
+              - multipart/form-data # Support POST of multi part forms containing binary data (images)
+              - application/midi
+              - application/octet-stream
+              - image/jpeg
+              - image/png
+              - image/svg+xml
+#          securityDefinitions:
+#            myApiUsers:
+#              type: "apiKey"
+#              name: "Authorization"
+#              in: "header"
+#              x-amazon-apigateway-authtype: "cognito_user_pools"
+#              x-amazon-apigateway-authorizer:
+#                providerARNs:
+#                - Fn::Sub: 'arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}'
+#                type: "cognito_user_pools"
+            definitions:
+              Empty:
+                type: object
+                title: Empty Schema
+  LogBucket:
+     Type: 'AWS::S3::Bucket'
+     Properties:
+       AccessControl: LogDeliveryWrite
+       BucketName: !Join  ['.',  ['www', !Ref WebUIS3Bucket, 'logs']]
+  SiteBucket:
+     Type: 'AWS::S3::Bucket'
+     Properties:
+        BucketName: !Join ['.', ['www', !Ref WebUIS3Bucket]]
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
+        LoggingConfiguration:
+          DestinationBucketName: !Ref LogBucket
+
+  SiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: SiteBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt: [ cloudfrontoriginaccessidentity , S3CanonicalUserId ]
+            Action: "s3:GetObject"
+            Resource: !Sub "${SiteBucket.Arn}/*"
+
+  cloudfrontoriginaccessidentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: cloudfront access identity
+
+  SiteCloudFront:
+     Type: 'AWS::CloudFront::Distribution'
+     Properties:
+        DistributionConfig:
+#         Aliases: !Join ['.', ['www', !Ref DomainName]]
+          Enabled: True
+          Origins:
+            - DomainName: !Sub "${SiteBucket}.s3.amazonaws.com"
+              Id: origin
+              S3OriginConfig:
+                OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${cloudfrontoriginaccessidentity}"
+#              CustomOriginConfig:
+#                OriginProtocolPolicy: http-only
+          DefaultCacheBehavior:
+            TargetOriginId: origin
+            SmoothStreaming: 'false'
+            DefaultTTL: 5
+            MaxTTL: 30
+            ForwardedValues:
+              QueryString: 'false'
+              Cookies:
+                Forward: all
+            ViewerProtocolPolicy: allow-all
+#        DefaultCacheBehavior:
+#          TargetOriginId: origin
+#          DefaultTTL: 5
+#          MaxTTL: 30
+#          ForwardedValues:
+#            QueryString: 'false'
+#          ViewerProtocolPolicy: redirect-to-https
+#        ViewerCertificate:
+#          CloudFrontDefaultCertificate: 'true'
+#          SslSupportMethod: sni-only
+#Outputs:
+  # Emit values needed for deployment status (e.g., where to SSH to)
+  #
