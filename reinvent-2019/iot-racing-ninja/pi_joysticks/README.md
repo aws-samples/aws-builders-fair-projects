@@ -1,5 +1,5 @@
 # PI Joysticks for IOTRacer.Ninja #
-This readme will walk through all the steps that you need to follow to create the physical joysticks for IoTRacer.Ninja.  For re:Invent 2019, we are creating 2 joystick housings, each holding 2 joysticks.  This 
+This readme will walk through all the steps that you need to follow to create the physical joysticks for IoTRacer.Ninja.  For re:Invent 2019, we are creating 2 joystick housings, each holding 2 joysticks.  This
 
 ## Bill of Materials ##
 1. 2 [Raspberry Pi 3 Model B+](https://www.amazon.com/ELEMENT-Element14-Raspberry-Pi-Motherboard/dp/B07P4LSDYV/ref=sr_1_1_sspa?keywords=raspberry+pi+3+b%2B+motherboard&qid=1573661642&s=electronics&sr=1-1-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzMFJVSDdKM0ZEWjhDJmVuY3J5cHRlZElkPUEwNjg1MDUyMVlJTVdHSERGOFdHNCZlbmNyeXB0ZWRBZElkPUEwNzYyOTk2M09aSE0yNFA4QTBXWiZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
@@ -7,22 +7,24 @@ This readme will walk through all the steps that you need to follow to create th
 3. 2 [Raspberry Pi 3 Model B+ case](https://www.amazon.com/gp/product/B079M96KWZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
 4. 2 [Raspberry Pi 3 Model B+ power supply](https://www.amazon.com/CanaKit-Raspberry-Supply-Adapter-Listed/dp/B00MARDJZ4/ref=sr_1_5?crid=2BSCPTVZN7184&keywords=raspberry+pi+3+b%2B+power+supply&qid=1573661825&s=electronics&sprefix=raspberry+pi+3+b%2B+power%2Celectronics%2C186&sr=1-5)
 5. 1 [Hikig 4 Player Joystick Kit](https://www.amazon.com/gp/product/B07KFWRPF7/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-6. 4 [Traffic Lights]()
-7. 2 [Breadboards]()
+6. 4 [Traffic Lights](https://www.amazon.com/gp/product/B0765NKCZ4/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1)
+7. 4 [Breadboards](https://www.amazon.com/DEYUE-breadboard-Set-Prototype-Board/dp/B07LFD4LT6/ref=sr_1_9?crid=9BAJWZM1A2YH&keywords=raspberry+pi+breadboard&qid=1574890881&sprefix=raspberry+pi+bread+%2Caps%2C238&sr=8-9)
 8. 2 2' x 1' x .5" MDF Boards (~1 foot per joystick)
 9. 8' 1" x 2" board for base
-10. 16 bolts and nuts
+10. 16 1/8" bolts and nuts
 
 ## Raspberry Pi Setup ##
 1. Install Noobs onto the memory card following directions on the [Raspberrypi.org site](https://www.raspberrypi.org/documentation/installation/noobs.md).  We used Noobs v 3.0.1 for this project.
 2. Install the memory card into the Raspberry Pi 3B+ motherboard, connect a mouse, keyboard, and monitor, and connect a power supply to it to boot it up.
 3. Follow the on-screen prompts for a full Raspian installation to continue the installation and reboot the device.  Once reboot is complete, follow the prompts to:
-* Set the country inputs and timezone
+* Set the country inputs and timezone appropriate to your location
 * Set the password to something you will remember.
+* Set the option for Wait for Network on Boot to Yes.
 * Connect the Pi to a Network.  Note the IP address of the Pi so that you can ssh to it later.
 * Update the system software
 4. [Enable SSH to the Raspberry Pi](https://www.raspberrypi.org/documentation/remote-access/ssh/)
-5. On the Raspberry Pi, open a Terminal session and type 
+5. [Enable Boot Option for Wait on Network](https://raspberrypi.stackexchange.com/questions/45769/how-to-wait-for-networking-on-login-after-reboot)
+6. On the Raspberry Pi, open a Terminal session and type
 ```
 sudo apt-get update -y
 ```
@@ -121,8 +123,10 @@ These connections in the example are done via a breadboard.
 ## USB Connections for Joysticks ##
 The USB slot each joystick is connected to identifies the color of the car that joystick will control.  With the Pi's ports facing you, the settings are:
 
+| Back of PI | Back of PI | Back of Pi |
+|--------------|-------------------|----------------|
 | Network Port | USB Port: BLACK   | USB Port: RED |
-|  |USB Port: WHITE | USB Port: BLUE |
+|  | USB Port: WHITE   | USB Port: BLUE |
 
 ## Installation of IoTRacer.Ninja ##
 1. Download the joy.py file from this repository and place it in the home/pi directory.
@@ -131,7 +135,8 @@ The USB slot each joystick is connected to identifies the color of the car that 
 4. Update the joy.py file to identify your IOT Endpoint on line 27 by modifying the value stored in ENDPOINT
 
 ## Configuration to Run Joy.py from startup ##
-In progress
+Add the following line to /etc/rc.local as sudo
+```python3.7 /home/pi/joy.py```
 
 ## Physical Build ##
 1. Measure where you will be drilling on the MDF for the Joystick and Button
@@ -143,11 +148,11 @@ In progress
 * Holes for the joysticks should be approximately 1" circle, to allow for movement
 * Holes for the buttons should be 1 1/8" circles
 * Holes for wiring should be 1/2" circles
-* 
+
 3. Place the joystick in the area where you will be mounting it and mark the areas for mounting it using the base
 
 4. Remove the joystick and drill your mounting holes
-* Holes for the joystick mounts should be ??" and you will need 4 of them
+* Holes for the joystick mounts should be 1/8" and you will need 4 of them
 
 5. Replace the joystick in the hole and connect it to the board using bolts and nuts through the 4 mounting holes you just drilled
 
@@ -157,6 +162,6 @@ In progress
 
 8. Mount the Raspberry Pi and the Breadboard to the bottom of the MDF, using Velcro
 
-9. Feed the wires for the traffic lights through the holes that were drilled for lighting 
+9. Feed the wires for the traffic lights through the holes that were drilled for lighting
 
 10. Connect the traffic lights to the wires and mount them to the board or other mounting
