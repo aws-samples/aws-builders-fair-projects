@@ -66,7 +66,7 @@ def get_vehicle(id):
     return (json.dumps(data))
 
 @app.on_sns_message(topic=topic_vehiclemoved)
-def handle_sns_message(event):  
+def handle_sns_message(event):
     """Process SNS messages and move vehicles if all vehicles have made a move"""
     gamemeta_response = dynamodb_table.get_item(Key={'itemid':'game','status':'meta'},
         ConsistentRead=True)
@@ -100,8 +100,11 @@ def handle_sns_message(event):
         if same_spot_check(moves['Items']):
             #set move order and update all recordsc
             #TODO: check for vehicle collision
-            order_moves(moves['Items'])
-            sns_response = sns.publish(TopicArn=move_arn,Subject='Moves Queued',Message=curr_round)
+            if order_moves(moves['Items']):
+                sns_response = sns.publish(TopicArn=move_arn,Subject='Moves Queued',Message=curr_round)
+                return{'bad moves':'false'}
+            else:
+                return{'bad moves':'true'}
         else:
             delete_bad_moves(moves['Items'])
             return{'bad moves':'true'}
@@ -197,6 +200,7 @@ def order_moves(moves):
                 #this is the case where a vehicle cannot move until the prior has
                 app.log.info('someone is in my way %s %s', moves[x]['itemid'], other_moves['itemid'])
                 can_move = False
+                break
         if can_move:
             #update the record to include the move order
             moves[x]['movestatus'] = 'readytomove'
@@ -212,8 +216,6 @@ def order_moves(moves):
                 },
                 ExpressionAttributeNames={'#ord': 'order', '#st':'movestatus', '#nx':'new_x', '#ny':'new_y', '#nf':'new_facing'}
                 )
-            #delete_response = dynamodb.delete_item(TableName=move_table, Key=item)
-            #todo update this to iot_game, change status on meta record
             app.log.debug('move made by %s to %s, %s', moves[x]['itemid'], moves[x]['new_x'], moves[x]['new_y'])
             #remove move made from list, no need to compare to old location
             del moves[x]
@@ -221,5 +223,15 @@ def order_moves(moves):
             order = order + 1
         else:
             #try the next move
-            app.debug.log('move not made for %s to %s, %s', moves['Items'][x]['itemid'], moves['Items'][x]['new_x'], moves['Items'][x]['new_y'])
+            app.log.debug('move not made for %s to %s, %s', moves[x]['itemid'], moves[x]['new_x'], moves[x]['new_y'])
             x-=1
+    if len(moves) > 0:
+        #there are some bad moves due to ordering - just delete those and reset joysticks
+        for move in moves:
+            move['movestatus'] = 'rejected'
+        print(moves)
+        delete_bad_moves(moves)
+        return False
+    else:
+        #all moves ordered
+        return True

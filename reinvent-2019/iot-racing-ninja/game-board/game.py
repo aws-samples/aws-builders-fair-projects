@@ -3,16 +3,19 @@ from position import Directions, Position
 import logging
 class Game:
     bots = {}
-
-    def __init__(self):
-        logging.info("Initializing positions")
-        self.bots["black"] = Bot("green", Position.lowerBoundry, Position.lowerBoundry, Directions.east)
-        self.bots["blue"] = Bot("blue", Position.lowerBoundry, Position.yBoundry, Directions.south)
-        self.bots["yellow"] = Bot("yellow", Position.xBoundry, Position.yBoundry, Directions.west)
-        self.bots["red"] =  Bot("red", Position.xBoundry, Position.lowerBoundry, Directions.north)
+    def startGame(self):
+        logging.info("Starting positions")
+        self.bots["black"] = Bot("green", 6, 1, Directions.north)
+        self.bots["blue"] = Bot("blue", 1, 1, Directions.north)
+        self.bots["white"] = Bot("white", 6, 6, Directions.south)
+        self.bots["red"] =  Bot("red", 1, 6, Directions.south)
         for bot in self.bots:
             logging.info(f"{bot} x: {self.bots[bot].position.x}, y: {self.bots[bot].position.y}")
             
+
+    def __init__(self):
+        logging.info("Initializing game")
+        startGame()
 
     def move(self, move, color):
         logging.info(f"Moving {color} {move}. From: {self.bots[color].position.x}, {self.bots[color].position.y}, {self.bots[color].position.direction}")
