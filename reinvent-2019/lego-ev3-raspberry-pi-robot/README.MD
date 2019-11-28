@@ -680,8 +680,8 @@ There were a variety of ways found to run ROS on EV3DEV, this process was the on
 
 
 ## Authors
-Ruald Andreae rualda@amazon.com
-Kyle Huang kylehh@amazon.com
+- Ruald Andreae rualda@amazon.com
+- Kyle Huang kylehh@amazon.com
 
 ## License Summary
 This sample code in this repo is made available under the Apache 2.0 license. See the LICENSE file.
