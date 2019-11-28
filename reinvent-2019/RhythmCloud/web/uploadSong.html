@@ -1,0 +1,112 @@
+<div id="wrap">
+
+    <h3 class='text-primary'> Upload a Song </h3>
+
+
+    <p>
+        Please upload a midi (.mid) or beats (.yml) file with drum tracks inside.
+    </p>
+
+    <form class="needs-validation"
+          id="uploadMaSong"
+          method="post"
+          enctype="multipart/form-data"
+          action="https://4v55eqpwo0.execute-api.us-east-1.amazonaws.com/Prod/upload-song"
+          novalidate>
+
+      <div class="form-group">
+
+          <label for="songName">
+            Song name
+          </label>
+
+          <input type="text"
+                 name="songName"
+                 class="form-control"
+                 id="validationCustom01"
+                 placeholder="Song Name"
+                 value=""
+                 required>
+
+      </div>
+
+      <div class="form-group">
+
+            <label for="content"> Upload </label>
+
+            <div class="custom-file">
+
+              <input type="file"
+                     class=" form-control custom-file-input"
+                     id="inputGroupFile01"
+                     aria-describedby="inputGroupFileAddon01"
+                     name="content" />
+
+              <label class="custom-file-label" for="inputGroupFile01">
+                Choose file
+              </label>
+
+
+              <input type="file"
+                     class="form-control custom-file-input"
+                     id="inputGroupFile01"
+                     name="content"
+                     aria-describedby="inputGroupFile01">
+
+              <label class="custom-file-label" id="fileNameTarget" for="exampleInputFile" data-browse="Choose midi or beats file">
+                Choose midi or beats file
+              </label>
+
+            </div>
+
+      </div>
+
+      <button class="btn btn-primary btn-sm"
+              type="submit">
+        Submit form
+      </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+  $("form#uploadMaSong").submit(function(e) {
+
+   var postDataUrl = $("form#uploadMaSong").attr('action');
+   var formData = new FormData($(this)[0]);
+
+   $.ajax({
+       type: "POST",
+       url: postDataUrl,
+       data: formData,
+       enctype: 'multipart/form-data',
+       processData: false,
+       contentType: false,
+       cache: false,
+       timeout: 600000,
+       success: function(data, textStatus, jqXHR) {
+          alert('nice')
+       },
+       error: function(data, textStatus, jqXHR) {
+          alert('naw')
+       }
+
+   });
+
+   return false;
+
+  });
+
+   $('#inputGroupFile01').on('change',function(){
+
+       //get the file name
+       var fileName = $(this).val();
+       console.log(fileName)
+       //replace the "Choose a file" label
+       $('#fileNameTarget').html(fileName);
+   });
+
+</script>

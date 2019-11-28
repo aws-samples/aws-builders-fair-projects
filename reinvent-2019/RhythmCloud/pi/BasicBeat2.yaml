@@ -1,0 +1,21 @@
+tempo: 128
+song:
+- loop:
+  - repeat: 5
+    bar:
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: kickdrum
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: snaredrum
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: kickdrum
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: snaredrum

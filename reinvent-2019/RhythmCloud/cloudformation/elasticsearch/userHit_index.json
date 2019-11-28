@@ -1,0 +1,26 @@
+{
+  "mappings": {
+    "userHit": {
+      "properties": {
+        "timestamp": {
+          "type": "long",
+          "copy_to": "datetime"
+        },
+        "datetime": {
+          "type": "date",
+          "store": true
+        },
+        "drum": {
+          "type": "text"
+        },
+        "sessionid": {
+          "type": "text"
+        },
+        "voltage": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}
+

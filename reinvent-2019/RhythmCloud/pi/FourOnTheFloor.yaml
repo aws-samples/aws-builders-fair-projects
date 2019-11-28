@@ -1,0 +1,13 @@
+tempo: 128
+song:
+- loop:
+  - repeat: 5
+    bar:
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum
+    - hit: kickdrum

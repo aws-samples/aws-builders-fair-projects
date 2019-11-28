@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+   MyTopicRule:
+      Type: AWS::IoT::TopicRule
+      Properties:
+         RuleName: "userDataRule"
+         TopicRulePayload:
+            RuleDisabled: "true"
+            Sql: >-
+               select * from '/song/userHit'
+            Actions:
+            - Elasticsearch:
+                     Endpoint: !Ref Endpoint
+                     Id: "${newuuid()}"
+                     Index: "userhits"
+                     RoleArn:
+                        Fn::GetAtt:
+                           - "MyRole"
+                           - "Arn"
+
+                     Type: "_doc"
+   MyTopicRule1:
+        Type: AWS::IoT::TopicRule
+        Properties:
+           RuleName: "referenceDataRule"
+           TopicRulePayload:
+              RuleDisabled: "true"
+              Sql: >-
+                 select * from '/song/reference'
+              Actions:
+              - Elasticsearch:
+                       Endpoint: !Ref Endpoint
+                       Id: "${newuuid()}"
+                       Index: "referencehits"
+                       RoleArn:
+                          Fn::GetAtt:
+                             - "MyRole"
+                             - "Arn"
+
+                       Type: "_doc"
+   MyRole:
+      Type: AWS::IAM::Role
+      Properties:
+         AssumeRolePolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+               -
+                  Effect: "Allow"
+                  Principal:
+                     Service:
+                        - "iot.amazonaws.com"
+                  Action:
+                     - "sts:AssumeRole"
+Parameters:
+   Endpoint:
+      Type: "String"
