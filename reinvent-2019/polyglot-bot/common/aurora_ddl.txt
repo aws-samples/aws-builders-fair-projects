@@ -1,0 +1,37 @@
+CREATE TABLE bot.bot_request
+(bot_request_id BIGINT NOT NULL,
+conv_start_time TIMESTAMP,
+conv_end_time TIMESTAMP,
+language_code VARCHAR(25),
+city_name VARCHAR(255),
+resort_name VARCHAR(255),
+PRIMARY KEY (bot_request_id));
+
+CREATE TABLE bot.bot_request_lang_detection
+(lang_detection_id BIGINT NOT NULL AUTO_INCREMENT,
+bot_request_id BIGINT NOT NULL,
+language VARCHAR(25),
+transcript_text VARCHAR(255),
+start_time TIMESTAMP,
+end_time TIMESTAMP,
+PRIMARY KEY (lang_detection_id),
+INDEX (bot_request_id),
+FOREIGN KEY (bot_request_id)
+        REFERENCES bot_request(bot_request_id)
+        ON DELETE CASCADE) ENGINE=INNODB;
+
+
+CREATE TABLE bot.bot_request_steps
+(bot_request_step_id BIGINT NOT NULL AUTO_INCREMENT,
+bot_request_id BIGINT NOT NULL,
+step_name VARCHAR(25),
+transcript_text VARCHAR(255),
+start_time TIMESTAMP,
+end_time TIMESTAMP,
+s3url VARCHAR(500),
+response_s3_url VARCHAR(500),
+PRIMARY KEY (bot_request_step_id),
+INDEX (bot_request_id),
+FOREIGN KEY (bot_request_id)
+        REFERENCES bot_request(bot_request_id)
+        ON DELETE CASCADE) ENGINE=INNODB;
