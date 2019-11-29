@@ -23,11 +23,15 @@ Data about the requests received and processed are captured in to Serverless Aur
 
 The files captured from the bot and sent back to the bot are stored in s3 under following folder structure. Event notifications to trigger different lambda functions are configured based on the folder into which the file is uploaded by pi. 
 
-- polyglotbot
- - greetings
- - city
- - hotel
- - output
+<ul>
+<li>polyglotbot</li>
+<ul>
+ <li>greetings</li>
+ <li>city</li>
+ <li>hotel</li>
+ <li>output</li>
+ </ul>
+ </ul>
 
 ### High Level Architecture
 ![High Level Architecture](images/Architecture.jpg "High Level Architecture")
