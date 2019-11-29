@@ -30,4 +30,4 @@ The files captured from the bot and sent back to the bot are stored in s3 under 
  - output
 
 ### High Level Architecture
-![High Level Architecture](images/ErDiagram.jpg "High Level Architecture")
+![High Level Architecture](images/Architecture.jpg "High Level Architecture")
