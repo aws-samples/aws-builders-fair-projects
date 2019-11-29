@@ -1,0 +1,10 @@
+{
+    "DEVICE_INFO_TOPIC": "sushi_demo/info/robot",
+    "MOVE_COMMAND_TOPIC": "sushi_demo/cmd/move",
+    "RAIL_COMMAND_TOPIC": "sushi_demo/cmd/rail",
+    "ARDUINO_UNO_PORT": "/dev/ttyUSB_UNO",
+    "IOT_ENDPOINT": "",
+    "CERT_FILE": "",
+    "PRIVATE_KEY_FILE": "",
+    "THING_NAME": ""
+}

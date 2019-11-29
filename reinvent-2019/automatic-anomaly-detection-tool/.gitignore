@@ -1,0 +1,9 @@
+.DS_Store
+*.pyc
+inference.zip
+sushi_cfn.yml
+RailController/appconfig.json
+RobotController/appconfig.json
+*-certificate.pem.crt
+*-private.pem.key
+*-public.pem.key

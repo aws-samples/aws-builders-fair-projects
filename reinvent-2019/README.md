@@ -14,6 +14,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [Polyglot Bot](polyglot-bot) | A greeter bot that recognizes your greeting language and wish you back in the same language with hand gesture |
 | [Rhythm Cloud](rhythm-cloud) | Learn to play the drums and learn AWS IoT |
 | [Zombie LEGO® IoT Robot](lego-ev3-raspberry-pi-robot) | Build a LEGO® Mindstorms® EV3 Robot, with the Robot Operating System and AWS RoboMaker, AWS IoT Greengrass, Raspberry Pi, Raspberry Pi Camera and a console gaming controller |
+|Automatic Anomaly Detection Tool a.k.a Sushi Detection| Use AWS IoT Greengrass with Nvidia Jetson Nano to use Machine Learning detection at the edge|
 
 
 # License
