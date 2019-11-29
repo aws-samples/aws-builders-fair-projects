@@ -35,3 +35,10 @@ The files captured from the bot and sent back to the bot are stored in s3 under 
 
 ### High Level Architecture
 ![High Level Architecture](images/Architecture.jpg "High Level Architecture")
+
+## Authors
+- Anusha Dharmalingam andharma@amazon.com
+- Vikas Shah vikashah@amazon.com
+
+## License Summary
+This sample code in this repo is made available under the Apache 2.0 license. See the LICENSE file.
