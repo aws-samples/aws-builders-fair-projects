@@ -1,0 +1,13 @@
+[Unit]
+Description=control arduino robot
+After=network.target network-online.target
+
+[Service]
+WorkingDirectory=/home/pi/RobotController
+ExecStart=/usr/bin/python /home/pi/RobotController/main.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+StartLimitBurst=0
+
+[Install]
+WantedBy=multi-user.target
