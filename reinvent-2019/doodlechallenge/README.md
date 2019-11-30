@@ -7,7 +7,7 @@
 
 
 # Architecture
-   <link>
+![Architecture](./architecture.png)
 
 # Environment setup
 Doodle Challenge uses a number of libraries to work properly:
