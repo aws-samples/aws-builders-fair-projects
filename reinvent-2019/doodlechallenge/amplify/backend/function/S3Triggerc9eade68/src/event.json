@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-west-2",
+            "eventTime": "2019-11-13T07:19:31.194Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AROAZWS7J5ZYOBMXT56T7:CognitoIdentityCredentials"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "205.251.233.52"
+            },
+            "responseElements": {
+                "x-amz-request-id": "397A1BF7C5604A47",
+                "x-amz-id-2": "6wO3tABTryoKVWeMYXdvVHHb//zZ4nzU/verasmnTvMyoT1abtYGNU9cYkY/JtvKh8z8bvKkG0I="
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "7218c5f2-8b2e-43f8-b7f9-96c67f4a4e7f",
+                "bucket": {
+                    "name": "doodlechallenge-drawings-prod",
+                    "ownerIdentity": {
+                        "principalId": "A1VPBNOGYPT01H"
+                    },
+                    "arn": "arn:aws:s3:::doodlechallenge-drawings-prod"
+                },
+                "object": {
+                    "key": "public/doodles/glasses/UWCZ_bc38b433-17f1-443e-8dab-3dc497fec5d6_0.jpg",
+                    "size": 6037,
+                    "eTag": "503910fcb71d4abd43ce21c71e636071",
+                    "sequencer": "005DCBAE832388C8EF"
+                }
+            }
+        }
+    ]
+}
