@@ -1,0 +1,58 @@
+.Screen_Host_RoundResults{
+  padding:20px;
+}
+.Screen_Host_RoundResults .InGameProgress_GridPlayer_Item{
+  width:100%;
+}
+.Screen_Host_RoundResults .InGame_Grow.has-doodled{
+  opacity:1;
+}
+.Screen_Host_RoundResults .InGame_Player_Image.MuiContainer-root{
+  width: 125px;
+  top: 5px;
+  position: absolute;
+  left: 5px;
+  right: initial;
+  border-radius: 1px;
+  z-index:1;
+}
+.Screen_Host_RoundResults .challenger_doodle_container img{
+  max-width: 100%;
+  max-height: 200px;
+  min-height: 100px;
+  padding-top: 35px;
+}
+.Screen_Host_RoundResults .InGameProgress_CardContent{
+  border:5px solid #9a9a9a;
+}
+.Screen_Host_RoundResults .InGame_Score{
+  margin-bottom: 0em;
+}
+.Screen_Host_RoundResults .InGame_CountDown{
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  background-color: #282c33;
+  top: 0;
+  left: 0;
+  text-align: center;
+  z-index: 2;
+  color: #FFFFFF;
+}
+.Screen_Host_RoundResults .InGame_CountDown_Label{
+  margin-top: 100px;
+}
+.Screen_Host_RoundResults .InGame_Player_Winner{
+  position: absolute;
+  top: -35%;
+  right: -45%;
+  left: initial;
+  transform: rotate(45deg);
+  padding-top: 70px !important;
+  width: 100% !important;
+  height: 100%;
+  z-index: 1;
+}
+.Screen_Host_RoundResults .InGameProgressPlayer.winner .InGameProgress_CardContent{
+  border: 5px #43cbf3 solid;
+}

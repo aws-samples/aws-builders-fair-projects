@@ -1,0 +1,186 @@
+.Section_Auth{
+  font-family: "Agenzada"!important;
+}
+.Section_Auth button{
+  font-family: "Agenzada"!important;
+}
+.Section_Auth input{
+  font-family: "Agenzada"!important;
+}
+.greetings-nav-right > div{
+  display:block;
+}
+.Screen_Host{
+  /* background-color: #282c34; */
+  z-index:1;
+}
+.Screen_Host_Game{
+  z-index:1;
+}
+.Screen_Host_Players{
+  background-color: #282c34 !important;
+}
+.Screen_Host .App_Bar{
+  background-color:#000;
+}
+.Screen_CountDown{
+  background-color: #282c34 !important;
+  font-size: 5rem;
+  line-height: initial;
+}
+.Screen_CountDown h6{
+  text-align:center;
+  font-size: 5rem;
+}
+.InGame_Image{
+  max-width:200px;
+}
+.challenger_doodle_container img{
+  max-width:100%;
+  max-height: 200px;
+  min-height: 100px;
+  padding-top:25px;
+}
+.InGame_Score{
+  text-align: center;
+  background-color: black;
+  color: #FFF;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.InGame_Player_Image.MuiContainer-root{
+  border-radius: 5px;
+  border-top: #FF0000 20px solid;
+  border-bottom: #FF0000 5px solid;
+  border-right: #FF0000 2px solid;
+  border-left: #FF0000 2px solid;
+  width: 30%;
+  position: absolute;
+  top: -25px;
+  left: 0;
+  right: 0;
+  background-color: #FFF;
+}
+.InGame_Player_Image img{
+  max-width:100%;
+  max-height:50px;
+}
+.InGameProgress_GridPlayer{
+  padding-top:25px;
+}
+.InGameProgress_GridPlayer_Item{
+  position:relative;
+}
+.InGameProgressPlayer.winner .InGameProgress_CardContent{
+  border:10px #43cbf3 solid;
+}
+.InGame_CountDown{
+  position:absolute;
+}
+.InGame_Player_Winner{
+  position: absolute;
+  top: -27%;
+  left: -35%;
+  transform: rotate(-45deg);
+  padding-top: 70px !important;
+  width: 100% !important;
+  height: 100%;
+}
+.InGame_Grow{
+  transition: all 1s !important;
+  position:relative;
+  opacity:1;
+}
+.InGame_Grow.has-doodled{
+  opacity:.7;
+}
+.InGame_Grow.winner{
+  opacity:1;
+}
+.Host-PlayerList{
+  height: calc(100% - 65px);
+  height: -o-calc(100% - 64px); /* opera */
+  height: -webkit-calc(100% - 64px); /* google, safari */
+  height: -moz-calc(100% - 64px); /* firefox */
+}
+.InGameProgress_CardContent{
+  transition: all 1s !important;
+  min-height:300px;
+  border: 10px solid #9a9a9a;
+  box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1), 0 0 0 2px rgb(255,255,255), 0.3em 0.3em 1em rgba(0,0,0,0.3);
+}
+.Component-Player{
+  box-shadow: none !important;
+}
+.Host_Player_List_Paper .Avatar_Content_Canvas{
+  max-height: initial;
+  min-height: initial;
+}
+.Host_Player_List_Paper .Avatar_Container{
+  max-width: initial;
+  min-width: initial;
+}
+.Host_Player_List_Paper img{
+  width:100%;
+}
+
+.InGameProgressPlayer .Avatar_Container{
+  max-width:initial;
+  min-width:initial;
+}
+.Host_Player_List_Item{
+  background-color:transparent;
+  position:relative;
+}
+.Host_Player_List_Item .MuiPaper-root{
+  background-color:transparent;
+  box-shadow: none !important;
+}
+.Screen_Host_Winner .Winner_Player{
+  width:500px;
+}
+.Screen_Host_Winner .Winner_Player .Component-Player{
+  background-color: transparent;
+  padding-bottom:20px;
+}
+.Screen_Host_Winner .Avatar_Container{
+  max-width: initial;
+  min-width: initial;
+}
+.Screen_Host_Winner .Avatar_Card.MuiCard-root{
+  width:100%;
+}
+.Screen_Host_Winner .Avatar_Card.MuiCard-root img{
+  max-width:100%;
+  height:100%;
+}
+.button-remove{
+  position: absolute;
+  right: 0;
+  margin: 25px 40px 0px 0px;
+  z-index:1;
+}
+.Screen_Host .Host_Player_List_Item.Empty{
+  background-color:transparent;
+}
+.Screen_Host .Host_Player_List_Item.Empty .MuiCardContent-root{
+  padding-bottom:30px;
+}
+.Screen_Host .Host_Player_List_Item.Empty .Host_Player_List_Paper .MuiContainer-root{
+  border:1px dashed #5f5f5f;
+  border-radius:5px;
+  min-height: 270px;
+}
+.Screen_Host .Host_Player_List_Item.Empty .Host_Player_List_Paper .MuiContainer-root .MuiTypography-body1{
+  color:#FFFFFF;
+  margin-top:50px;
+}
+.Host_Player_List_Paper img{
+  height:150px;
+}
+
+.Screen_Winner {
+  width:100%
+}

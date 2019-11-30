@@ -1,0 +1,22 @@
+
+.Avatar_Container{
+  width:100%;
+  max-width:50%;
+  min-width:500px;
+}
+.Avatar_Card.MuiCard-root{
+  background-color:#FF0000;
+  padding: 10px 0px;
+}
+.Avatar_Content_Title{
+  
+  color: #FFF;
+}
+.Avatar_Content_Canvas{
+  padding:0px !important;
+}
+.Avatar_Content_Canvas, .Avatar_Canvas{
+  height:100%;
+  max-height: 300px;
+  min-height: 150px;
+}

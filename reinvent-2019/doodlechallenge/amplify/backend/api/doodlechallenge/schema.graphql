@@ -1,0 +1,40 @@
+type Game @model 
+  @auth(rules: [
+    {allow: public, provider: iam},
+    {allow: private}
+  ]){
+  id: ID!,
+  room: String!
+  players: [Player]
+}
+type Player {
+  uuid: String!
+  room: String!
+  name: String!
+  avatar: String
+  doodles: [Doodle]
+}
+type Doodle {
+  name: String!
+  score: Float!
+  url: String,
+  labels: [Label]
+}
+
+type Label{
+  name: String!,
+  confidence: Float!
+}
+
+type GameMessage @model 
+  @auth(rules: [
+    {allow: public, provider: iam},
+    {allow: private}
+  ]){
+  id: ID!
+  room: String!,
+  action: String!,
+  data: String,
+  message: String,
+  createdAt: String
+}

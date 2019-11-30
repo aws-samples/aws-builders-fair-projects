@@ -1,0 +1,57 @@
+.Leaderboard{
+  padding: 20px;
+}
+.Leaderboard .Component-Player{
+  width:100%;
+  position:relative;
+}
+.Leaderboard .Component-Player.Empty{
+  height:100%;
+  border:1px dashed #5f5f5f;
+  background-color:transparent;
+}
+.Leaderboard .Component-Player .button-remove{
+  position: absolute;
+  color: #ffffffc2;
+  padding: 2px;
+}
+.Leaderboard .Component-Player > .MuiCardContent-root{
+  padding:0px;
+}
+.Leaderboard .Avatar_Container{
+  width: 100%;
+  max-width: initial;
+  min-width: initial;
+}
+.Leaderboard .Avatar_Content_Title{
+  padding:0px;
+}
+.Leaderboard .Avatar_Content_Title .MuiTypography-body1{
+  font-size:.8rem;
+}
+.Leaderboard .Avatar_Content_Canvas{
+  height: initial;
+  max-height: initial;
+  min-height: initial;
+  background-color:#FFFFFF;
+}
+.Leaderboard .Avatar_Content_Canvas img{
+  max-width:100%;
+  height:50px;
+}
+.Leaderboard .Avatar_Content_Score{
+  padding:0px !important;
+  color:#FFFFFF;
+}
+.Leaderboard .Avatar_Content_Score .MuiTypography-body1{
+  font-size:1.2rem;
+}
+.Leaderboard .Avatar_Card{
+  padding:0px !important;
+}
+.Leaderboard .InGame_Label{
+  max-width:800px;
+}
+.Leaderboard .InGame_Label span{
+  font-weight: bold !important;
+}
