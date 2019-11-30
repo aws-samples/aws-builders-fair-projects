@@ -1,0 +1,10 @@
+0 anago
+1 anago_anormal
+2 ebi
+3 ebi_anormal
+4 empty
+5 maguro
+6 maguro_anormal
+7 ship
+8 tamago
+9 tamago_anormal

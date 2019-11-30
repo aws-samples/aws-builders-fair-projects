@@ -1,0 +1,14 @@
+@startuml
+title sushi anormal detection
+alt sushi == anormal
+    actor Operator
+    Greengrass -> "Raspberry Pi(Rail Thing)": publish close message to topic 'sushi_demo/cmd/rail'
+    "Raspberry Pi(Rail Thing)" -> Servo: close rail
+    Operator -> "Raspberry Pi(Rail Thing)": remove sushi and push button
+    "Raspberry Pi(Rail Thing)" -> "Raspberry Pi(Robot Thing)": publish move command topic 'sushi_demo/cmd/move'
+    "Raspberry Pi(Robot Thing)" -> "Arduino(Robot)": move the robot
+    "Arduino(Robot)" -> "Raspberry Pi(Robot Thing)": return moved status
+    "Raspberry Pi(Robot Thing)" -> "Raspberry Pi(Rail Thing)": publish open message to topic 'sushi_demo/cmd/rail'
+    "Raspberry Pi(Rail Thing)" -> Servo: open rail
+end
+@enduml

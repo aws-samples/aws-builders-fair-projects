@@ -1,0 +1,535 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Automatic Anomaly Detection Tool	a.k.a Sushi detector
+
+Parameters:
+  GreengrassGroupName:
+    Description: Greengrass Group name
+    Type: String
+    Default: Sushi
+  GreengrassCoreCertificateARN:
+    Description: Greengrass Core Certificate ARN
+    Type: String
+  RailControllerCertificateARN:
+    Description: Rail Controller Certificate ARN
+    Type: String
+  RobotControllerCertificateARN:
+    Description: Robot Controller Certificate ARN
+    Type: String
+  LambdaSourceBucket:
+    Description: Lambda function zip file bucket
+    Type: String
+  InferenceLambdaSourceKey:
+    Description: Lambda function zip file object key
+    Type: String
+  MLModelURI:
+    Description: ML Model URL
+    Type: String
+
+Resources:
+
+
+  #############################################################################
+  # GREENGRASS RESOURCES SECTION
+  # This section contains all the Greengrass related resources
+  #############################################################################
+  GreengrassGroup:
+    Type: AWS::Greengrass::Group
+    Properties:
+      Name: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName] ]
+      RoleArn: !GetAtt GreengrassResourceRole.Arn
+
+  GreengrassGroupVersion:
+    Type: "AWS::Greengrass::GroupVersion"
+    Properties:
+      GroupId: 
+        Ref: GreengrassGroup
+      CoreDefinitionVersionArn: !Ref GreengrassCoreDefinitionVersion
+      LoggerDefinitionVersionArn: !Ref GreengrassLoggerDefinitionVersion
+      FunctionDefinitionVersionArn: !Ref LambdaFunctionDefinitionVersion
+      SubscriptionDefinitionVersionArn: !Ref SubscriptionDefinitionVersion
+      DeviceDefinitionVersionArn: !Ref GreengrassDeviceDefinitionVersion
+      ResourceDefinitionVersionArn: !Ref GreengrassResourceDefinitionVersion
+
+  #############################################################################
+  # Greengrass Core section
+  #############################################################################
+  GreengrassCoreDefinition:
+    Type: AWS::Greengrass::CoreDefinition
+    Properties:
+      Name: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "Core"] ]
+
+  GreengrassCoreDefinitionVersion:
+    Type: AWS::Greengrass::CoreDefinitionVersion
+    Properties:
+      CoreDefinitionId: !Ref GreengrassCoreDefinition
+      Cores:
+        - Id: !Ref GreengrassCoreThing
+          ThingArn: !Join
+                      - ":"
+                      - - "arn:aws:iot"
+                        - !Ref AWS::Region
+                        - !Ref AWS::AccountId
+                        - !Join
+                          - "/"
+                          - - "thing"
+                            - !Ref GreengrassCoreThing
+          CertificateArn: !Ref GreengrassCoreCertificateARN
+          SyncShadow: "false"
+
+  GreengrassCoreThing:
+    Type: AWS::IoT::Thing
+    Properties: 
+      ThingName: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "Core"] ]
+
+  GreengrassCoreThingPrincipal:
+    Type: AWS::IoT::ThingPrincipalAttachment
+    Properties: 
+      Principal: !Ref GreengrassCoreCertificateARN
+      ThingName: !Ref GreengrassCoreThing
+
+  GreengrassCoreThingPolicy:
+    Type: AWS::IoT::Policy
+    Properties: 
+      PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - greengrass:*
+            Resource: "*"
+      PolicyName: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "Core", "Policy"] ]
+
+  GreengrassCoreThingPolicyPrincipal:
+    Type: AWS::IoT::PolicyPrincipalAttachment
+    Properties: 
+      Principal: !Ref GreengrassCoreCertificateARN
+      PolicyName: !Ref GreengrassCoreThingPolicy
+
+  #############################################################################
+  # Role for deployed Lambda functions to a Greengrass core to call other AWS services directly
+  #############################################################################
+  GreengrassResourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GreengrassSushiDemoRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: greengrass.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSGreengrassResourceAccessRolePolicy"
+      Policies:
+      - PolicyName: GreengrassSushiDemoPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+
+
+  #############################################################################
+  # Greengrass Logging section
+  #############################################################################
+  GreengrassLoggerDefinition:
+    Type: 'AWS::Greengrass::LoggerDefinition'
+    Properties:
+      Name: GreengrassLoggerDefinition
+
+  GreengrassLoggerDefinitionVersion:
+    Type: 'AWS::Greengrass::LoggerDefinitionVersion'
+    Properties:
+      LoggerDefinitionId: !Ref GreengrassLoggerDefinition
+      Loggers:
+        - Id: SystemLogger
+          Type: FileSystem
+          Component: GreengrassSystem
+          Level: INFO
+          Space: 10000
+        - Id: LambdaLogger
+          Type: FileSystem
+          Component: Lambda
+          Level: DEBUG
+          Space: 10000
+
+
+  #############################################################################
+  # Greengrass resource section
+  #############################################################################
+  GreengrassResourceDefinition:
+    Type: AWS::Greengrass::ResourceDefinition
+    Properties: 
+      Name: GreengrassResourceDefinition
+
+  GreengrassResourceDefinitionVersion:
+    Type: AWS::Greengrass::ResourceDefinitionVersion
+    Properties: 
+      ResourceDefinitionId: !Ref GreengrassResourceDefinition
+      Resources:
+      - Id: "nvhost-ctrl-gpu"
+        Name: "nvhost-ctrl-gpu"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/nvhost-ctrl-gpu"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "shm"
+        Name: "shm"
+        ResourceDataContainer:
+          LocalVolumeResourceData:
+            SourcePath: "/dev/shm"
+            DestinationPath: "/dev/shm"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "tmp"
+        Name: "tmp"
+        ResourceDataContainer:
+          LocalVolumeResourceData:
+            SourcePath: "/tmp"
+            DestinationPath: "/tmp"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "nvhost-ctrl"
+        Name: "nvhost-ctrl"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/nvhost-ctrl"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "nvhost-prof-gpu"
+        Name: "nvhost-prof-gpu"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/nvhost-prof-gpu"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "nvmap"
+        Name: "nvmap"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/nvmap"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "video"
+        Name: "video0"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/video0"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "nvhost-dbg-gpu"
+        Name: "nvhost-dbg-gpu"
+        ResourceDataContainer:
+          LocalDeviceResourceData:
+            SourcePath: "/dev/nvhost-dbg-gpu"
+            GroupOwnerSetting:
+              AutoAddGroupOwner: "true"
+      - Id: "model"
+        Name: "model"
+        ResourceDataContainer:
+          S3MachineLearningModelResourceData:
+            DestinationPath: "/model"
+            S3Uri: !Ref MLModelURI
+
+
+  #############################################################################
+  # Greengrass Lambda section
+  #############################################################################
+  LambdaFunctionDefinition:
+    Type: 'AWS::Greengrass::FunctionDefinition'
+    Properties:
+      Name: LambdaFunctionDefinition
+
+  LambdaFunctionDefinitionVersion:
+    Type: AWS::Greengrass::FunctionDefinitionVersion
+    Properties: 
+      DefaultConfig:
+        Execution:
+          IsolationMode: GreengrassContainer
+      FunctionDefinitionId: !Ref LambdaFunctionDefinition
+      Functions:
+        - Id: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "GGIPDetector"] ]
+          FunctionArn: "arn:aws:lambda:::function:GGIPDetector:1"
+          FunctionConfiguration:
+            Pinned: 'true'
+            MemorySize: '32768'
+            Timeout: '3'
+        - Id: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "Inference"] ]
+          FunctionArn: !Ref LambdaFunctionAlias
+          FunctionConfiguration:
+            Pinned: 'true'
+            Executable: lambda_function.py
+            MemorySize: '2500000'
+            Timeout: '3'
+            Environment:
+              Variables:
+                MODEL_PATH: "/model"
+                VIDEO_DEVICE: "/dev/video0"
+                RAIL_COMMAND_TOPIC: "sushi_demo/cmd/rail"
+                RAIL_THING_NAME: !Ref RailControllerThing
+              AccessSysfs: 'true'
+              Execution:
+                IsolationMode: GreengrassContainer
+              ResourceAccessPolicies:
+                - Permission: "rw"
+                  ResourceId: "nvhost-ctrl-gpu"
+                - Permission: "rw"
+                  ResourceId: "shm"
+                - Permission: "rw"
+                  ResourceId: "nvhost-ctrl"
+                - Permission: "rw"
+                  ResourceId: "nvhost-prof-gpu"
+                - Permission: "rw"
+                  ResourceId: "nvmap"
+                - Permission: "rw"
+                  ResourceId: "video"
+                - Permission: "rw"
+                  ResourceId: "nvhost-dbg-gpu"
+                - Permission: "rw"
+                  ResourceId: "tmp"
+                - Permission: "ro"
+                  ResourceId: "model"
+
+  LambdaFunctionAlias:
+    Type: AWS::Lambda::Alias
+    Properties: 
+      Description: Sushi Inference function
+      FunctionName: !Ref InferenceLambdaFunction
+      FunctionVersion: !GetAtt LambdaFunctionVersion.Version
+      Name: dev
+
+  LambdaFunctionVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName : !Ref InferenceLambdaFunction
+
+  InferenceLambdaFunction:
+    # Lambda function deployed by Greengrass
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "Inference"] ]
+      Description: Long running lambda that detect sushi anomalie
+      Handler: lambda_function.function_handler
+      Runtime: python2.7
+      # Role and Timeout not used when deployed to Lambda, but required for creation
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 3
+      Code:
+        S3Bucket: !Ref LambdaSourceBucket
+        S3Key: !Ref InferenceLambdaSourceKey
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+
+
+  #############################################################################
+  # Greengrass devices section
+  #############################################################################
+  GreengrassDeviceDefinition:
+    Type: AWS::Greengrass::DeviceDefinition
+    Properties: 
+      Name: GreengrassDeviceDefinition
+
+  GreengrassDeviceDefinitionVersion:
+    Type: AWS::Greengrass::DeviceDefinitionVersion
+    Properties:
+      DeviceDefinitionId: !GetAtt GreengrassDeviceDefinition.Id
+      Devices:
+        - Id: RailControllerDevice
+          CertificateArn: !Ref RailControllerCertificateARN
+          SyncShadow: 'false'
+          ThingArn: !Join
+                      - ":"
+                      - - "arn:aws:iot"
+                        - !Ref AWS::Region
+                        - !Ref AWS::AccountId
+                        - !Join ["/", ["thing", !Ref RailControllerThing]]
+        - Id: RobotControllerThingDevice
+          CertificateArn: !Ref RobotControllerCertificateARN
+          SyncShadow: 'false'
+          ThingArn: !Join
+                      - ":"
+                      - - "arn:aws:iot"
+                        - !Ref AWS::Region
+                        - !Ref AWS::AccountId
+                        - !Join ["/", ["thing", !Ref RobotControllerThing]]
+
+  #############################################################################
+  # Rail Controller Thing
+  #############################################################################
+  RailControllerThing:
+    Type: AWS::IoT::Thing
+    Properties: 
+      ThingName: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "RailController"] ]
+
+  RailControllerThingPrincipal:
+    Type: AWS::IoT::ThingPrincipalAttachment
+    Properties: 
+      Principal: !Ref RailControllerCertificateARN
+      ThingName: !Ref RailControllerThing
+
+  RailControllerThingPolicy:
+    Type: AWS::IoT::Policy
+    Properties: 
+      PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - greengrass:*
+            Resource: "*"
+      PolicyName: !Join ["_", [!Ref RailControllerThing, "Policy"] ]
+
+  RailControllerThingPolicyPrincipal:
+    Type: AWS::IoT::PolicyPrincipalAttachment
+    Properties: 
+      Principal: !Ref RailControllerCertificateARN
+      PolicyName: !Ref RailControllerThingPolicy
+
+  #############################################################################
+  # Robot Controller Thing
+  #############################################################################
+  RobotControllerThing:
+    Type: AWS::IoT::Thing
+    Properties: 
+      ThingName: !Join ["_", [!Ref "AWS::StackName", !Ref GreengrassGroupName, "RobotController"] ]
+
+  RobotControllerThingPrincipal:
+    Type: AWS::IoT::ThingPrincipalAttachment
+    Properties: 
+      Principal: !Ref RobotControllerCertificateARN
+      ThingName: !Ref RobotControllerThing
+
+  RobotControllerThingPolicy:
+    Type: AWS::IoT::Policy
+    Properties: 
+      PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - greengrass:*
+            Resource: "*"
+      PolicyName: !Join ["_", [!Ref RobotControllerThing, "Policy"] ]
+
+  RobotControllerThingPolicyPrincipal:
+    Type: AWS::IoT::PolicyPrincipalAttachment
+    Properties: 
+      Principal: !Ref RobotControllerCertificateARN
+      PolicyName: !Ref RobotControllerThingPolicy
+
+
+  #############################################################################
+  # Greengrass Subscription section
+  #############################################################################
+  SubscriptionDefinition:
+    Type: 'AWS::Greengrass::SubscriptionDefinition'
+    Properties:
+      Name: SubscriptionDefinition
+
+  SubscriptionDefinitionVersion:
+    Type: AWS::Greengrass::SubscriptionDefinitionVersion
+    Properties: 
+      SubscriptionDefinitionId: !Ref SubscriptionDefinition
+      Subscriptions:
+        - Id: rail_pub
+          Source: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RailControllerThing]]
+          Subject: "sushi_demo/#"
+          Target: "cloud"
+        - Id: robot_pub
+          Source: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RobotControllerThing]]
+          Subject: "sushi_demo/#"
+          Target: "cloud"
+        - Id: lambda_pub
+          Source: !Ref LambdaFunctionAlias
+          Subject: "sushi_demo/#"
+          Target: "cloud"
+        - Id: stop_train
+          Source: !Ref LambdaFunctionAlias
+          Subject: "sushi_demo/cmd/rail"
+          Target: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RailControllerThing]]
+        - Id: move_robot
+          Source: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RailControllerThing]]
+          Subject: "sushi_demo/cmd/move"
+          Target: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RobotControllerThing]]
+        - Id: move_finished
+          Source: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RobotControllerThing]]
+          Subject: "sushi_demo/cmd/rail"
+          Target: !Join
+                    - ":"
+                    - - "arn:aws:iot"
+                      - !Ref AWS::Region
+                      - !Ref AWS::AccountId
+                      - !Join ["/", ["thing", !Ref RailControllerThing]]

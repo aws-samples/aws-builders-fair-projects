@@ -1,0 +1,5 @@
+com/rttranscribe/app/RTTranscribe.class
+com/rttranscribe/app/ByteToAudioEventSubscription.class
+com/rttranscribe/app/TranscribeStreamingSynchronousClient.class
+com/rttranscribe/app/TranscribeRequest.class
+com/rttranscribe/app/AudioStreamPublisher.class

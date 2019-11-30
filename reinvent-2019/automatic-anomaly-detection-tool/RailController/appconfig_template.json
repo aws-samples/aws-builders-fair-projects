@@ -1,0 +1,10 @@
+{
+    "DEVICE_INFO_TOPIC": "sushi_demo/info/rail",
+    "ROBOT_COMMAND_TOPIC": "sushi_demo/cmd/move",
+    "RAIL_COMMAND_TOPIC": "sushi_demo/cmd/rail",
+    "ROBOT_STATUS_TOPIC": "sushi_demo/status/rail",
+    "IOT_ENDPOINT": "",
+    "CERT_FILE": "",
+    "PRIVATE_KEY_FILE": "",
+    "THING_NAME": ""
+}
