@@ -321,3 +321,11 @@ This demo use SageMaker built-in Image Classification template to create model. 
 ## Use Object Detection with Image Classification
 
 This demo use OpenCV to detect sushi saucer. But you can use Objecte Detection to detect sushi saucer. SageMaker built-in Object Detection Algorithm is not supported at SageMaker Neo(2019/11). If you want to use Object Detection with Image Classification use MXNet.
+
+## Authors ##
+- Jun Ichikawa juichika@amazon.com
+- Tatsuhiro Iida tatsiida@amazon.com
+
+# License #
+
+This library is licensed under the Apache 2.0 License.

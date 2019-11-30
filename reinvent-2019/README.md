@@ -7,6 +7,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | Title | Description |
 |---------|-------------|
 | [AI/ML Blackjack Challenge](ai-ml-blackjack-challenge) | Use AWS AI/ML to detect and track playing card rank and suit real-time from a camera |
+| [Automatic Anomaly Detection Tool a.k.a Sushi Detection](automatic-anomaly-detection-tool) | This is the sample source code to create Sushi Detection demo |
 | [Autoponics: Happier Plants](autoponics/thing-app) | Python 3 app for controlling the sensors and actuators of the Autoponics thing |
 | [Drone Zone](drone-zone) | Drone Zone is a multi-drone command and control environment powered by AWS IoT/Greengrass |
 | [IoT Racer](iot-racing-ninja) | IoT Racer is an IoT and Serverless project that displays long-distance command and control capabilities via a 4 player game of tag |
