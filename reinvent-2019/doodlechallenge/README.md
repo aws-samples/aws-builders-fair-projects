@@ -104,8 +104,8 @@ A:  Using AWS Rekognition Image, a deep learning powered image recognition servi
 ### Q:  What is Machine Learning?
 A:  Machine Learning is a branch of artificial intelligence based on the idea that systems can learn from data, identify patterns and make decisions with minimal human intervention.
 
-### Q:  How long did it take to produce Google Challenge?
-A:  The developers spent around six weeks conceptualizing and implementing Google Challenge.
+### Q:  How long did it take to produce Doodle Challenge?
+A:  The developers spent around six weeks conceptualizing and implementing Doodle Challenge.
 
 ### Q:  Can I reuse this code in my own project?
 A:  Yes you can! The demo uses licensed fonts and images that we have excluded. You will need to use your own licensed fonts and images.
