@@ -16,6 +16,10 @@ Drone Zone is a multi-drone command and control environment powered by AWS IoT/G
 
 ![Architecture Diagram](./docs/architecture.png)
 
+## Getting Started ##
+
+Please see [Getting Started](./docs/getting-started.md) to try out this project.
+
 ## FAQ ##
 __Q: What drone was used for this project?__
 
@@ -35,3 +39,4 @@ The [NVIDIA Jetson Nano Developer Kit](https://www.nvidia.com/en-us/autonomous-m
 # License #
 
 This library is licensed under the Apache 2.0 License.
+
