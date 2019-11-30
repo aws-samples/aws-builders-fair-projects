@@ -67,8 +67,11 @@ A:  Yes, yes, and yes.
 
 
 # Authors
-Howard Tran, Enterprise Solutions Architect, AWS
-Jeff Richards, Solutions Architect, AWS
+- Howard Tran, Enterprise Solutions Architect, AWS
+- Jeff Richards, Solutions Architect, AWS
+
+# License #
+This library is licensed under the Apache 2.0 License.
 
 [AWS Amplify]: <https://aws-amplify.github.io/docs/>
 [Node.js]: <https://nodejs.org/en/>
