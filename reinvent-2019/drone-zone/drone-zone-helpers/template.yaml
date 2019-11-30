@@ -1,0 +1,672 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  drone-zone-helpers
+
+  Sample SAM Template for drone-zone-helpers
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  CoreName:
+    Description: Greengrass Core / IoT Thing name to be created.
+    Type: String
+  ThingsDetectionModelS3Path:
+    Description: Path to detection ML model on S3
+    Type: String
+
+Resources:
+  GreengrassConfigsBucket:
+    Type: AWS::S3::Bucket
+  DetectThingsFunctionVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName : !GetAtt DetectThingsFunction.Arn
+  DetectThingsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: detect_things/
+      Handler: app.handler
+      Runtime: python3.7
+      Policies:
+          - AWSLambdaExecute # Managed Policy
+  CreateThingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: create_thing/
+      Handler: app.handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          GG_CONFIGS_BUCKET: !Ref GreengrassConfigsBucket
+      Policies:
+          - AWSLambdaExecute # Managed Policy
+          - Version: '2012-10-17' # Policy Document
+            Statement:
+              - Effect: Allow
+                Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                - s3:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                - iot:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                - greengrass:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                - ec2:DescribeReservedInstancesOfferings
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                - iam:CreateRole
+                - iam:AttachRolePolicy
+                - iam:GetRole
+                - iam:DeleteRole
+                - iam:PassRole
+                Resource: !Join ["", ["arn:aws:iam::", !Ref "AWS::AccountId", ":role/greengrass_cfn_", !Ref "AWS::StackName", "_ServiceRole"] ]
+  GreengrassGroup:
+    Type: AWS::Greengrass::Group
+    Properties:
+      Name: !Ref CoreName
+      RoleArn: !GetAtt GreengrassResourceRole.Arn
+      InitialVersion:
+        CoreDefinitionVersionArn: !GetAtt GreengrassCoreDefinition.LatestVersionArn
+        FunctionDefinitionVersionArn: !GetAtt FunctionDefinition.LatestVersionArn
+        SubscriptionDefinitionVersionArn: !GetAtt SubscriptionDefinition.LatestVersionArn
+        ResourceDefinitionVersionArn: !GetAtt ResourceDefinition.LatestVersionArn
+        DeviceDefinitionVersionArn: !GetAtt DeviceDefinition.LatestVersionArn
+        LoggerDefinitionVersionArn: !GetAtt LoggerDefinition.LatestVersionArn
+        # Other Greengrass resources that can be included in a group
+        # not used in this example
+        #
+        # ConnectorDefinitionVersionArn: !Ref ExampleConnectorDefinitionVersion
+  GreengrassCoreDefinition:
+    Type: AWS::Greengrass::CoreDefinition
+    Properties:
+      # use CoreName + "_Core" as "thingName"
+      Name: !Ref CoreName
+      InitialVersion: 
+        Cores:
+          - Id: !Ref CoreName
+            ThingArn: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            CertificateArn: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "cert"
+                    - !GetAtt IoTThing.certificateId
+            SyncShadow: "false"
+  DeviceDefinition:
+    Type: AWS::Greengrass::DeviceDefinition
+    Properties:
+      # use CoreName + "_Core" as "thingName"
+      Name: !Join ["_", [!Ref CoreName, "Device"] ]
+      InitialVersion:      
+        Devices:
+          - Id: !Join ["_", [!Ref CoreName, "Device"] ]
+            ThingArn: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            CertificateArn: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "cert"
+                    - !GetAtt IoTThing.certificateId
+            SyncShadow: "true"
+  FunctionDefinition:
+    # Example of using "InitialVersion" to not have to reference a separate
+    # "Version" resource
+    Type: 'AWS::Greengrass::FunctionDefinition'
+    Properties:
+      Name: FunctionDefinition
+      InitialVersion:
+        DefaultConfig:
+          Execution:
+            IsolationMode: GreengrassContainer
+        Functions:
+          - Id: !Join ["_", [!Ref CoreName, "GGCloudSpooler"] ]
+            FunctionArn: 'arn:aws:lambda:::function:GGCloudSpooler:1'
+            FunctionConfiguration:
+              Pinned: 'true'
+              MemorySize: '32768'
+              Timeout: '3'
+              Executable: 'spooler'
+              EncodingType: json
+              Environment:
+                Variables:
+                  GG_CONFIG_MAX_SIZE_BYTES: '262144'
+                  GG_CONFIG_STORAGE_TYPE: 'Memory'
+          - Id: !Join ["_", [!Ref CoreName, "DetectThings"] ]
+            FunctionArn: !Ref DetectThingsFunctionVersion
+            FunctionConfiguration:
+              Pinned: 'true'
+              MemorySize: '2500000'
+              Timeout: '30'
+              EncodingType: json
+              Environment:
+                ResourceAccessPolicies:
+                  - ResourceId: ThingsDetectionModel
+                    Permission: rw
+                  - ResourceId: dev-shm
+                    Permission: rw
+                  - ResourceId: nvhost-ctrl
+                    Permission: rw
+                  - ResourceId: nvhost-ctrl-gpu
+                    Permission: rw
+                  - ResourceId: nvhost-prof-gpu
+                    Permission: rw
+                  - ResourceId: nvhost-dbg-gpu
+                    Permission: rw
+                  - ResourceId: nvmap
+                    Permission: rw
+                Variables:
+                  THING_NAME: !Ref CoreName
+                AccessSysfs: 'true'
+  SubscriptionDefinition:
+    Type: 'AWS::Greengrass::SubscriptionDefinition'
+    Properties:
+      Name: SubscriptionDefinition
+      InitialVersion:
+        # Example of one-to-many subscriptions in single definition version
+        Subscriptions:
+          - Id: sh01
+            Source: GGShadowService
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "update", "accepted" ]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: sh02
+            Source: GGShadowService
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "update", "rejected" ]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: sh03
+            Source: GGShadowService
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "delete", "accepted" ]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: sh04
+            Source: GGShadowService
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "delete", "rejected" ]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: sh05
+            Source: GGShadowService
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "update", "delta" ]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: sh06
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "delete" ]]
+            Target: GGShadowService
+          - Id: sh07
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", [ "$aws", "things", !Ref CoreName, "shadow", "update" ]]
+            Target: GGShadowService
+          - Id: s01
+            Source: !Ref DetectThingsFunctionVersion
+            Subject: !Join ["/", ["detections", !Ref CoreName , "infer", "output"]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: s02
+            Source: !Ref DetectThingsFunctionVersion
+            Subject: !Join ["/", ["detections", !Ref CoreName , "infer", "output"]]
+            Target: 'cloud'
+          - Id: s03
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", ["detections", !Ref CoreName , "infer", "input"]]
+            Target: !Ref DetectThingsFunctionVersion
+          - Id: s04
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", ["telemetry", !Ref CoreName]]
+            Target: 'cloud'
+          - Id: s05
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", ["commands", !Ref CoreName, "ack"]]
+            Target: 'cloud'
+          - Id: s07
+            Source: 'cloud'
+            Subject: !Join ["/", ["commands", !Ref CoreName]]
+            Target: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+          - Id: s08
+            Source: !Join
+              - ":"
+              - - "arn:aws:iot"
+                - !Ref AWS::Region
+                - !Ref AWS::AccountId
+                - !Join
+                  - "/"
+                  - - "thing"
+                    - !Ref CoreName
+            Subject: !Join ["/", [!Ref CoreName, "frames"]]
+            Target: 'cloud'
+  ResourceDefinition:
+    Type: 'AWS::Greengrass::ResourceDefinition'
+    Properties:
+      Name: ResourceDefinition
+      InitialVersion:
+        Resources:
+          - Id: ThingsDetectionModel
+            Name: ThingsDetectionModel
+            ResourceDataContainer:
+              S3MachineLearningModelResourceData: 
+                  DestinationPath: /ml/od/
+                  S3Uri: !Ref ThingsDetectionModelS3Path
+          - Id: dev-shm
+            Name: dev-shm
+            ResourceDataContainer:
+              LocalVolumeResourceData:
+                SourcePath: /dev/shm
+                DestinationPath: /dev/shm
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+          - Id: nvhost-ctrl
+            Name: nvhost-ctrl
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/nvhost-ctrl
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+          - Id: nvhost-ctrl-gpu
+            Name: nvhost-ctrl-gpu
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/nvhost-ctrl-gpu
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+          - Id: nvhost-prof-gpu
+            Name: nvhost-prof-gpu
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/nvhost-prof-gpu
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+          - Id: nvhost-dbg-gpu
+            Name: nvhost-dbg-gpu
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/nvhost-dbg-gpu
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+          - Id: nvmap
+            Name: nvmap
+            ResourceDataContainer:
+              LocalDeviceResourceData:
+                SourcePath: /dev/nvmap
+                GroupOwnerSetting:
+                  AutoAddGroupOwner: 'true'
+  LoggerDefinition:
+    Type: AWS::Greengrass::LoggerDefinition
+    Properties: 
+      Name: LoggerDefinition
+      InitialVersion: 
+        Loggers:
+          - Component: GreengrassSystem
+            Id: GreengrassSystem-Local
+            Level: INFO
+            Space: 25000
+            Type: FileSystem
+          - Component: GreengrassSystem
+            Id: GreengrassSystem-Cloud
+            Level: INFO
+            Type: AWSCloudWatch
+          - Component: Lambda
+            Id: Lambda-Local
+            Level: INFO
+            Space: 25000
+            Type: FileSystem
+          - Component: Lambda
+            Id: Lambda-Cloud
+            Level: INFO
+            Type: AWSCloudWatch
+
+      
+  #############################################################################
+  # SUPPORTING RESOURCES SECTION
+  # This section contains all the resources that support the Greengrass
+  # section above. The VPC and EC2 instance to run Greengrass core software, the
+  # AWS IoT Thing, Certificate, and IoT Policy required for the Greengrass
+  # Core definition, and finally custom resources to assist with CloudFormation
+  # stack setup and teardown.
+  #############################################################################
+
+  # Supporting resources from AWS IoT Core
+
+  IoTThing:
+    # Resource creates thing, certificate key pair, and IoT policy
+    Type: Custom::IoTThing
+    Properties:
+      ServiceToken: !GetAtt CreateThingFunction.Arn
+      ThingName: !Ref CoreName
+
+  GroupDeploymentReset:
+    # Allows for deletion of Greengrass group if the deployment status is not
+    # reset manually via the console or API
+    Type: Custom::GroupDeploymentReset
+    DependsOn: GreengrassGroup
+    Properties:
+      ServiceToken: !GetAtt GroupDeploymentResetFunction.Arn
+      Region: !Ref "AWS::Region"
+      ThingName: !Ref CoreName
+  GroupDeploymentResetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Resets any deployments during stack delete and manages Greengrass service role needs
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 60
+      Environment:
+        Variables:
+          STACK_NAME: !Ref "AWS::StackName"
+      InlineCode: |
+          import os
+          import sys
+          import json
+          import logging
+          import cfnresponse
+          import boto3
+          from botocore.exceptions import ClientError
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          c = boto3.client('greengrass')
+          iam = boto3.client('iam')
+          role_name = 'greengrass_cfn_{}_ServiceRole'.format(os.environ['STACK_NAME'])
+
+          def find_group(thingName):
+              response_auth = ''
+
+              response = c.list_groups()
+              for group in response['Groups']:
+                  thingfound = False
+                  group_version = c.get_group_version(
+                      GroupId=group['Id'],
+                      GroupVersionId=group['LatestVersion']
+                  )
+                  
+                  core_arn = group_version['Definition'].get('CoreDefinitionVersionArn', '')
+                  if core_arn:
+                      core_id = core_arn[core_arn.index('/cores/')+7:core_arn.index('/versions/')]
+                      core_version_id = core_arn[core_arn.index('/versions/')+10:len(core_arn)]
+                      thingfound = False
+                      response_core_version = c.get_core_definition_version(
+                          CoreDefinitionId=core_id,
+                          CoreDefinitionVersionId=core_version_id
+                      )
+                      if 'Cores' in response_core_version['Definition']:
+                          for thing_arn in response_core_version['Definition']['Cores']:
+                              if thingName == thing_arn['ThingArn'].split('/')[1]:
+                                  thingfound = True
+                                  break
+                  if(thingfound):
+                      logger.info('found thing: %s, group id is: %s' % (thingName, group['Id']))
+                      response_auth = group['Id']
+                      return(response_auth)
+
+
+          def manage_greengrass_role(cmd):
+              if cmd == 'CREATE':
+                  r = iam.create_role(
+                      RoleName=role_name,
+                      AssumeRolePolicyDocument='{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Principal": {"Service": "greengrass.amazonaws.com"},"Action": "sts:AssumeRole"}]}',
+                      Description='Role for CloudFormation blog post',
+                  )
+                  role_arn = r['Role']['Arn']
+                  iam.attach_role_policy(
+                      RoleName=role_name,
+                      PolicyArn='arn:aws:iam::aws:policy/service-role/AWSGreengrassResourceAccessRolePolicy'
+                  )
+                  c.associate_service_role_to_account(RoleArn=role_arn)
+                  logger.info('Created and associated role {}'.format(role_name))
+              else:
+                  try:
+                      r = iam.get_role(RoleName=role_name)
+                      role_arn = r['Role']['Arn']
+                      c.disassociate_service_role_from_account()
+                      iam.delete_role(RoleName=role_name)
+                      logger.info('Disassociated and deleted role {}'.format(role_name))
+                  except ClientError:
+                      return
+
+
+          def handler(event, context):
+              responseData = {}
+              try:
+                  logger.info('Received event: {}'.format(json.dumps(event)))
+                  result = cfnresponse.FAILED
+                  thingName=event['ResourceProperties']['ThingName']
+                  if event['RequestType'] == 'Create':
+                      try:
+                          c.get_service_role_for_account()
+                          result = cfnresponse.SUCCESS
+                      except ClientError as e:
+                          manage_greengrass_role('CREATE')
+                          logger.info('Greengrass service role created')
+                          result = cfnresponse.SUCCESS
+                  elif event['RequestType'] == 'Delete':
+                      group_id = find_group(thingName)
+                      logger.info('Group id to delete: %s' % group_id)
+                      if group_id:
+                          c.reset_deployments(
+                              Force=True,
+                              GroupId=group_id
+                          )
+                          result = cfnresponse.SUCCESS
+                          logger.info('Forced reset of Greengrass deployment')
+                          manage_greengrass_role('DELETE')
+                      else:
+                          logger.error('No group Id for thing: %s found' % thingName)
+              except ClientError as e:
+                  logger.error('Error: %s' % e)
+                  result = cfnresponse.FAILED
+              logger.info('Returning response of: %s, with result of: %s' % (result, responseData))
+              sys.stdout.flush()
+              cfnresponse.send(event, context, result, responseData)
+
+  # Roles
+  LambdaExecutionRole:
+    # Role used by CloudFormation created Lambda functions, used by the custom
+    # resource functions to perform their objectives.
+    # Overly permissive for iot:* and greengrass:* to reduce Statement complexity
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - s3:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - greengrass:*
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - ec2:DescribeReservedInstancesOfferings
+            Resource: "*"
+          - Effect: Allow
+            Action:
+            - iam:CreateRole
+            - iam:AttachRolePolicy
+            - iam:GetRole
+            - iam:DeleteRole
+            - iam:PassRole
+            Resource: !Join ["", ["arn:aws:iam::", !Ref "AWS::AccountId", ":role/greengrass_cfn_", !Ref "AWS::StackName", "_ServiceRole"] ]
+  GreengrassResourceRole:
+    # Role for deployed Lambda functions to a Greengrass core to call other
+    # AWS services directly
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: greengrass.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+            - iot:*
+            Resource: "*"
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  CreateThingFunction:
+    Description: "CreateThing Lambda Function ARN"
+    Value: !GetAtt CreateThingFunction.Arn
