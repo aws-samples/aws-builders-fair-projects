@@ -1,5 +1,6 @@
 # Project Overview
    Doodle Challenge is a multi-player game enabling you to compete against your fellow players, to see who can create the best doodles of a given subject.  You will need 1 host and at least 2 players to enjoy the game. The host and the players should be in the physical room to play.
+   To see a live demo go to https://doodlechallenge.app/
 
 
 # Project Abstract
