@@ -2,6 +2,8 @@
 
 This is a sample source code to create Sushi Detection demo.
 
+![Architecture](./architecture.png)
+
 ## Devices
 
 This demo use following devices.
