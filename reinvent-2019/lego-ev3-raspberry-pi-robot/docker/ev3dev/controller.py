@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/env python3
 
 print('Starting up...')
 print('Loading EV3 dependencies...')
@@ -21,7 +21,6 @@ from ev3dev2.wheel import EV3Tire
 from ev3dev2.button import Button
 from ev3dev2.sensor.lego import InfraredSensor, TouchSensor, ColorSensor
 from ev3dev2.sound import Sound
-from ev3dev2.led import Leds
 from ev3dev2.power import PowerSupply
 
 steering_drive = MoveSteering(OUTPUT_A, OUTPUT_B)
@@ -81,6 +80,7 @@ class EV3DEV(object):
             elif data.data == 'spin':
                 self.spin()
             elif data.data == 'tracking':
+
                 self.ros_drive('tracking', 'cmd_vel')
                 sleep(1)
                 self.halt()
@@ -135,6 +135,13 @@ class EV3DEV(object):
             self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
         self.halt()
 
+    def circle(self):
+        self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(50), 0.94)
+        self.tank_drive.on(SpeedPercent(90), SpeedPercent(20))
+        sleep(5)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
+        self.halt()
+
     def snake(self):
         self.halt()
         turn1 = 60
@@ -166,13 +173,55 @@ class EV3DEV(object):
     def return_home(self):
         self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(-50), 6)
         self.halt()
+    
+    def dance(self):
+        self.halt()
+        turn1 = 60
+        turn2 = 30
+        forward = 100
+        t = 0.3
+        for i in range(0,3):
+            self.tank_drive.on(SpeedPercent(-turn1), SpeedPercent(turn1))
+            sleep(t)
+            self.tank_drive.on(SpeedPercent(forward), SpeedPercent(forward))
+            sleep(t)
+            self.tank_drive.on(SpeedPercent(-forward), SpeedPercent(-forward))
+            sleep(t)
+            self.tank_drive.on(SpeedPercent(turn1), SpeedPercent(-turn1))
+            sleep(t*2)
+            self.tank_drive.on(SpeedPercent(forward), SpeedPercent(forward))
+            sleep(t)
+            self.tank_drive.on(SpeedPercent(-forward), SpeedPercent(-forward))
+            sleep(t)
+            self.tank_drive.on(SpeedPercent(-turn1), SpeedPercent(turn1))
+            sleep(t)
+        self.tank_drive.on(SpeedPercent(0), SpeedPercent(0))
+    
+    def sepentine(self):
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.5)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2)
+        self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(50), 0.94)
+        for i in range(0,3):
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.5)
+            self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(50), 0.94)
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 4)
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.5)
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
+            self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 4)
+            self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(50), 0.94)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.5)
+        self.tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(50), 0.94)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2)
+        self.tank_drive.on_for_rotations(SpeedPercent(50), SpeedPercent(-50), 0.94)
+        self.halt()
 
     def random_turn(self):
-        self.tank_drive.on(SpeedPercent(-50), SpeedPercent(-50))
+        self.tank_drive.on(SpeedPercent(-20), SpeedPercent(-20))
         sleep(0.8)
-        t = uniform(0, 2)
-        self.tank_drive.on(SpeedPercent(50), SpeedPercent(-50))
-        sleep(t)
+        self.tank_drive.on(SpeedPercent(20), SpeedPercent(-20))
+        sleep(0.8)
 
     def ros_drive(self, action, topic):
         thread = threading.Thread(target=self.ros_drive_thread, args=(action, topic))
