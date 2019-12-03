@@ -8,15 +8,19 @@ AWS now has the tools to create such a robot. We use AWS RoboMaker to design, si
 
 Amazon Sumerian provides a way to create interactive graphical user interfaces to simulate, observe and control the robot. Since it is connected via AWS IoT Shadow to the robot, it does not matter if you are right next to it or miles away.
 
+## Architecture ##
+
+![Architecture Diagram](./docs/Robot-Legs-Diagram.png)
+
 ## AWS Services Used ##
 - [AWS IoT Core](https://aws.amazon.com/iot-core/)
 - [Amazon Sumerian](https://aws.amazon.com/sumerian/)
 - [AWS RoboMaker](https://aws.amazon.com/robomaker/)
 - [Amazon Cognito](https://aws.amazon.com/cognito/)
 
-## Architecture ##
+## 3d model we created for this demo ##
 
-![Architecture Diagram](./docs/Robot-Legs-Diagram.png)
+![Architecture Diagram](./docs/3d-robot.png)
 
 ## FAQ ##
 __Q: Where can I get the Robot Legs?__
