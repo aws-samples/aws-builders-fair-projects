@@ -16,9 +16,9 @@ export class HomeComponent implements OnInit {
   }
 
   animate(): void {
-    TweenMax.fromTo('h1', 3, {x: 250}, {x: 0});
-    TweenMax.fromTo('#p1', 2.4, {x: 300}, {x: 0});
-    TweenMax.fromTo('#p2', 3.3, {x: 300}, {x: 0});
+    TweenMax.fromTo('h1', 3, {x: 220}, {x: 0});
+    TweenMax.fromTo('#p1', 2.4, {x: 300}, {x: 20});
+    TweenMax.fromTo('#p2', 3.3, {x: 300}, {x: 20});
   }
   playGame() {
     this.router.navigateByUrl('/game');
