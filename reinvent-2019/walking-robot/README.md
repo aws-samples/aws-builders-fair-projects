@@ -1,6 +1,10 @@
 # Walking Robot #
 
-...
+Learning to walk takes time and a practise for humans to do naturally. It means the ability to stand upright and balanced, then the actions of locomotion and failing and then trying again until we get it right.
+
+Building a robot to do the same is even harder. We have to design the limbs and motors, build a perception system so is understand balance and more importantly we need to use re-enforcement learning, so that it keeps on trying even when it falls.
+
+AWS now has the tools to create such a robot. We use AWS RoboMaker to design, simulate and then help build a physical limbs and motors, we then use Sagemaker to help learn balance and then IoT to control and use feedback of real-world measurements to compare with the simulated data.
 
 ## AWS Services Used ##
 - [AWS IoT Core](https://aws.amazon.com/iot-core/)
