@@ -21,9 +21,9 @@ Amazon Sumerian provides a way to create interactive graphical user interfaces t
 ## FAQ ##
 __Q: Where can I get the Robot Legs?__
 
-You can buy a MK1 robot set [here](https://www.aliexpress.com/i/32933030622.html)
+You can buy a MK1 robot set [here](https://www.aliexpress.com/i/32933030622.html).
 
-You can get all the information of building the MK2 [here](https://releasetheinnergeek.com/2018/11/28/walbi-the-walking-biped/)
+You can get all the information of building the MK2 [here](https://releasetheinnergeek.com/2018/11/28/walbi-the-walking-biped/).
 
 __Q: What edge/IoT device was used for this project?__
 
