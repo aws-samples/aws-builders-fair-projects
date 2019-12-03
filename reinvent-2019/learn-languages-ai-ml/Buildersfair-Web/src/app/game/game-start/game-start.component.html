@@ -49,7 +49,7 @@
                           <i fa name="user"></i>&nbsp;Name
                         </span>
                       </div>
-                      <input type="text" autofocus formControlName="userName" class="form-control" [autofocus]
+                      <input type="text" autofocus id="userName" formControlName="userName" class="form-control" [autofocus]
                         [ngClass]="{'is-invalid': gameForm.get('userName').errors && gameForm.get('userName').touched}"
                         aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Username">
                       <div class="invalid-feedback" 

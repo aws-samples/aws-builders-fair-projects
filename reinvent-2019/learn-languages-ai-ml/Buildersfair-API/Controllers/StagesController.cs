@@ -40,7 +40,7 @@ namespace BuildersFair_API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetStageInfo([FromQuery(Name="game_id")] int gameId, [FromQuery(Name="stage_id")] int stageId)
+        public async Task<IActionResult> GetStageInfo([FromQuery(Name="game_id")] int gameId, [FromQuery(Name="stage_id")] int stageId, [FromQuery(Name="language_code")] string languageCode)
         {
             StageInfoDTO stageInfo = new StageInfoDTO();
 
@@ -57,7 +57,7 @@ namespace BuildersFair_API.Controllers
             switch (stageId)
             {
                 case 1:
-                    stageInfo.stage_time = 60;
+                    stageInfo.stage_time = 45;
                     stageInfo.stage_difficulty = "Easy";
                     difficulty = 1;
                     objectCount = 3;
@@ -66,8 +66,8 @@ namespace BuildersFair_API.Controllers
                 case 2:
                     stageInfo.stage_time = 60;
                     stageInfo.stage_difficulty = "Easy";
-                    difficulty = 1;
-                    objectCount = 3;
+                    difficulty = 2;
+                    objectCount = 5;
                     objectScore = 50;
                     break;
                 // case 3:
@@ -83,13 +83,11 @@ namespace BuildersFair_API.Controllers
             }
             
             // get object list randomly
-            //List<string> objectList = GetRandomStageObjectList(difficulty, objectCount);
-            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount);
+            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, languageCode);
             stageInfo.stage_objects = objectList;
 
             // Add object list to StageObject table
             List<StageObject> stageObjectList = new List<StageObject>();
-            //foreach (string item in objectList)
             foreach (StageObjectDTO item in objectList)
             {
                 StageObject stageObject = new StageObject()
@@ -196,12 +194,12 @@ namespace BuildersFair_API.Controllers
             return Ok(stageScore);            
         }  
     
-        private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string language = "en")
+        private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string languageCode = "en-US")
         {
             List<string> nameList = new List<String>();
             List<StageObjectDTO> objectList = new List<StageObjectDTO>();
 
-            int recordCount = _context.Object.Where(x => x.difficulty == difficulty).Count();
+            int recordCount = _context.Object.Where(x => x.difficulty <= difficulty).Count();
             var records = _context.Object.Where(x => x.difficulty == difficulty);
 
             for (int i = 0; i < objectCount && i < recordCount; i++)
@@ -219,20 +217,21 @@ namespace BuildersFair_API.Controllers
                         StageObjectDTO stageObject = new StageObjectDTO();
                         stageObject.object_name = record.object_name;
 
-                        switch (language)
+                        switch (languageCode)
                         {
-                            case "ko":
+                            case "ko-KR":
                                 stageObject.object_display_name = record.object_name_ko;
                                 break;
-                            case "ja":
+                            case "ja-JP":
                                 stageObject.object_display_name = record.object_name_ja;
                                 break;
-                            case "cn":
+                            case "cmn-CN":
                                 stageObject.object_display_name = record.object_name_cn;
                                 break;
-                            case "es":
+                            case "es-ES":
                                 stageObject.object_display_name = record.object_name_es;
                                 break;
+                            case "en-US":
                             default:
                                 stageObject.object_display_name = record.object_name;
                                 break;                                

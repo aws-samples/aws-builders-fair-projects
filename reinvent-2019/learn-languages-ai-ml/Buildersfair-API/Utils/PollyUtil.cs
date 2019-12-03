@@ -41,15 +41,12 @@ namespace Buildersfair_API.Utils
 
                     // Upload image to S3 bucket
                     string bucketName = "reinvent-indiamazones";
-                    //string key = dto.text;
                     string key = "pollytest";
                     await Task.Run(() => S3Util.UploadToS3(S3Client, bucketName, key, ms));
 
                     // TODO : need to check the file exists in S3
                     result = S3Util.GetPresignedURL(S3Client, bucketName, key);
                 }
-                //syntheizeResponse.AudioStream.CopyTo(result);
-                //result.Flush();
             }
             catch (AmazonPollyException pollyException)
             {

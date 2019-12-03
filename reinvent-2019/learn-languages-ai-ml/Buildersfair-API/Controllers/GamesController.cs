@@ -41,9 +41,11 @@ namespace BuildersFair_API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewGame([FromBody] GameCreateDTO game)
         {
+            Console.WriteLine(game);
             Game newGame = new Game{
-                name = game.userName,
-                start_date = DateTime.Now
+                name = game.user_name,
+                start_date = DateTime.Now,
+                lang_code = game.language_code
             };
 
             var value = _context.Game.Add(newGame);

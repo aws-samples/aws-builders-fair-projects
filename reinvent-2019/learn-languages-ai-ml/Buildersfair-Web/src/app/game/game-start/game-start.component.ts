@@ -32,9 +32,14 @@ export class GameStartComponent implements OnInit {
 
   createGame() {
 
-    console.log(this.gameForm.value);
+    const username = document.getElementById('userName') as HTMLInputElement;
 
-    this.gameService.createGame(this.gameForm.value).subscribe((newGameId: number) => {
+    const gameInfo = {
+      user_name: username.value,
+      language_code: 'en-US'
+    };
+
+    this.gameService.createGame(gameInfo).subscribe((newGameId: number) => {
 
       this.alertify.success('A new game created : ' + newGameId);
       this.gameStart(newGameId);
