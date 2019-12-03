@@ -5,8 +5,8 @@
 ## AWS Services Used ##
 - [AWS IoT Core](https://aws.amazon.com/iot-core/)
 - [Amazon Sumerian](https://aws.amazon.com/sumerian/)
-- [AWS RoboMaker](https://aws.amazon.com/robomaker/
-- [Amazon Cognito](https://aws.amazon.com/cognito/))
+- [AWS RoboMaker](https://aws.amazon.com/robomaker/)
+- [Amazon Cognito](https://aws.amazon.com/cognito/)
 
 ## Architecture ##
 
