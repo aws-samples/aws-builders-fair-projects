@@ -198,8 +198,8 @@ namespace BuildersFair_API.Controllers
             }
             
             return Ok(stageScore);            
-        }  
-    
+        }
+
         private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string languageCode = "en-US")
         {
             List<string> nameList = new List<String>();
@@ -252,6 +252,53 @@ namespace BuildersFair_API.Controllers
             }
 
             return objectList;
-        }   
+        }
+
+        // POST api/stages/tts
+        [Route("tts")]
+        [HttpPost]
+        public async Task<IActionResult> TextToSpeech([FromBody] TextToSpeechDTO dto)
+        {
+            PollyResultDTO result = new PollyResultDTO();
+
+            Guid g = Guid.NewGuid();
+            string guidString = Convert.ToBase64String(g.ToByteArray());
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
+
+            // Validation check
+            if (string.IsNullOrWhiteSpace(dto.language_code) == true)
+                return BadRequest("Language code is empty.");
+
+            if (string.IsNullOrWhiteSpace(dto.text) == true)
+                return BadRequest("Text is empty.");            
+
+            string voiceName = "";
+            switch (dto.language_code)
+            {
+                case "ko-KR" : 
+                    voiceName = "Seoyeon";
+                    break;
+                case "cmn-CN" : 
+                    voiceName = "Zhiyu";
+                    break;
+                case "ja-JP" : 
+                    voiceName = "Mizuki";
+                    break;
+                case "es-ES" : 
+                    voiceName = "Lucia";
+                    break;
+                case "en-US" : 
+                default : 
+                    voiceName = "Joanna";
+                    break;
+            }
+
+            // call Polly API
+            result.mediaUri = await PollyUtil.PollyDemo(this.PollyClient, this.S3Client, dto.language_code, dto.text, voiceName);
+
+            return Ok(result);
+        } 
     }
 }

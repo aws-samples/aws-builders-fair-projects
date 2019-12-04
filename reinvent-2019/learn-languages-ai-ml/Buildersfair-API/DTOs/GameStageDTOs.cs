@@ -34,4 +34,10 @@ namespace BuildersFair_API.DTOs
         public int object_score { get; set; }
         public int stage_score { get; set; }
     }
+
+    public class TextToSpeechDTO
+    {
+        public string language_code { get; set; }    
+        public string text { get; set; }     
+    }
 }

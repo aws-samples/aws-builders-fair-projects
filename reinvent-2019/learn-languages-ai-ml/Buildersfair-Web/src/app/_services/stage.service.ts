@@ -21,6 +21,10 @@ export class StageService {
     return this.http.post<number>(this.baseUrl + 'stageslogs', stageInfo);
   }
 
+  getVoice(body): Observable<any> {
+    return this.http.post<any>(this.baseUrl + 'stages/tts', body);
+  }
+
   endStage(stageInfo): Observable<number> {
     return this.http.put<number>(this.baseUrl + 'stageslogs', stageInfo);
   }
