@@ -260,14 +260,20 @@ export class GameStageComponent implements OnInit, OnDestroy {
       const element: HTMLElement = document.getElementById(stageScore.object_name) as HTMLElement;
       if (element) {
         this.audioFound.play();
-        element.style.backgroundColor = 'grey';
+        if (this.stageId === 1) {
+          element.style.opacity = '0.4';
+          this.playVoice((element as HTMLImageElement).alt);
+        }
+        else {
+          element.style.backgroundColor = 'grey';
+          this.playVoice(element.innerText);
+        }
 
         this.objectsScore += stageScore.object_score;
         this.totalScore += stageScore.object_score;
         this.foundObjectCount++;
 
         this.message = 'Great!';
-        this.playVoice(element.innerText);
 
         if (this.foundObjectCount === this.totalObjectCount) {
           this.clearTimer();

@@ -76,11 +76,28 @@
         </div>
       </div>
     </div>
-    
+
   </div>
-  
-  <!-- object list -->
-  <div class="row text-center mt-1">
+
+
+  <!-- object picture list for stage #1 -->
+  <div *ngIf="stageId==1" class="row text-center mt-1">
+      <div class="container picture-list">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div>
+          <h3>Please find the following word cards. (Found : {{ foundObjectCount }} / {{ totalObjectCount }})</h3>
+          </div>
+          <div class="container-fluid text-center" *ngIf="displayObjectList">
+              <img *ngFor="let object of objects" id="{{object.object_name}}" class="object-img" alt="{{ object.object_display_name }}" src="../../../assets/images/object/{{object.object_name.toLowerCase()}}.jpg"/>
+          </div> 
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
+  <!-- object word list for stage #2 -->
+  <div *ngIf="stageId==2" class="row text-center mt-1">
     <div class="container object-list">
       <div class="col-1"></div>
       <div class="col-10">

@@ -1,7 +1,13 @@
 .object-font {
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .modal-content {
     background-color: #d6ab7b;
+}
+
+.object-img {
+    width: 180px;
+    margin-right: 50px;
+    background-color: #000;   
 }
