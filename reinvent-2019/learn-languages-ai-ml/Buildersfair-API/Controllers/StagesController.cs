@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Polly;
 using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
 using Amazon.S3;
@@ -27,20 +28,23 @@ namespace BuildersFair_API.Controllers
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
         IAmazonRekognition RekognitionClient { get; set; }
-        IAmazonTextract TextractClient { get; set; } 
+        IAmazonTextract TextractClient { get; set; }
+        IAmazonPolly PollyClient { get; set; }
 
         public StagesController(DataContext context, 
             IAmazonS3 s3Client, IAmazonRekognition rekognitionClient,
-            IAmazonTextract textractClient)
+            IAmazonTextract textractClient,
+            IAmazonPolly pollyClient)
         {
             _context = context;
             this.S3Client = s3Client;
             this.RekognitionClient = rekognitionClient;
-            this.TextractClient = textractClient;        
+            this.TextractClient = textractClient;
+            this.PollyClient = pollyClient;  
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetStageInfo([FromQuery(Name="game_id")] int gameId, [FromQuery(Name="stage_id")] int stageId, [FromQuery(Name="language_code")] string languageCode)
+        public async Task<IActionResult> GetStageInfo([FromQuery(Name="game_id")] int gameId, [FromQuery(Name="stage_id")] int stageId)
         {
             StageInfoDTO stageInfo = new StageInfoDTO();
 
@@ -49,6 +53,16 @@ namespace BuildersFair_API.Controllers
 
             stageInfo.game_id = gameId;
             stageInfo.stage_id = stageId;
+
+            var game = _context.Game.Where(x => x.game_id == gameId).FirstOrDefault();
+            if (game != null)
+            {
+                stageInfo.language_code = game.lang_code;
+            }
+            else
+            {
+                return BadRequest("Unknown game language code");
+            }
 
             // set gaming rule
             int difficulty = 0;
@@ -83,7 +97,7 @@ namespace BuildersFair_API.Controllers
             }
             
             // get object list randomly
-            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, languageCode);
+            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, game.lang_code);
             stageInfo.stage_objects = objectList;
 
             // Add object list to StageObject table
@@ -130,8 +144,27 @@ namespace BuildersFair_API.Controllers
 
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
+                StageObject matchedObject = null;
 
+                // stage 1 : find word flash card with given picture
                 if (dto.stage_id == 1)
+                {
+                   // call Textract API
+                    List<Block> blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms); 
+                    List<string> texts = new List<string>();
+                    foreach (Block block in blocks)
+                    {
+                        texts.Add(block.Text);
+                        Console.Write(block.Text + " ");
+                    }
+
+                    matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                        x.stage_id == dto.stage_id &&
+                                        x.found_yn == "N" &&
+                                        texts.Contains(x.object_name)).FirstOrDefault();
+                }
+                // stage 2 : find picture card with given word
+                else if (dto.stage_id == 2)
                 {
                     // call Rekonition API
                     List<Label> labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms); 
@@ -141,53 +174,26 @@ namespace BuildersFair_API.Controllers
                         labelNames.Add(label.Name);
                         Console.Write(label.Name + " ");
                     }
-                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
-                                            x.stage_id == dto.stage_id &&
-                                            x.found_yn == "N" &&
-                                            labelNames.Contains(x.object_name)).FirstOrDefault();
-                    if (matchedObject != null)
-                    {
-                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
-                        stageScore.object_name = matchedObject.object_name;
-                        stageScore.object_score = matchedObject.object_score;
-                        matchedObject.found_yn = "Y";
+                    matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                        x.stage_id == dto.stage_id &&
+                                        x.found_yn == "N" &&
+                                        labelNames.Contains(x.object_name)).FirstOrDefault();
 
-                        _context.StageObject.Update(matchedObject);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        Console.WriteLine("no matched object");
-                    }
                 }
-                else if (dto.stage_id == 2)
+                
+                if (matchedObject != null)
                 {
-                    // call Textract API
-                    List<Block> blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms); 
-                    List<string> texts = new List<string>();
-                    foreach (Block block in blocks)
-                    {
-                        texts.Add(block.Text);
-                        Console.Write(block.Text + " ");
-                    }
-                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
-                                            x.stage_id == dto.stage_id &&
-                                            x.found_yn == "N" &&
-                                            texts.Contains(x.object_name)).FirstOrDefault();
-                    if (matchedObject != null)
-                    {
-                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
-                        stageScore.object_name = matchedObject.object_name;
-                        stageScore.object_score = matchedObject.object_score;
-                        matchedObject.found_yn = "Y";
+                    //Console.WriteLine("Matched object: " + matchedObject.object_name);
+                    stageScore.object_name = matchedObject.object_name;
+                    stageScore.object_score = matchedObject.object_score;
+                    matchedObject.found_yn = "Y";
 
-                        _context.StageObject.Update(matchedObject);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        Console.WriteLine("no matched object");
-                    }
+                    _context.StageObject.Update(matchedObject);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    Console.WriteLine("no matched object");
                 }
             }
             

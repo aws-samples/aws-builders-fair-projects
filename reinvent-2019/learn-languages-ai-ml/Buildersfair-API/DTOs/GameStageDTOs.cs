@@ -22,6 +22,7 @@ namespace BuildersFair_API.DTOs
         public int stage_id { get; set; }
         public int stage_time { get; set; }
         public string stage_difficulty { get; set; }
+        public string language_code { get; set; }
         public List<StageObjectDTO> stage_objects { get; set; }
     }
 
