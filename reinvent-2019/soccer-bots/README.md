@@ -2,15 +2,15 @@
 
 ## Overview ##
 
-Clash of the Soccer Bots powered by AWS IOT
+Clash of the Soccer Bots powered by Amazon Sagemaker
 
 In this demo, you will see 2 soccer bots (NVidia Jetson Nanos) clash with each other and fight for a soccer ball. The bots are smart enough to find, chase and strike the ball and compete with the other to see who scores the max number of strikes. The bots come to life using a mix of AWS services like Sagemaker, Greengrass and IoT Core.
 
 This project has the following core components:
 
-- Sagemaker Ground Truth for annotating data for custom model training
-- Sagemaker for ML Model Training
-- Sagemaker Neo for optimising model and compiling
+- Amazon Sagemaker Ground Truth for annotating data for custom model training
+- Amazon Sagemaker for ML Model Training
+- Amazon Sagemaker Neo for optimising model and compiling
 - AWS IoT Greengrass for edge deployment
 - AWS IoT Core for pub/sub updates to the cloud
 - AWS Amplify for real-time dashboard to track state
@@ -18,8 +18,7 @@ This project has the following core components:
 
 ## Architecture ##
 
-For the architecture see the PDF file "docs/.pdf".
-For the physical build and software setup instructions see the file "docs/SoccerBotsArchitecture.pdf"
+For the architecture see the PDF file "docs/SoccerBotsArchitecture.pdf".
 
 Have fun!
 
