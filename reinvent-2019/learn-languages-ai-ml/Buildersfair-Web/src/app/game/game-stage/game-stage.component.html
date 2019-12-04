@@ -29,7 +29,7 @@
     <!-- game play screen -->
     <div class="row text-right">
       <div class="col-3">
-        <img src="../../../assets/images/root/playing.png" height="630">
+        <img id="game-bg-img" src="../../../assets/images/background/bg-game-en.jpg" height="630">
       </div>
     
       <div class="col-9">
@@ -47,14 +47,11 @@
                           (initError)="handleInitError($event)">
                   </webcam>
                   
-                  <br/>
+                  <br/><br/>
                   <button id="buttonSnapshot" class="btn btn-primary btn-lg mr-2" 
                     (click)="triggerSnapshot();" *ngIf="gameStarted">
                     <i fa name="camera"></i> Press "BIG ENTER"
                   </button>
-                  <!-- <button class="btn btn-secondary btn-lg" (click)="toggleWebcam();" *ngIf="action_type!='NoMoreAction'">
-                    <i fa name="toggle-on"></i> Toggle Webcam
-                  </button> -->
                         
                 </div>
             </div>
@@ -77,11 +74,9 @@
   
           </div>
         </div>
-  
       </div>
-      
     </div>
-  
+    
   </div>
   
   <!-- object list -->

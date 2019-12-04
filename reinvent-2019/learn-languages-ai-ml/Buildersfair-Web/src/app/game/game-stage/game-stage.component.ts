@@ -41,7 +41,6 @@ export class GameStageComponent implements OnInit, OnDestroy {
   public difficulty = '';
   public message = '';
   public modalTimer: number;
-  public language: string;
   public languageCode: string;
 
   // score info
@@ -200,8 +199,27 @@ export class GameStageComponent implements OnInit, OnDestroy {
       // stage info
       this.seconds = stageInfo.stage_time;
       this.difficulty = stageInfo.stage_difficulty;
-      //this.language = stageInfo.language;
       this.languageCode = stageInfo.language_code;
+
+      const element = document.getElementById('game-bg-img') as HTMLImageElement;
+      switch (this.languageCode)
+      {
+        case 'ko-KR':
+          element.src = '../../../assets/images/background/bg-game-kr.jpg';
+          break;
+        case 'ja-JP':
+            element.src = '../../../assets/images/background/bg-game-jp.jpg';
+            break;
+        case 'cmn-CN':
+            element.src = '../../../assets/images/background/bg-game-cn.jpg';
+            break;
+        case 'es-ES':
+            element.src = '../../../assets/images/background/bg-game-es.jpg';
+            break;
+        case 'en-US':
+        default:
+          element.src = '../../../assets/images/background/bg-game-en.jpg';
+      }
 
       // show start modal dialog
       this.displayStageStartModal = 'block';
