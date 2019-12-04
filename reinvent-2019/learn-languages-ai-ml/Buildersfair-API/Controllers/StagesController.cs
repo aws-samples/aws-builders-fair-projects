@@ -97,7 +97,7 @@ namespace BuildersFair_API.Controllers
             }
             
             // get object list randomly
-            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, game.lang_code);
+            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, stageInfo.language_code);
             stageInfo.stage_objects = objectList;
 
             // Add object list to StageObject table
@@ -206,7 +206,7 @@ namespace BuildersFair_API.Controllers
             List<StageObjectDTO> objectList = new List<StageObjectDTO>();
 
             int recordCount = _context.Object.Where(x => x.difficulty <= difficulty).Count();
-            var records = _context.Object.Where(x => x.difficulty == difficulty);
+            var records = _context.Object.Where(x => x.difficulty <= difficulty);
 
             for (int i = 0; i < objectCount && i < recordCount; i++)
             {
