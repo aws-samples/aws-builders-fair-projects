@@ -1,0 +1,24 @@
+.Lobby{
+  background-color: #282c34;
+}
+.Welcome_Host_Button{
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+.Welcome_Input_Code{
+  margin: 8px auto;
+  color: #FFF;
+}
+.Welcome_Input_Code input{
+  text-transform:uppercase;
+}
+h1.Game_Title{
+  font-family:"Peinture" !important;
+}
+.Lobby .Button_Host{
+  text-align:right;
+}

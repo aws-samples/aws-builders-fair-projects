@@ -1,0 +1,44 @@
+{
+  "name": "doodlechallenge",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@aws-amplify/api": "^1.2.4",
+    "@aws-amplify/pubsub": "^1.2.4",
+    "@material-ui/core": "^4.6.1",
+    "@material-ui/icons": "^4.5.1",
+    "aws-amplify": "^1.2.4",
+    "aws-amplify-react": "^2.5.4",
+    "aws-appsync": "^3.0.2",
+    "aws-sdk": "^2.576.0",
+    "react": "^16.12.0",
+    "react-canvas-draw": "^1.0.2",
+    "react-dom": "^16.12.0",
+    "react-ga": "^2.7.0",
+    "react-motion": "^0.5.2",
+    "react-scripts": "^3.2.0",
+    "react-transition-group": "^4.3.0",
+    "uuidv4": "^6.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "amplify mock function S3Triggerc9eade68",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

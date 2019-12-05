@@ -21,16 +21,16 @@ In order to bridge the gap between the cloud and the limited power of the EV3 Co
 - [Components](#components)
 - [FAQ](#faq)
 - [Deployment Instructions](#deployment-instructions)
-  - [Create AWS Resources (**[PLACEHOLDER]** mins)](#create-aws-resources-placeholder-mins)
+  - [Create AWS Resources (20 mins)](#create-aws-resources-20-mins)
     - [Deploy CloudFormation Template](#deploy-cloudformation-template)
     - [Create RoboMaker Development Environment](#create-robomaker-development-environment)
   - [EV3DEV Setup (120 mins)](#ev3dev-setup-120-mins)
     - [Build EV3DEV Container](#build-ev3dev-container)
     - [Build EV3DEV Image](#build-ev3dev-image)
     - [Run and Setup EV3DEV Image](#run-and-setup-ev3dev-image)
-  - [Raspberry Pi Setup (**[PLACEHOLDER]** mins)](#raspberry-pi-setup-placeholder-mins)
+  - [Raspberry Pi Setup (35 mins)](#raspberry-pi-setup-35-mins)
     - [Install Raspbian](#install-raspbian)
-    - [Setup Raspbian (**[PLACEHOLDER]** mins)](#setup-raspbian-placeholder-mins)
+    - [Setup Raspbian](#setup-raspbian)
   - [Checkpoint](#checkpoint)
 - [Usage Instructions](#usage-instructions)
   - [RoboMaker](#robomaker)
@@ -132,19 +132,16 @@ You can change modes by either updating the Greengrass Core IoT Thing Shadow via
 - Return: Reverse in a straight line about 80cm
 
 **Q: How long will it take to build this project?**
-This project will take about **[PLACEHOLDER]** hours to complete depending on whether you use a pre-trained model or plan on training your own. Training your own will take an additional 8 hours minimum.
+This project will take about 3 hours to complete depending on whether you use a pre-trained model or plan on training your own. Training your own will take an additional 8 hours minimum.
 
 Each section below will state next to it how long it takes to complete the section.
-
-**Q: What are the costs of this project?**
-Running this project will incur costs on your AWS Account, the amount of which again will depend on using a pre-trained model. When using a pre-trained model the costs will be approximately $**[PLACEHOLDER]** and $**[PLACEHOLDER]** when training your own.
 
 **Q: What regions does this project support?**
 - This project must be run in the us-east-1 North Virginia region. However can be adjusted to run in pother regions that have AWS Greengrass, RoboMaker and Cloud 9
 
 ## Deployment Instructions
 
-### Create AWS Resources (**[PLACEHOLDER]** mins)
+### Create AWS Resources (20 mins)
 In order to deploy the required resources in AWS, you will deploy an AWS CloudFormation template in your account. This template will deploy a majority of the resources for you, which will save you considerable time from setting them up by hand. There are still some final resources that you must launch and configure by hand.
 
 #### Deploy CloudFormation Template
@@ -164,7 +161,7 @@ Upload a template file** then choose the file you just downloaded and click **Ne
 
 7. At the final screen, review your entries, scroll to the bottom, check the box for **I acknowledge that AWS CloudFormation might create IAM resources.** and click **Create Stack**
 
-8. Monitor the deployment of your stack, once it has completed (this will take approx. **[PLACEHOLDER]** mins) you may continue.
+8. Monitor the deployment of your stack, once it has completed (this will take approx. 5 mins) you may continue.
 
 9. When the stack has completed creating, go to the **Outputs** section and note down all of the outputs, you will use them later.
 
@@ -190,12 +187,12 @@ _You can list available development environments by choosing Development in the 
 
 9. When the Cloud9 RoboMaker Console has finished launching, go to the terminal at the bottom and clone this repository with:
 ```
-git clone [PLACEHOLDER]
+git clone https://github.com/aws-samples/aws-builders-fair-projects.git
 ```
 
-10. When the process has finished, you will see a new folder in the left pane called **lego-robot**.
+10. When the process has finished, you will see a new folder in the left pane called **aws-builders-fair-projects**.
 
-11. Next we are going to setup the `roboMakerSettings.json` file. In the left pane, browse to the **lego-robot/robomaker** directory and double-click on the **roboMakerSettings.json** file.
+11. Next we are going to setup the `roboMakerSettings.json` file. In the left pane, browse to the **aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/robomaker** directory and double-click on the **roboMakerSettings.json** file.
 
 12. In this file, replace the following placeholders using with your environment details, which you will find in the Outputs of your CloudFormation stack:
   - `<bucket name>`
@@ -205,7 +202,7 @@ git clone [PLACEHOLDER]
 
 13. Now you need to import this file into RoboMaker as new settings. Click on the **Run** menu item and select **Add or Edit Configurations**.
 
-14. At the bottom click the **Switch config** button then navigate and select `lego-robot/robomaker/roboMakerSettings.json` file and click **Ok** and then click **Save**
+14. At the bottom click the **Switch config** button then navigate and select `aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/robomaker/roboMakerSettings.json` file and click **Ok** and then click **Save**
 
 **Congrats, your development environment is now ready!**
 
@@ -221,7 +218,7 @@ You can either build this image using your Cloud9 environment, or if you want to
 #### Build EV3DEV Container
 1. From the Cloud9 RoboMaker environment, you are now going to build the EV3DEV ARM Image using Docker. Go to the terminal and run the following commands:
 ```
-cd lego-robot/docker
+cd aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/docker
 sudo ./build_ev3dev_image.sh
 ```
 
@@ -297,7 +294,7 @@ Gateway: 10.42.0.1
 
 **Congrats, your EV3 is now ready!**
 
-### Raspberry Pi Setup (**[PLACEHOLDER]** mins)
+### Raspberry Pi Setup (35 mins)
 
 #### Install Raspbian
 1. Download Raspbian Buster Lite from [raspberrypi.org][b154578b].
@@ -337,7 +334,7 @@ Save and close the file
 
 9. Unmount your SD-Card and insert it into the Raspberry Pi
 
-#### Setup Raspbian (**[PLACEHOLDER]** mins)
+#### Setup Raspbian
 _These instructions are summarized from the [Greengrass documentation](https://docs.aws.amazon.com/greengrass/latest/developerguide/setup-filter.rpi.html) and [more here][74504248]_
 1. Power on your Raspberry Pi and a wait a few moments for the OS to boot.
 
@@ -438,7 +435,7 @@ Now with your hardware ready we may run through the rest of the procedures to co
 ### RoboMaker
 
 #### Train the model and simulate
-With your RoboMaker Development Environment setup you can now prepare your reinforcement learning model and ROS application. This part of the project is optional, but recommended in order to understand how everything works and learn how to train and evaluate your own model. Training takes up to 8 hours to get a good model and an additional [PLACEHOLDER] hours to build and bundle the app. So if you want to just get the robot working and use our pre-trained model and app instead,then you are welcome to skip this part and move on to step: [Download and use a pre-trained model and ROS app](#Download and use a pre-trained model and ROS app).
+With your RoboMaker Development Environment setup you can now prepare your reinforcement learning model and ROS application. This part of the project is optional, but recommended in order to understand how everything works and learn how to train and evaluate your own model. Training takes up to 8 hours to get a good model and an additional 1-2 hours to build and bundle the app. So if you want to just get the robot working and use our pre-trained model and app instead,then you are welcome to skip this part and move on to step: [Download and use a pre-trained model and ROS app](#Download and use a pre-trained model and ROS app).
 
 1. On the AWS Cloud9 menu bar, select **RoboMaker Run**, **Launch simulation**, then **1. ObjectTracker Train Model**. This process uploads the **output.tar** bundle file to the S3 bundles bucket created by CloudFormation, then it creates a simulation application and a simulation job in AWS RoboMaker.
 
@@ -504,18 +501,18 @@ In this step, you’ll build and bundle the robot application with the trained R
 
 2. In AWS Cloud9 IDE terminal window, execute the following command to download and build a cross-platform container image. This image is used for compiling and bundling a robot application for the TurtleBot ARM architecture. This process takes about 10 minutes to complete.
 ```
-cd ~/environment/lego-robot/docker
+cd ~/environment/aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/docker
 sudo ./build_raspberry_image.sh
 ```
 
 3. When that process has completed, execute the following commands to create a running container with image built in earlier step.
 ```
-cd ~/environment/lego-robot/robomaker/robot_ws
+cd ~/environment/aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/robomaker/robot_ws
 docker run -v $(pwd):/robot_ws -v ~/.aws:/root/.aws ros-cross-compile:armhf robot_ws/src/build_arm_pkg.sh
 ```
 **Note, there is a known issue here where the first time the build & bundle process above is run, the output.tar file is not complete. The above docker step must be run again to ensure the file is complete.**
 
-4. When the process has completed, the robot application is now built and bundled for ARMHF, the same architecture that is used by the Raspberry Pi. The **output.tar** bundle file is created in the **lego-robot/robomaker/robot_ws/bundle/** folder. The bundle contains the trained reinforcement learning model and the logic that helps the robot use the model in real world.
+4. When the process has completed, the robot application is now built and bundled for ARMHF, the same architecture that is used by the Raspberry Pi. The **output.tar** bundle file is created in the **aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/robomaker/robot_ws/bundle/** folder. The bundle contains the trained reinforcement learning model and the logic that helps the robot use the model in real world.
 
 5. Upload the bundle file to your S3 bucket with this command:
 ```
@@ -526,8 +523,8 @@ aws s3 cp bundle/output.tar s3://<your_bundles_bucket_name>
 _If you trained your own model and bundled your own ROS app, you must skip this step and go on to: **Deploy your model**._
 1. From your Cloud9 terminal run the following commands:
 ```
-cd ~/lego-robot/robomaker/
-wget [PLACEHOLDER]/output.tar
+cd ~/aws-builders-fair-projects/reinvent-2019/lego-ev3-raspberry-pi-robot/robomaker/
+wget https://lego-robot-bundlesbucket-itzevm4pah63.s3.amazonaws.com/output.tar
 aws s3 cp output.tar s3://<your_bundles_bucket_name>
 ```
 
@@ -546,7 +543,7 @@ aws s3 cp output.tar s3://<your_bundles_bucket_name>
 
 7. Leave the rest as is, scroll down and click **Create**.
 
-8. At the deployment details page you will now be able to monitor the deployment of your app to the Raspberry Pi using Greengrass. The first time this will take about [PLACEHOLDER] mins to complete.
+8. At the deployment details page you will now be able to monitor the deployment of your app to the Raspberry Pi using Greengrass. The first time this will take about 30 mins to complete.
 _Note that subsequent deployments of your robot app will be much quicker as Greengrass will work out what's changed and only upload that to the device. Additionally, creating a new deployment is much easier the next time you need to deploy an updated output.tar in S3. All you do is open a previous deployment and click **Clone**, create a new version from the new file in S3 and click deploy, the rest of the fields will already be filled in._
 
 #### AWS IoT Console
@@ -648,10 +645,12 @@ http://wiki.ros.org/
 
 ### AWS IoT & RoboMaker
 https://aws.amazon.com/robomaker/resources/train-a-robot-using-reinforcement-learning-project/
+https://aws.amazon.com/blogs/machine-learning/an-introduction-to-reinforcement-learning-with-aws-robomaker/
 https://aws.amazon.com/blogs/iot/automating-aws-iot-greengrass-setup-with-aws-cloudformation/
 https://docs.aws.amazon.com/robomaker/latest/dg/what-is-robomaker.html
 https://docs.aws.amazon.com/robomaker/latest/dg/gs-following.html
 https://github.com/aws-robotics/aws-robomaker-sample-application-objecttracker
+https://docs.aws.amazon.com/greengrass/latest/developerguide/setup-filter.rpi.html
 
 
 ## Issues

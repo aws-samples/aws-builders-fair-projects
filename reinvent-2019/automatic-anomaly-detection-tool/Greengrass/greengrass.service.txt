@@ -1,0 +1,16 @@
+[Unit]
+Description=AWS Greengrass daemon
+After=network.target network-online.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/greengrassd.pid
+Restart=on-failure
+ExecStartPre=/usr/bin/jetson_clocks
+ExecStartPre=/bin/sleep 10
+ExecStart=/greengrass/ggc/core/greengrassd start
+ExecReload=/greengrass/ggc/core/greengrassd restart
+ExecStop=/greengrass/ggc/core/greengrassd stop
+
+[Install]
+WantedBy=multi-user.target

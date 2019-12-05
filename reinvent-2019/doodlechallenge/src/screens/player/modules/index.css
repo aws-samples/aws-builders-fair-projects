@@ -1,0 +1,52 @@
+.App{
+  max-width: 100% !important;
+  padding: 0px !important;
+  margin: 0px;
+}
+.App .MuiContainer-root {
+  padding:0px;
+}
+.Component-canvas .canvas{
+  background-image: url('../../../assets/icons/canvas_bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+.App_Bar_LB_Item{
+  text-align:left;
+}
+.App_Bar_Title{
+  color: #FFFFFF;
+  text-align:center;
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: initial;
+  background-color: black;
+  margin-top: 16px !important;
+  padding:5px;
+}
+.App_Bar_Hello_MyName button:disabled{
+  background-color: #e0e0e0;
+}
+.App_Bar_Hello_MyName.MuiAppBar-colorPrimary{
+  background-color:#000000;
+}
+.Player_Draw_App_Bar img{
+  max-width: 100%;
+  height: 28px;
+}
+.Screen_Challenger_Winner .Winner_Player .Component-Player{
+  background-color:transparent;
+}
+.Screen_Challenger_Winner .Winner_Player .Avatar_Content_Canvas img{
+  max-width:100%;
+}
+.Screen_Challenger_Winner .Winner_Player .Avatar_Container{
+  max-width:100%;
+}
+.Screen_Hello_MyName .Avatar_Container {
+  min-width:375px;
+}

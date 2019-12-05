@@ -1,0 +1,26 @@
+.Component-canvas {
+    min-height: 100vh;
+    width:100%;
+    height:100%;
+}
+
+.canvas{
+    min-height: 100vh;
+}
+.Component-canvas-conrols{
+    
+    z-index:99;
+}
+
+.Instructions {
+    width: 100%;
+    height: 100%;
+    position:relative;
+}
+.timer{
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:99;
+    color:#000;
+}

@@ -1,0 +1,100 @@
+@font-face {
+  font-family: 'Peinture';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./assets/fonts/peinture.eot'); /* IE9 Compat Modes */
+  src: url('./assets/fonts/peinture.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('./assets/fonts/peinture.woff2') format('woff2'), /* Super Modern Browsers */
+       url('./assets/fonts/peinture.woff') format('woff'), /* Modern Browsers */
+       url('./assets/fonts/peinture.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('./assets/fonts/peinture.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+@font-face {
+  font-family: 'Agenzada';
+  src: url('./assets/fonts/Agenzada.eot'); /* IE9 Compat Modes */
+  src: url('./assets/fonts/Agenzada.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('./assets/fonts/Agenzada.woff') format('woff'), /* Modern Browsers */
+       url('./assets/fonts/Agenzada.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('./assets/fonts/Agenzada.svg#Agenzada-Regular') format('svg'); /* Legacy iOS */
+  font-style: normal;
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+}
+body{
+  background-color: #282c34;
+  min-height: 100vh;
+}
+.font-legible{
+  /* font-family: Arial, Helvetica, sans-serif */
+}
+#root{
+  min-height: 100vh;
+}
+.App {
+  text-align: center;
+  font-family: "Agenzada";
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+.Background{
+  opacity: .1;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+.Button {
+  padding: var(--base-spacing) var(--double-spacing);
+  color: var(--lightsaber-color);
+  background-color: var(--white-color);
+  border-color: var(--lightsaber-color);
+  font: var(--regular-font);
+}
+
+.Button___important {
+  color: var(--important-color);
+  background-color: var(--white-color);
+  border-color: var(--lightsaber-color);
+}
+.center {
+  margin: auto;
+  width: 50%;
+  border: 3px solid green;
+  padding: 10px;
+}
+h4.MuiTypography-h4{
+  font-family: "Agenzada";
+}
+.MuiButton-label{
+  font-family: "Agenzada";
+}
+.MuiInputBase-input{
+  font-family: "Agenzada"!important;
+}
+.MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3, .MuiTypography-h4, .MuiTypography-h5, .MuiTypography-h6, .MuiTypography-subtitle1, .MuiTypography-subtitle2 {
+  font-family: "Agenzada"!important;
+}
+.MuiTypography-body1{
+  font-family: "Agenzada"!important;
+}
+.MuiChip-root{
+  font-family: "Agenzada"!important;
+}
