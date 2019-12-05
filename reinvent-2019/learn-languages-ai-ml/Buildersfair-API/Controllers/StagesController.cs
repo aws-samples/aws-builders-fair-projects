@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Polly;
 using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
 using Amazon.S3;
@@ -27,16 +28,19 @@ namespace BuildersFair_API.Controllers
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
         IAmazonRekognition RekognitionClient { get; set; }
-        IAmazonTextract TextractClient { get; set; } 
+        IAmazonTextract TextractClient { get; set; }
+        IAmazonPolly PollyClient { get; set; }
 
         public StagesController(DataContext context, 
             IAmazonS3 s3Client, IAmazonRekognition rekognitionClient,
-            IAmazonTextract textractClient)
+            IAmazonTextract textractClient,
+            IAmazonPolly pollyClient)
         {
             _context = context;
             this.S3Client = s3Client;
             this.RekognitionClient = rekognitionClient;
-            this.TextractClient = textractClient;        
+            this.TextractClient = textractClient;
+            this.PollyClient = pollyClient;  
         }
 
         [HttpGet]
@@ -50,6 +54,16 @@ namespace BuildersFair_API.Controllers
             stageInfo.game_id = gameId;
             stageInfo.stage_id = stageId;
 
+            var game = _context.Game.Where(x => x.game_id == gameId).FirstOrDefault();
+            if (game != null)
+            {
+                stageInfo.language_code = game.lang_code;
+            }
+            else
+            {
+                return BadRequest("Unknown game language code");
+            }
+
             // set gaming rule
             int difficulty = 0;
             int objectCount = 0;
@@ -57,7 +71,7 @@ namespace BuildersFair_API.Controllers
             switch (stageId)
             {
                 case 1:
-                    stageInfo.stage_time = 60;
+                    stageInfo.stage_time = 45;
                     stageInfo.stage_difficulty = "Easy";
                     difficulty = 1;
                     objectCount = 3;
@@ -66,8 +80,8 @@ namespace BuildersFair_API.Controllers
                 case 2:
                     stageInfo.stage_time = 60;
                     stageInfo.stage_difficulty = "Easy";
-                    difficulty = 1;
-                    objectCount = 3;
+                    difficulty = 2;
+                    objectCount = 5;
                     objectScore = 50;
                     break;
                 // case 3:
@@ -83,13 +97,11 @@ namespace BuildersFair_API.Controllers
             }
             
             // get object list randomly
-            //List<string> objectList = GetRandomStageObjectList(difficulty, objectCount);
-            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount);
+            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount, stageInfo.language_code);
             stageInfo.stage_objects = objectList;
 
             // Add object list to StageObject table
             List<StageObject> stageObjectList = new List<StageObject>();
-            //foreach (string item in objectList)
             foreach (StageObjectDTO item in objectList)
             {
                 StageObject stageObject = new StageObject()
@@ -132,8 +144,27 @@ namespace BuildersFair_API.Controllers
 
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
+                StageObject matchedObject = null;
 
+                // stage 1 : find word flash card with given picture
                 if (dto.stage_id == 1)
+                {
+                   // call Textract API
+                    List<Block> blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms); 
+                    List<string> texts = new List<string>();
+                    foreach (Block block in blocks)
+                    {
+                        texts.Add(block.Text);
+                        Console.Write(block.Text + " ");
+                    }
+
+                    matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                        x.stage_id == dto.stage_id &&
+                                        x.found_yn == "N" &&
+                                        texts.Contains(x.object_name)).FirstOrDefault();
+                }
+                // stage 2 : find picture card with given word
+                else if (dto.stage_id == 2)
                 {
                     // call Rekonition API
                     List<Label> labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms); 
@@ -143,66 +174,39 @@ namespace BuildersFair_API.Controllers
                         labelNames.Add(label.Name);
                         Console.Write(label.Name + " ");
                     }
-                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
-                                            x.stage_id == dto.stage_id &&
-                                            x.found_yn == "N" &&
-                                            labelNames.Contains(x.object_name)).FirstOrDefault();
-                    if (matchedObject != null)
-                    {
-                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
-                        stageScore.object_name = matchedObject.object_name;
-                        stageScore.object_score = matchedObject.object_score;
-                        matchedObject.found_yn = "Y";
+                    matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                        x.stage_id == dto.stage_id &&
+                                        x.found_yn == "N" &&
+                                        labelNames.Contains(x.object_name)).FirstOrDefault();
 
-                        _context.StageObject.Update(matchedObject);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        Console.WriteLine("no matched object");
-                    }
                 }
-                else if (dto.stage_id == 2)
+                
+                if (matchedObject != null)
                 {
-                    // call Textract API
-                    List<Block> blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms); 
-                    List<string> texts = new List<string>();
-                    foreach (Block block in blocks)
-                    {
-                        texts.Add(block.Text);
-                        Console.Write(block.Text + " ");
-                    }
-                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
-                                            x.stage_id == dto.stage_id &&
-                                            x.found_yn == "N" &&
-                                            texts.Contains(x.object_name)).FirstOrDefault();
-                    if (matchedObject != null)
-                    {
-                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
-                        stageScore.object_name = matchedObject.object_name;
-                        stageScore.object_score = matchedObject.object_score;
-                        matchedObject.found_yn = "Y";
+                    //Console.WriteLine("Matched object: " + matchedObject.object_name);
+                    stageScore.object_name = matchedObject.object_name;
+                    stageScore.object_score = matchedObject.object_score;
+                    matchedObject.found_yn = "Y";
 
-                        _context.StageObject.Update(matchedObject);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        Console.WriteLine("no matched object");
-                    }
+                    _context.StageObject.Update(matchedObject);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    Console.WriteLine("no matched object");
                 }
             }
             
             return Ok(stageScore);            
-        }  
-    
-        private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string language = "en")
+        }
+
+        private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string languageCode = "en-US")
         {
             List<string> nameList = new List<String>();
             List<StageObjectDTO> objectList = new List<StageObjectDTO>();
 
-            int recordCount = _context.Object.Where(x => x.difficulty == difficulty).Count();
-            var records = _context.Object.Where(x => x.difficulty == difficulty);
+            int recordCount = _context.Object.Where(x => x.difficulty <= difficulty).Count();
+            var records = _context.Object.Where(x => x.difficulty <= difficulty);
 
             for (int i = 0; i < objectCount && i < recordCount; i++)
             {
@@ -219,20 +223,21 @@ namespace BuildersFair_API.Controllers
                         StageObjectDTO stageObject = new StageObjectDTO();
                         stageObject.object_name = record.object_name;
 
-                        switch (language)
+                        switch (languageCode)
                         {
-                            case "ko":
+                            case "ko-KR":
                                 stageObject.object_display_name = record.object_name_ko;
                                 break;
-                            case "ja":
+                            case "ja-JP":
                                 stageObject.object_display_name = record.object_name_ja;
                                 break;
-                            case "cn":
+                            case "cmn-CN":
                                 stageObject.object_display_name = record.object_name_cn;
                                 break;
-                            case "es":
+                            case "es-ES":
                                 stageObject.object_display_name = record.object_name_es;
                                 break;
+                            case "en-US":
                             default:
                                 stageObject.object_display_name = record.object_name;
                                 break;                                
@@ -247,6 +252,53 @@ namespace BuildersFair_API.Controllers
             }
 
             return objectList;
-        }   
+        }
+
+        // POST api/stages/tts
+        [Route("tts")]
+        [HttpPost]
+        public async Task<IActionResult> TextToSpeech([FromBody] TextToSpeechDTO dto)
+        {
+            PollyResultDTO result = new PollyResultDTO();
+
+            Guid g = Guid.NewGuid();
+            string guidString = Convert.ToBase64String(g.ToByteArray());
+            guidString = guidString.Replace("=", "");
+            guidString = guidString.Replace("+", "");
+            guidString = guidString.Replace("/", "");
+
+            // Validation check
+            if (string.IsNullOrWhiteSpace(dto.language_code) == true)
+                return BadRequest("Language code is empty.");
+
+            if (string.IsNullOrWhiteSpace(dto.text) == true)
+                return BadRequest("Text is empty.");            
+
+            string voiceName = "";
+            switch (dto.language_code)
+            {
+                case "ko-KR" : 
+                    voiceName = "Seoyeon";
+                    break;
+                case "cmn-CN" : 
+                    voiceName = "Zhiyu";
+                    break;
+                case "ja-JP" : 
+                    voiceName = "Mizuki";
+                    break;
+                case "es-ES" : 
+                    voiceName = "Lucia";
+                    break;
+                case "en-US" : 
+                default : 
+                    voiceName = "Joanna";
+                    break;
+            }
+
+            // call Polly API
+            result.mediaUri = await PollyUtil.PollyDemo(this.PollyClient, this.S3Client, dto.language_code, dto.text, voiceName);
+
+            return Ok(result);
+        } 
     }
 }

@@ -3,6 +3,8 @@
 <br>
 
 
+<script type="text/javascript" src="../../../../node_modules/js-audio-recorder/dist/recorder.js"></script>
+
 <div class="container">
     <div class="row">
       <div class="col-1"></div>
@@ -11,9 +13,9 @@
         <div class="btn-group">
             <div>
               <label>Language :&nbsp;</label>
-              <select id="selectLanguages">
+              <select id="optLanguages">
                 <option *ngIf="!transcribeLanguages" value="0">Loading...</option>
-                <option *ngFor="let language of transcribeLanguages" value="{{language.language}}" [attr.selected]="language.language_code == 'en-US' ? true : null">
+                <option *ngFor="let language of transcribeLanguages" value="{{language.language_code}}" [attr.selected]="language.language_code == 'en-US' ? true : null">
                   {{language.language}} ({{language.language_code}})
                 </option>
               </select>
@@ -22,11 +24,16 @@
 
           <br/><br/>
 
-          <button id="buttonTranscribe" class="btn btn-primary mr-2" (click)="startRecording()">Start Recording!</button>
+          <button id="buttonRecord" class="btn btn-primary mr-2" (click)="startRecording()">Start Recording!</button>
+          <button id="buttonStop" class="btn btn-primary mr-2" (click)="stopRecording()">Stop Recording!</button>
+          <button id="buttonPlay" class="btn btn-primary mr-2" (click)="play()">Play</button>
           <br/>
 
           <br/><br/>
 
+          <canvas id="canvas"></canvas>
+
+          <br/><br/>
 
         <div class="text-center">
           <div class="input-group">

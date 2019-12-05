@@ -11,7 +11,7 @@ namespace Buildersfair_API.Utils
     public class TranscribeUtil
     {
 
-        public async static Task<string> TranscribeDemo(IAmazonTranscribeService transcribeClient, string mediaUri)
+        public async static Task<string> TranscribeDemo(IAmazonTranscribeService transcribeClient, string lauguageCode, string mediaUri)
         {
             string result = null;
             Media media = new Media()
@@ -23,8 +23,8 @@ namespace Buildersfair_API.Utils
             {
                 TranscriptionJobName = DateTime.Now.Millisecond.ToString(),
                 Media = media,
-                MediaFormat = MediaFormat.Mp3.ToString(),
-                LanguageCode = "en-US",
+                MediaFormat = MediaFormat.Wav.ToString(),
+                LanguageCode = lauguageCode,
                 OutputBucketName = "reinvent-indiamazones"
             };
 

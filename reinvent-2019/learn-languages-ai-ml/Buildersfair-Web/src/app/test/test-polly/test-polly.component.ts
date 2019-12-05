@@ -53,8 +53,28 @@ export class TestPollyComponent implements OnInit {
 
   public speech() {
 
+    const sel = document.getElementById('selectLanguages') as HTMLSelectElement;
+    const language = sel.options[sel.selectedIndex].value;
+
+    let voice = '';
+    const radios = document.getElementsByName('radioVoices');
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < radios.length; i++) {
+      const item = radios[i];
+      if ((item as HTMLInputElement).checked === true) {
+        voice = (item as HTMLInputElement).value;
+      }
+    }
+
+    console.log(language + ',' + voice);
+
+    const texttospeech = document.getElementById('texttospeech') as HTMLInputElement;
+    console.log(texttospeech.value);
+
     const body = {
-      text: 'Learn languages with AWS AI/ML'
+      language_code: language,
+      text: texttospeech.value,
+      voice_name: voice
     };
 
     this.alertify.message('Now working on it...');

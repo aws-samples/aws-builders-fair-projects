@@ -2,6 +2,7 @@ namespace BuildersFair_API.DTOs
 {
     public class GameCreateDTO
     {
-        public string userName { get; set; }
+        public string user_name { get; set; }
+        public string language_code { get; set; }
     } 
 }

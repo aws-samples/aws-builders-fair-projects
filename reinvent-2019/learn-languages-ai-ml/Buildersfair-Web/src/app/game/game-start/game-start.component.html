@@ -1,11 +1,13 @@
 <div class="bgimg-1">
     <div class="row">
-      <div class="col-3">
-        <img src="../../../assets/images/root/hello.png">
+      <div class="col-4">
+        <img src="../../../assets/images/background/bg-game-start.jpg">
       </div>
   
-      <div class="col-8">
+      <div class="col-7">
         <br><br>
+
+        <!--
         <div id="section_2">
           <h1 class="text-black">How to play game</h1>
 
@@ -35,21 +37,23 @@
           </div>
           <div class="col-1"></div>
 
-          <br><br>
-          <div id="section_3" class="alert alert-info col">
+        -->
+
+          <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+          <div id="section_3" class="alert alert-success col">
             <div class="ml-10 mr-10">
               <br>
-              <h3>Let's begin with your name.</h3>
+              <h1>Let's begin with your name.</h1>
               <br>
 
               <form [formGroup]="gameForm" (ngSubmit)="createGame()">
                   <div class="input-group input-group-lg">
                       <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-lg">
-                          <i fa name="user"></i>&nbsp;Name
+                            <i class="fa fa-user"></i>&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
                       </div>
-                      <input type="text" autofocus formControlName="userName" class="form-control" [autofocus]
+                      <input type="text" autofocus id="userName" formControlName="userName" class="form-control" [autofocus]
                         [ngClass]="{'is-invalid': gameForm.get('userName').errors && gameForm.get('userName').touched}"
                         aria-label="Large" aria-describedby="inputGroup-sizing-sm" placeholder="Username">
                       <div class="invalid-feedback" 
@@ -66,6 +70,29 @@
                       </div>
                     </div>
                     <br/>
+
+                    <br>
+                    <h1>Which language do you want to play?</h1>
+                    <br>
+
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-lg">
+                              <i class="fa fa-globe"></i>&nbsp;&nbsp;Language</span>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-secondary" type="button" id="btnEnglish" (click)="selectLanguage('en-US')">&nbsp;English (US)</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-secondary" type="button" id="btnKorean" (click)="selectLanguage('ko-KR')">&nbsp;한국어 (Korean)</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-secondary" type="button" id="btnChinese" (click)="selectLanguage('cmn-CN')">&nbsp;中文 (Chinese)</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-secondary" type="button" id="btnJapanese" (click)="selectLanguage('ja-JP')">&nbsp;日本語 (Japanese)</button>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-secondary" type="button" id="btnSpanish" (click)="selectLanguage('es-ES')">&nbsp;español (Spanish)</button>
+                      </div>
+
+                    <br><br>
                     <div class="text-center">
                         <button [disabled]="!gameForm.valid" type="submit" class="btn btn-primary btn-lg">
                           <i fa name="gamepad"></i> Play Game!

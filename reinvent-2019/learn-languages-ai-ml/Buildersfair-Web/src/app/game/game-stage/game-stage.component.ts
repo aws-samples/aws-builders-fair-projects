@@ -15,6 +15,7 @@ import { CardObject } from 'src/app/_models/object';
   styleUrls: ['./game-stage.component.css']
 })
 export class GameStageComponent implements OnInit, OnDestroy {
+  audioPolly = new Audio();
 
   // ===============================================================================
   // Angular component constructor and destructor
@@ -40,6 +41,7 @@ export class GameStageComponent implements OnInit, OnDestroy {
   public difficulty = '';
   public message = '';
   public modalTimer: number;
+  public languageCode: string;
 
   // score info
   public objectsScore: number;
@@ -197,6 +199,27 @@ export class GameStageComponent implements OnInit, OnDestroy {
       // stage info
       this.seconds = stageInfo.stage_time;
       this.difficulty = stageInfo.stage_difficulty;
+      this.languageCode = stageInfo.language_code;
+
+      const element = document.getElementById('game-bg-img') as HTMLImageElement;
+      switch (this.languageCode)
+      {
+        case 'ko-KR':
+          element.src = '../../../assets/images/background/bg-game-kr.jpg';
+          break;
+        case 'ja-JP':
+            element.src = '../../../assets/images/background/bg-game-jp.jpg';
+            break;
+        case 'cmn-CN':
+            element.src = '../../../assets/images/background/bg-game-cn.jpg';
+            break;
+        case 'es-ES':
+            element.src = '../../../assets/images/background/bg-game-es.jpg';
+            break;
+        case 'en-US':
+        default:
+          element.src = '../../../assets/images/background/bg-game-en.jpg';
+      }
 
       // show start modal dialog
       this.displayStageStartModal = 'block';
@@ -237,14 +260,21 @@ export class GameStageComponent implements OnInit, OnDestroy {
       const element: HTMLElement = document.getElementById(stageScore.object_name) as HTMLElement;
       if (element) {
         this.audioFound.play();
-
-        element.style.backgroundColor = 'grey';
+        if (this.stageId === 1) {
+          element.style.opacity = '0.4';
+          this.playVoice((element as HTMLImageElement).alt);
+        }
+        else {
+          element.style.backgroundColor = 'grey';
+          this.playVoice(element.innerText);
+        }
 
         this.objectsScore += stageScore.object_score;
         this.totalScore += stageScore.object_score;
         this.foundObjectCount++;
 
         this.message = 'Great!';
+
         if (this.foundObjectCount === this.totalObjectCount) {
           this.clearTimer();
           this.gameStarted = false;
@@ -271,6 +301,24 @@ export class GameStageComponent implements OnInit, OnDestroy {
     }, error => {
       this.isWaiting = false;
       this.alertify.error('Something wrong. Try again.');
+    });
+  }
+
+  public playVoice(matchedWord) {
+
+    const body = {
+      language_code: this.languageCode,
+      text: matchedWord
+    };
+
+    this.stageService.getVoice(body).subscribe(result => {
+      console.log(result);
+
+      this.audioPolly.src = result.mediaUri;
+      this.audioPolly.load();
+      this.audioPolly.play();
+    }, error => {
+      console.log('getVoice');
     });
   }
 

@@ -29,7 +29,7 @@
     <!-- game play screen -->
     <div class="row text-right">
       <div class="col-3">
-        <img src="../../../assets/images/root/playing.png" height="630">
+        <img id="game-bg-img" src="../../../assets/images/background/bg-game-en.jpg" height="630">
       </div>
     
       <div class="col-9">
@@ -47,14 +47,11 @@
                           (initError)="handleInitError($event)">
                   </webcam>
                   
-                  <br/>
+                  <br/><br/>
                   <button id="buttonSnapshot" class="btn btn-primary btn-lg mr-2" 
                     (click)="triggerSnapshot();" *ngIf="gameStarted">
                     <i fa name="camera"></i> Press "BIG ENTER"
                   </button>
-                  <!-- <button class="btn btn-secondary btn-lg" (click)="toggleWebcam();" *ngIf="action_type!='NoMoreAction'">
-                    <i fa name="toggle-on"></i> Toggle Webcam
-                  </button> -->
                         
                 </div>
             </div>
@@ -77,15 +74,30 @@
   
           </div>
         </div>
-  
       </div>
-      
     </div>
-  
+
   </div>
-  
-  <!-- object list -->
-  <div class="row text-center mt-1">
+
+
+  <!-- object picture list for stage #1 -->
+  <div *ngIf="stageId==1" class="row text-center mt-1">
+      <div class="container picture-list">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div>
+          <h3>Please find the following word cards. (Found : {{ foundObjectCount }} / {{ totalObjectCount }})</h3>
+          </div>
+          <div class="container-fluid text-center" *ngIf="displayObjectList">
+              <img *ngFor="let object of objects" id="{{object.object_name}}" class="object-img" alt="{{ object.object_display_name }}" src="../../../assets/images/object/{{object.object_name.toLowerCase()}}.jpg"/>
+          </div> 
+        </div>
+        <div class="col-1"></div>
+      </div>
+    </div>
+
+  <!-- object word list for stage #2 -->
+  <div *ngIf="stageId==2" class="row text-center mt-1">
     <div class="container object-list">
       <div class="col-1"></div>
       <div class="col-10">

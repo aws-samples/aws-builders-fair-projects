@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace BuildersFair_API.DTOs
 {
     public class RekognitionTestDTO
@@ -12,7 +14,9 @@ namespace BuildersFair_API.DTOs
 
     public class PollyTestDTO
     {
+        public string language_code { get; set; }    
         public string text { get; set; }
+        public string voice_name { get; set; }
     }
 
     public class PollyLanguageDTO
@@ -34,7 +38,8 @@ namespace BuildersFair_API.DTOs
 
     public class TranscribeTestDTO
     {
-        public string mediaUri { get; set; }
+        public string language_code { get; set; }
+        public IFormFile WAVblob { get; set; }
     }
 
     public class TranscribeLanguageDTO

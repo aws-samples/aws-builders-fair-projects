@@ -79,7 +79,7 @@ export class DebugComponent implements OnInit {
   }
 
   getGameColumns(): string[] {
-    return ['game_id', 'name', 'share_yn', 'start_date', 'end_date'];
+    return ['game_id', 'name', 'share_yn', 'start_date', 'end_date', 'lang_code'];
   }
 
   getCastColumns(): string[] {

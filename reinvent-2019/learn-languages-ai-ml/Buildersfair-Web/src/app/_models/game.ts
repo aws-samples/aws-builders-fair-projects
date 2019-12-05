@@ -3,4 +3,5 @@ export interface Game {
     name: string;
     start_date: Date;
     end_date?: Date;
+    language_code: string;
 }
