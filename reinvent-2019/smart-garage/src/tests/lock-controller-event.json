@@ -1,0 +1,20 @@
+{
+  "directive": {
+      "header": {
+          "namespace": "Alexa.LockController",
+          "name": "Lock",
+          "payloadVersion": "3",
+          "messageId": "fa5c1080-dd59-48f9-b79f-c73190834071",
+          "correlationToken": "AAAAAAAAAAAY+b"
+      },
+      "endpoint": {
+          "scope": {
+              "type": "BearerToken",
+              "token": "Atza|IwEBI"
+          },
+          "endpointId": "garage-lock-01",
+          "cookie": {}
+      },
+      "payload": {}
+  }
+}

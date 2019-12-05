@@ -1,0 +1,69 @@
+{
+  "iot_id": "lotus-garage-raspi-w",
+  "datetime": "2019-09-18T09:53:49.542620",
+  "state": {
+    "reported": {
+      "status": "close",
+      "iot_id": "lotus-garage-raspi-w"
+    }
+  },
+  "clientToken": "2a605b27-99e6-4d19-9fee-839c6099b5ae"
+}
+
+
+
+{
+  "state": {
+    "reported": {
+      "status": "open",
+      "iot_id": "lotus-garage-raspi-w"
+    }
+  },
+  "metadata": {
+    "reported": {
+      "status": {
+        "timestamp": 1568825883
+      },
+      "iot_id": {
+        "timestamp": 1568825883
+      }
+    }
+  },
+  "version": 99,
+  "timestamp": 1568825883,
+  "clientToken": "cbd4334b-ed8b-42e2-aef0-88c2b76c438b"
+}
+
+
+{
+  "state": {
+    "reported": {
+      "status": "close",
+      "iot_id": "lotus-garage-raspi-w"
+    }
+  },
+  "metadata": {
+    "reported": {
+      "status": {
+        "timestamp": 1568825902
+      },
+      "iot_id": {
+        "timestamp": 1568825902
+      }
+    }
+  },
+  "version": 100,
+  "timestamp": 1568825902,
+  "clientToken": "e14908bf-8fe5-4b92-8dab-080c0113950e"
+}
+
+
+SELECT state.reported.iot_id as iot_id, timestamp, state.reported.status as status, version FROM "$aws/things/smart-garage/shadow/update/accepted"
+
+
+{
+    "version": 109,
+    "timestamp": 1568826324,
+    "iot_id": "lotus-garage-raspi-w",
+    "status": "close"
+}

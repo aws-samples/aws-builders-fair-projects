@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda to control smart-garage using Alexa Smart Home skill
+
+Resources:
+  SmartGarageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Lambda to control smart-garage using Alexa Smart Home skill
+      CodeUri: .
+      Handler: src/app.handler
+      Runtime: nodejs12.x
+      Tracing: Active
+      Policies:
+        - AWSIoTFullAccess
+
+      # TODO: https://github.com/awslabs/serverless-application-model/pull/363
+      # Events:
+      #   AlexaSkillEvent:
+      #     Type: AlexaSkill
+
+Outputs:
+  LambdaFunction:
+    Description: "Lambda function ARN"
+    Value: !GetAtt SmartGarageFunction.Arn
