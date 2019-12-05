@@ -1,6 +1,6 @@
 # Sign & Speak - AI-powered Communication
 
-<div style="text-align:center"><img src="img/sign-and-speak-logo-small.png" /></div>
+<p align="center"><img src="img/sign-and-speak-logo-small.png" /></p>
 
 ## Project Overview
 
