@@ -17,7 +17,16 @@ The Sign & Speak demo allows two participants to complete two scripted conversat
 The table below shows the two scripted conversations supported in the demo, where *A* is the Auslan user and *E* is the English user.
 
 | Conversation #1 | Conversation #2 |
-| A: Hello.<br />E: Hi! How are you?<br />A: Good. How are you?<br />E: I'm doing well. What are you planning tonight?<br />A: Going to the pub.<br />E: Oh cool, I'd love to join you. What time are you going?<br />A: At 20:00<br />E: See you there!<br />A: Goodbye | A: Pleased to meet you.<br />E: Likewise. How are you?<br />A: Good. How are you?<br />E: I'm doing well. What are you up to tonight?<br />A: Going to a restaurant.<br />E: Sound great, I'd love to join you. At what time are you going?<br />A: At 20:00<br />E: See you there!<br />A: Goodbye |
+| A: Hello. | A: Pleased to meet you. |
+| E: Hi! How are you? | E: Likewise. How are you? |
+| A: Good. How are you? | A: Good. How are you? |
+| E: I'm doing well. What are you planning tonight? | E: I'm doing well. What are you up to tonight? |
+| A: Going to the pub. | A: Going to a restaurant. |
+| E: Oh cool, I'd love to join you. What time are you going? | |
+| A: At 20:00 | E: Sound great, I'd love to join you. At what time are you going? |
+| E: See you there! | A: At 20:00 |
+| A: Goodbye | E: See you there! |
+| | A: Goodbye |
 
 In addition to the two-way conversation, the demo allows for individual participants to test the Auslan transcription model seperately. When testing the Auslan model, participants can choose from the following list of supported words and phrases:
 
