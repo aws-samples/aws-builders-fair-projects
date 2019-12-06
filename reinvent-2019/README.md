@@ -17,6 +17,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [Learn Languages with AWS AI/ML](learn-languages-ai-ml) | A casual game to learn languages with AWS AI/ML |
 | [Polyglot Bot](polyglot-bot) | A greeter bot that recognizes your greeting language and wish you back in the same language with hand gesture |
 | [Rhythm Cloud](rhythm-cloud) | Learn to play the drums and learn AWS IoT |
+| [Sign & Speak](sign-and-speak) | A communication tool for users of sign language and users of spoken language, allowing for simple conversation through the use of AI/ML |
 | [Skittles Sorter](skittle-sorter) | The Skittles Sorter automagically sorts your favorite snack based on their color, powered by the AWS IoT suite of services |
 | [Sports Scoring using Machine Learning](sports-scoring-using-machine-learning) | Track and display the score of a Cornhole game using a camera and Amazon SageMaker |
 | [Walking Robot](walking-robot) | We use AWS RoboMaker to design, simulate and then help build a physical limbs and motors, we then use Sagemaker to help learn balance and then IoT to control and use feedback of real-world measurements to compare with the simulated data |
