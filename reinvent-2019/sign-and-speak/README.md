@@ -17,16 +17,16 @@ The Sign & Speak demo allows two participants to complete two scripted conversat
 The table below shows the two scripted conversations supported in the demo, where *A* is the Auslan user and *E* is the English user.
 
 | Conversation #1 | Conversation #2 |
+| ------------- | ------------- |
 | A: Hello. | A: Pleased to meet you. |
 | E: Hi! How are you? | E: Likewise. How are you? |
 | A: Good. How are you? | A: Good. How are you? |
 | E: I'm doing well. What are you planning tonight? | E: I'm doing well. What are you up to tonight? |
 | A: Going to the pub. | A: Going to a restaurant. |
-| E: Oh cool, I'd love to join you. What time are you going? | |
-| A: At 20:00 | E: Sound great, I'd love to join you. At what time are you going? |
-| E: See you there! | A: At 20:00 |
-| A: Goodbye | E: See you there! |
-| | A: Goodbye |
+| E: Oh cool, I'd love to join you. What time are you going? | E: Sound great, I'd love to join you. At what time are you going? |
+| A: At 20:00 | A: At 20:00 |
+| E: See you there! | E: See you there! |
+| A: Goodbye | A: Goodbye |
 
 In addition to the two-way conversation, the demo allows for individual participants to test the Auslan transcription model seperately. When testing the Auslan model, participants can choose from the following list of supported words and phrases:
 
@@ -45,7 +45,12 @@ In addition to the two-way conversation, the demo allows for individual particip
 
 ## 4. Architecture
 
-TODO - describe architecture 
+The image below shows the full architecture for the two-way communication demo.
+
+1. A video recording is made of the Auslan user signing a word or phrase. This video is uploaded to an Amazon S3 bucket.
+1. The video upload triggers an AWS Lambda function which transforms the video into an image (a grid of frames). 
+1. A second AWS Lambda function sends the image to an Amazon SageMaker inference endpoint and waits for the response. It stores the resulting message in Amazon DynamoDB.
+1. TODO - continue describing the process
 
 <p align="center"><img src="img/sign-and-speak-architecture.png" /></p>
 
@@ -66,13 +71,21 @@ Below is a list of hardware and equipment used during the demo, in combination w
 
 ### 5.2 Machine Learning Model
 
-TODO
+The sign language machine learning model is created using [PyTorch](https://pytorch.org/) in [Amazon SageMaker](https://aws.amazon.com/sagemaker/). This section describes the process of training a new model from scratch.
 
 #### 5.2.1 Creating a data set
 
+First, you need to decide on a set of words and short phrases which the demo should support. We used the list of 12 words and phrases listed in section 3. The model performs better on signs which are visually distinct, but with enough training data, it can distinguish between similar signs such as grandfather and grandmother.
+
+Second, you need to determine the audience for your demo. At re:Invent, we expected to see adult participants, with no prior knowledge of Auslan, and various nationalities, genders, clothing styles, and other visual features. To create a robust model for our expected audience, we asked 64 colleagues from different AWS offices to help us create training data. 
+
+We controlled for factors such as background and lighting by choosing to only support a white background with even lighting. After completing the recording sessions with volunteers, and discarding unsuitable recordings, we were left with 42-72 videos per word or phrase. 
+
+#### 5.2.2. Video preprocessing
+
 TODO
 
-#### 5.2.2 Training and deploying a model
+#### 5.2.3 Training and deploying a model
 
 TODO
 
