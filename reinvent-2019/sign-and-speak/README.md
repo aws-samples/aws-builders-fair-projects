@@ -12,7 +12,27 @@ Sign & Speak facilitates communication between users of spoken language and user
 
 ## 3. Participant Experience
 
-TODO
+The Sign & Speak demo allows two participants to complete two scripted conversations, where one participant uses Auslan (Australian sign language) and one participant uses English. The Auslan user stands in front of a webcam, with a white background behind them, and is shown the 'Sign' page of the UI. The English user stands in front of a directional microphone, and is shown the 'Speak' page of the UI. Both UI components allow the participants to record their interaction through start/stop buttons.
+
+The table below shows the two scripted conversations supported in the demo, where *A* is the Auslan user and *E* is the English user.
+
+| Conversation #1 | Conversation #2 |
+| A: Hello.<br />E: Hi! How are you?<br />A: Good. How are you?<br />E: I'm doing well. What are you planning tonight?<br />A: Going to the pub.<br />E: Oh cool, I'd love to join you. What time are you going?<br />A: At 20:00<br />E: See you there!<br />A: Goodbye | A: Pleased to meet you.<br />E: Likewise. How are you?<br />A: Good. How are you?<br />E: I'm doing well. What are you up to tonight?<br />A: Going to a restaurant.<br />E: Sound great, I'd love to join you. At what time are you going?<br />A: At 20:00<br />E: See you there!<br />A: Goodbye |
+
+In addition to the two-way conversation, the demo allows for individual participants to test the Auslan transcription model seperately. When testing the Auslan model, participants can choose from the following list of supported words and phrases:
+
+* Cat
+* Friend
+* Grandfather
+* Grandmother
+* Hello
+* Goodbye
+* Pleased to meet you
+* Good! How are you?
+* Thank you
+* Eight 'o clock
+* Restaurant
+* Pub
 
 ## 4. Architecture
 
