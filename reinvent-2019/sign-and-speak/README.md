@@ -22,21 +22,32 @@ TODO - describe architecture
 
 ## 5. User Guide
 
+This section describes how to set up the project on your own AWS account.
+
+### 5.1 Hardware and Equipment
+
+Below is a list of hardware and equipment used during the demo, in combination with the laptop running the demo itself.
+
+* Webcam with USB connector
+* Directional microphone with USB connector
+* White canvas background + stand
+* Height-adjustable tripods for webcam and microphone
+* Additional monitor (*optional*)
+* Softbox lighting kit (*optional*)
+
+### 5.2 Machine Learning Model
+
 TODO
 
-### 5.1 Machine Learning Model
+#### 5.2.1 Creating a data set
 
 TODO
 
-#### 5.1.1 Creating a data set
+#### 5.2.2 Training and deploying a model
 
 TODO
 
-#### 5.1.2 Training and deploying a model
-
-TODO
-
-### 5.2 User Interface
+### 5.3 User Interface
 
 TODO
 
