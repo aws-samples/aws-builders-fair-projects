@@ -63,6 +63,7 @@ TODO - Add more Q/A
 ## Authors
 
 Sara 'Moose' van de Moosdijk, AWS ([GitHub](https://github.com/moose-in-australia/) | [LinkedIn](https://www.linkedin.com/in/saravandemoosdijk/))
+
 Eshaan Anand, AWS (GitHub | LinkedIn)
 
 ## License
