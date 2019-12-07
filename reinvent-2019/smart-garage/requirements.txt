@@ -1,0 +1,5 @@
+AWSIoTPythonSDK==1.4.7
+# RPi.GPIO==0.7.0
+python-dotenv==0.10.3
+coloredlogs==10.0
+watchtower==0.7.3

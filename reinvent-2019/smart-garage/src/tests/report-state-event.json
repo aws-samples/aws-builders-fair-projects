@@ -1,0 +1,20 @@
+{
+  "directive": {
+      "header": {
+          "namespace": "Alexa",
+          "name": "ReportState",
+          "payloadVersion": "3",
+          "messageId": "9dfb309d-9b1a-438f-ae9a-2973cc1459b3",
+          "correlationToken": "AAAAAAAAAAC"
+      },
+      "endpoint": {
+          "scope": {
+              "type": "BearerToken",
+              "token": "Atza|IwE"
+          },
+          "endpointId": "garage-lock-01",
+          "cookie": {}
+      },
+      "payload": {}
+  }
+}
