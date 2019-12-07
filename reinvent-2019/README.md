@@ -18,6 +18,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [Polyglot Bot](polyglot-bot) | A greeter bot that recognizes your greeting language and wish you back in the same language with hand gesture |
 | [Rhythm Cloud](rhythm-cloud) | Learn to play the drums and learn AWS IoT |
 | [Skittles Sorter](skittle-sorter) | The Skittles Sorter automagically sorts your favorite snack based on their color, powered by the AWS IoT suite of services |
+| [Smart Garage](smart-garage) | Control your garage using Alexa using Raspberry Pi |
 | [Sports Scoring using Machine Learning](sports-scoring-using-machine-learning) | Track and display the score of a Cornhole game using a camera and Amazon SageMaker |
 | [Walking Robot](walking-robot) | We use AWS RoboMaker to design, simulate and then help build a physical limbs and motors, we then use Sagemaker to help learn balance and then IoT to control and use feedback of real-world measurements to compare with the simulated data |
 | [Zombie LEGO® IoT Robot](lego-ev3-raspberry-pi-robot) | Build a LEGO® Mindstorms® EV3 Robot, with the Robot Operating System and AWS RoboMaker, AWS IoT Greengrass, Raspberry Pi, Raspberry Pi Camera and a console gaming controller |
