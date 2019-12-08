@@ -1,5 +1,5 @@
 {
-    "region": "REGION",
-    "wss_endpoint": "wss://xxxxxxxxxxxxx-ats.iot.REGION.amazonaws.com/mqtt",
+    "region": "us-west-2",
+    "wss_endpoint": "wss://ah16oq02y4k3v-ats.iot.us-west-2.amazonaws.com/mqtt",
     "iot_policy_suffix": "-full-access"
 }

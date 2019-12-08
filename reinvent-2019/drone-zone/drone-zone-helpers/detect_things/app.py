@@ -42,42 +42,24 @@ def handler(event, context):
 
     if mode == 'cars':
 
-        new_b64, prediction, dX, dY, mX, mY = carsModel.predict_from_base64String(b64, mode, target)
-
-        response = {
-            'b64': new_b64,
-            'prediction': prediction,
-            'dX': dX,
-            'dY': dY,
-            'dZ': 'HOLD',
-            'mX': mX,
-            'mY': mY,
-            'mZ': 1.0
-        }
+        prediction = carsModel.predict_from_base64String(b64, mode, target)
 
     elif mode == 'drones':
 
-        new_b64, prediction, dX, dY, dZ, mX, mY, mZ = dronesModel.predict_from_base64String(b64)
-
-        response = {
-            'b64': new_b64,
-            'prediction': prediction,
-            'dX': dX,
-            'dY': dY,
-            'dZ': dZ,
-            'mX': mX,
-            'mY': mY,
-            'mZ': mZ
-        }
+        prediction = dronesModel.predict_from_base64String(b64)
 
     else:
         return
 
+    response = {
+        'prediction': prediction
+    }
+
     end = int(round(time.time() * 1000))
 
-    logging.info('Prediction: {} for type: {} in: {}'.format(prediction, 'base64 string', end - start))
+    # logging.info('Prediction: {} for type: {} in: {}'.format(prediction, 'base64 string', end - start))
 
-    OUTPUT_TOPIC = 'detect-cars/{}/infer/output'.format(THING_NAME)
+    OUTPUT_TOPIC = 'detections/{}/infer/output'.format(THING_NAME)
 
     client.publish(topic=OUTPUT_TOPIC, payload=json.dumps(response))
     return response

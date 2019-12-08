@@ -14,11 +14,11 @@ function App() {
   return (
     <div className="App">
       <SemanticToastContainer />
-      <Dashboard thingName="dz-drone0" />
+      {/* <Dashboard thingName="dz-drone0" /> */}
       {/* <Dashboard thingName="dz-drone1" /> */}
       {/* <Dashboard thingName="dz-drone2" /> */}
       {/* <Dashboard thingName="dz-drone3" /> */}
-      {/* <Dashboard thingName="dz-drone4" /> */}
+      <Dashboard thingName="dz-drone4" />
     </div>
   );
 }

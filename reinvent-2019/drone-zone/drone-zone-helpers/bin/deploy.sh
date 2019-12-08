@@ -1,8 +1,8 @@
 # declare variables
-BUCKET_NAME_PREFIX=<BUCKET-NAME-PREFIX>
-DRONE_NAME=<DRONE-NAME>
-REGION=<REGION>
-DETECTION_MODEL_PATH=<MODEL-PATH>
+BUCKET_NAME_PREFIX=aws-drone-zone-helpers
+DRONE_NAME=dz-drone3
+REGION=us-west-2
+DETECTION_MODEL_PATH=s3://drone-zone-resources-us-west-2/cars-n-drones.zip
 
 # build, package, and deploy stack
 aws s3 mb --region $REGION s3://$BUCKET_NAME_PREFIX-$REGION

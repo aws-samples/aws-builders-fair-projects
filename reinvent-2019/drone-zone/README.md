@@ -2,6 +2,8 @@
 
 Drone Zone is a multi-drone command and control environment powered by AWS IoT/Greengrass. Flight settings are configured with Device Shadow Service for AWS IoT, while piloting instructions are provided by a serverless Lambda function deployed to the edge. With AWS SageMaker object detection models deployed to the edge, drones can detect other drones/RC cars within its range of vision, follow these targets, and report findings back to a real time dashboard.
 
+> Note: Project code and model is still being updated, and will be published shortly.
+
 ## AWS Services Used ##
 - [Amazon CloudFront](https://aws.amazon.com/cloudfront/)
 - [Amazon Cognito](https://aws.amazon.com/cognito/)

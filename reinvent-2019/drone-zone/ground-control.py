@@ -27,7 +27,15 @@ from olympe.messages.ardrone3.PilotingState import AltitudeChanged, AttitudeChan
 from olympe.messages.ardrone3.SpeedSettings import MaxVerticalSpeed, MaxRotationSpeed
 from olympe.messages.ardrone3.SpeedSettingsState import MaxRotationSpeedChanged, MaxVerticalSpeedChanged
 
+
 AllowedActions = ['both', 'publish', 'subscribe']
+
+CLASSES = [
+    "ferrari-red",
+    "lamborghini-white",
+    "porsche-yellow",
+    "lamborghini-orange"
+]
 
 CarModels = {
     'ferrari-red': 0,
@@ -138,7 +146,8 @@ def customShadowCallback_Delta(payload, responseStatus, token):
 
     if 'targeted_car' in payloadDict['state'].keys():
         droneThing.targeted_car = payloadDict['state']['targeted_car']
-
+        droneThing.initBB = None
+        droneThing.trackerInitialized = False
         print('updated targeted_car')
 
 
@@ -154,12 +163,18 @@ class DroneThing:
         )
         self.state = {}
         # default settings
+        self.IMAGE_WIDTH = int(1280*0.3)
+        self.IMAGE_HEIGHT = int(720*0.3)
         self.gimbal_pitch = -90.0
-        self.max_altitude = 3.0
+        self.max_altitude = 2.0
         self.flight_altitude = 2.0
-        self.detection_enabled = False
+        self.detection_enabled = True
         self.detection_mode = 'cars'
         self.targeted_car = 'porsche-yellow'
+        self.initBB = None
+        self.tracker = None
+        self.inferenceFrame = None
+        self.trackerInitialized = False
 
         self.tempd = tempfile.mkdtemp(prefix="olympe_streaming_test_")
         print("Olympe streaming example output dir: {}".format(self.tempd))
@@ -208,56 +223,142 @@ class DroneThing:
             :type yuv_frame: olympe.VideoFrame
         """
 
-        # 30 / LIMIT = FPS that will be processed
-        LIMIT = 8
+        # Every x frames, do inference (at 30fps rate)
+        LIMIT = 60
 
         if self.frameCount < LIMIT:
             self.frameCount = self.frameCount + 1
         elif self.frameCount == LIMIT or self.frameCount > LIMIT:
             self.frameCount = 0
 
-            # the VideoFrame.info() dictionary contains some useful informations
-            # such as the video resolution
-            info = yuv_frame.info()
-            height, width = info["yuv"]["height"], info["yuv"]["width"]
-            print(str(width) + " x " + str(height))
+        # the VideoFrame.info() dictionary contains some useful informations
+        # such as the video resolution
+        info = yuv_frame.info()
+        height, width = info["yuv"]["height"], info["yuv"]["width"]
+        # print(str(width) + " x " + str(height))
 
-            # convert pdraw YUV flag to OpenCV YUV flag
-            cv2_cvt_color_flag = {
-                olympe.PDRAW_YUV_FORMAT_I420: cv2.COLOR_YUV2BGR_I420,
-                olympe.PDRAW_YUV_FORMAT_NV12: cv2.COLOR_YUV2BGR_NV12,
-            }[info["yuv"]["format"]]
+        # convert pdraw YUV flag to OpenCV YUV flag
+        cv2_cvt_color_flag = {
+            olympe.PDRAW_YUV_FORMAT_I420: cv2.COLOR_YUV2BGR_I420,
+            olympe.PDRAW_YUV_FORMAT_NV12: cv2.COLOR_YUV2BGR_NV12,
+        }[info["yuv"]["format"]]
 
-            # yuv_frame.as_ndarray() is a 2D numpy array with the proper "shape"
-            # i.e (3 * height / 2, width) because it's a YUV I420 or NV12 frame
+        # yuv_frame.as_ndarray() is a 2D numpy array with the proper "shape"
+        # i.e (3 * height / 2, width) because it's a YUV I420 or NV12 frame
 
-            # Use OpenCV to convert the yuv frame to RGB
-            cv2frame = cv2.cvtColor(yuv_frame.as_ndarray(), cv2_cvt_color_flag)
+        # Use OpenCV to convert the yuv frame to RGB
+        cv2frame = cv2.cvtColor(yuv_frame.as_ndarray(), cv2_cvt_color_flag)
+        cv2frame = cv2.resize(cv2frame, None, fx=0.3, fy=0.3)
 
-            payload = {
-                'b64': self.frameToBase64String(cv2frame, 0.3),
-                'timestamp': time.time(),
-                'mode': self.detection_mode,
-                'target': CarModels[self.targeted_car]
-            }
+        payload = {
+            'b64': self.frameToBase64String(cv2frame, 1.0),
+            'mode': self.detection_mode,
+            'target': CarModels[self.targeted_car]
+        }
 
-            ui_payload = {
-                'b64': self.frameToBase64String(cv2frame, 0.3)
-            }
+        # print("frameCount{}".format(self.frameCount))
+        if self.detection_enabled == True and self.frameCount == 0:
 
-            if self.detection_enabled == True:
+            print("try inference")
+            self.inferenceFrame = cv2frame
+            myAWSIoTMQTTShadowClient.getMQTTConnection().publish('detections/{}/infer/input'.format(topic),
+                                                                    json.dumps(payload), 0)
 
-                myAWSIoTMQTTShadowClient.getMQTTConnection().publish('detect-cars/{}/infer/input'.format(topic),
-                                                                     json.dumps(payload), 0)
+        # roll - right axis (left/right)
+        dY = 'HOLD' # direction
+        mY = 30.0    # magnitude
 
-            else:
+        # pitch - front axis (forward/backward)
+        dX = 'HOLD' # direction
+        mX = 30.0    # magnitude
 
-                myAWSIoTMQTTShadowClient.getMQTTConnection().publish('{}/frames'.format(topic), json.dumps(ui_payload),
-                                                                     0)
+        # gaz - down axis (up/down)
+        dZ = 'HOLD' # direction
+        mZ = 30.0    # magnitude
+
+        # check to see if we are currently tracking an object
+        if self.initBB is not None and self.trackerInitialized == True and self.detection_enabled == True:
+
+            # grab the new bounding box coordinates of the object
+            (success, box) = self.tracker.update(cv2frame)
+
+            # check to see if the tracking was a success
+            if success:
+                (x, y, w, h) = [int(v) for v in box]
+
+                x1 = x
+                y1 = y
+                x2 = x + w
+                y2 = y + h
+                detectionWidth = w
+                offsetX = self.IMAGE_WIDTH/2-(x1+x2)/2
+                offsetY = self.IMAGE_HEIGHT/2-(y1+y2)/2
+
+                # proportionately derived from 25/640 and 25/360
+                offsetYPercentage = 0.07
+                offsetXPercentage = 0.04
+
+                if self.detection_mode == 'cars':
+            
+                    if offsetY < -offsetYPercentage*self.IMAGE_HEIGHT:
+                        dX = 'BACKWARD'
+                    elif offsetY > offsetYPercentage*self.IMAGE_HEIGHT:
+                        dX = 'FORWARD'
+
+                    if abs(offsetY) > offsetYPercentage*self.IMAGE_HEIGHT * 3:
+                        mX = 40.0
+                    elif abs(offsetY) > offsetYPercentage*self.IMAGE_HEIGHT * 2:
+                        mX = 35.0
+                        
+                    if offsetX < -offsetXPercentage*self.IMAGE_WIDTH:
+                        dY = 'RIGHT'
+                    elif offsetX > offsetXPercentage*self.IMAGE_WIDTH:
+                        dY = 'LEFT'
+
+                    if abs(offsetX) > offsetXPercentage*self.IMAGE_WIDTH * 3:
+                        mY = 40.0
+                    elif abs(offsetX) > offsetXPercentage*self.IMAGE_WIDTH * 2:
+                        mY = 35.0
+                        
+                    cv2.putText(cv2frame, str(CLASSES[self.last_detected_class]) + ' - ' + str(self.last_confidence), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
+
+                    self.performPilotingCommands(dX, dY, dZ, mX, mY, mZ)
+
+                elif self.detection_mode == 'drones':
+
+                    if offsetX < -offsetXPercentage*self.IMAGE_WIDTH:
+                        dY = 'RIGHT'
+                    elif offsetX > offsetXPercentage*self.IMAGE_WIDTH:
+                        dY = 'LEFT'
+
+                    if offsetY < -offsetYPercentage*self.IMAGE_HEIGHT:
+                        dZ = 'DOWN'
+                    elif offsetY > offsetYPercentage*self.IMAGE_HEIGHT:
+                        dZ = 'UP'
+
+                    if detectionWidth < self.IMAGE_HEIGHT*0.10:
+                        dX = 'FORWARD'
+                    elif detectionWidth > self.IMAGE_HEIGHT*0.40:
+                        dX = 'BACKWARD'
+
+                    cv2.putText(cv2frame, 'anafi-drone - ' + str(self.last_confidence), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
+
+                    self.performPilotingCommands(dX, dY, dZ, mX, mY, mZ)
+
+                cv2.rectangle(cv2frame,(x1,y1),(x2,y2),(245,185,66),2)
+                cv2.putText(cv2frame, str(self.IMAGE_WIDTH) + ', ' + str(self.IMAGE_HEIGHT) + ' | ' + str(offsetX) + ', ' + str(offsetY) + ', ' + str(detectionWidth), (0, self.IMAGE_HEIGHT-10), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
+            
+            cv2.putText(cv2frame, dX + ', ' + dY + ', ' + dZ, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
 
         # # Use OpenCV to show this frame
-        # cv2.imshow("Olympe Streaming Example", new_frame)
-        # cv2.waitKey(1)  # please OpenCV for 1 ms...
+        cv2.imshow("Frame", cv2frame)
+        key = cv2.waitKey(1) & 0xFF
+
+        ui_payload = {
+            'b64': self.frameToBase64String(cv2frame, 1.0)
+        }
+
+        myAWSIoTMQTTShadowClient.getMQTTConnection().publish('{}/frames'.format(topic), json.dumps(ui_payload), 0)
 
     def frameToBase64String(self, cv2frame, resizeRatio):
 
@@ -318,11 +419,15 @@ class DroneThing:
         # Start video streaming
         self.drone.start_video_streaming()
 
+        # self.drone.start_piloting()
+
     def stopStreaming(self):
         print('<< stopStreaming() >>')
 
         # Stop video streaming
         self.drone.stop_video_streaming()
+
+        self.drone.stop_piloting()
 
     def notSupportedHandler(self):
         print('<< notSupportedHandler() >>')
@@ -330,54 +435,64 @@ class DroneThing:
     def predictionCallback(self, client, userdata, message):
         print('<< predictionCallback() >>')
 
-        # convert from bytearray back to image
-
-        keyName = 'b64'
-
         data = json.loads(message.payload.decode())
-        bytes_jpg = bytes(data[keyName].encode())
-        new_buffer = base64.b64decode(bytes_jpg)
-        new_frame = cv2.imdecode(np.fromstring(new_buffer, dtype=np.uint8), -1)
 
-        # Use OpenCV to show this frame
-        cv2.imshow("Olympe Streaming via callback", new_frame)
-        cv2.waitKey(1)  # please OpenCV for 1 ms...
+        if len(data['prediction']) > 0 and data['prediction'][0][0] > -1:
+
+            self.last_confidence = round(data['prediction'][0][2]*100,2)
+            self.last_detected_class = int(data['prediction'][0][0])
+            x1 = data['prediction'][0][2]*self.IMAGE_WIDTH
+            y1 = data['prediction'][0][3]*self.IMAGE_HEIGHT
+            x2 = data['prediction'][0][4]*self.IMAGE_WIDTH
+            y2 = data['prediction'][0][5]*self.IMAGE_HEIGHT
+            w = x2-x1
+            h = y2-y1
+
+            print("({},{},{},{})".format(x1,x2,y1,y2))
+            print("({},{})".format(w,h))
+
+            self.initBB = (int(x1), int(y1), int(w), int(h))
+            # self.tracker = cv2.TrackerMOSSE_create()
+            # self.tracker = cv2.TrackerKCF_create()
+            self.tracker = cv2.TrackerCSRT_create()
+            self.tracker.init(self.inferenceFrame, self.initBB)   
+            self.trackerInitialized = True
+
+    def performPilotingCommands(self, dX, dY, dZ, mX, mY, mZ):     
 
         if self.detection_enabled == True:
-
-            data = json.loads(message.payload.decode())
 
             yaw = 0
             gaz = 0
             roll = 0
             pitch = 0
 
-            if self.detection_mode == 'cars' and data['dX'] == 'HOLD' and data['dY'] == 'HOLD':
+            if self.detection_mode == 'cars' and dX == 'HOLD' and dY == 'HOLD':
                 return
 
-            elif self.detection_mode == 'drones' and data['dX'] == 'HOLD' and data['dY'] == 'HOLD' and data[
-                'dZ'] == 'HOLD':
+            elif self.detection_mode == 'drones' and dX == 'HOLD' and dY == 'HOLD' and dZ == 'HOLD':
                 return
 
-            if data['dX'] == 'FORWARD':
-                pitch = int(data['mX'])
-            elif data['dX'] == 'BACKWARD':
-                pitch = int(-1 * data['mX'])
+            if dX == 'FORWARD':
+                pitch = int(mX)
+            elif dX == 'BACKWARD':
+                pitch = int(-1 * mX)
 
-            if data['dY'] == 'LEFT':
-                roll = int(-1 * data['mY'])
-            elif data['dY'] == 'RIGHT':
-                roll = int(data['mY'])
+            if dY == 'LEFT':
+                roll = int(-1 * mY)
+            elif dY == 'RIGHT':
+                roll = int(mY)
 
-            if data['dZ'] == 'UP':
-                gaz = int(data['mZ'])
-            elif data['dZ'] == 'DOWN':
-                gaz = int(-1 * data['mZ'])
+            if dZ == 'UP':
+                gaz = int(mZ)
+            elif dZ == 'DOWN':
+                gaz = int(-1 * mZ)
 
-            for i in range(0, 2):
-                print('pcmd - {}({}), {}({}), {}({})'.format(data['dX'], data['mX'], data['dY'], data['mY'], data['dZ'],
-                                                             data['mZ']))
-                self.drone(PCMD(1, roll, pitch, yaw, gaz, int(time.time())))
+            # for i in range(0, 1):
+            if self.frameCount % 10 == 0:
+                for i in range (0,2):
+                    print('pcmd - {}({}), {}({}), {}({})'.format(dX, pitch, dY, roll, dZ, gaz))
+                    self.drone(PCMD(1, roll, pitch, yaw, gaz, int(time.time())))
 
     # frame callback
     def frameCallback(self, client, userdata, message):
@@ -608,7 +723,7 @@ myAWSIoTMQTTShadowClient.configureCredentials(groupCA, privateKeyPath, certifica
 myAWSIoTMQTTShadowClient.configureAutoReconnectBackoffTime(1, 32, 20)
 myAWSIoTMQTTShadowClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTShadowClient.configureMQTTOperationTimeout(5)  # 5 sec
-myAWSIoTMQTTShadowClient.getMQTTConnection().configureOfflinePublishQueueing(5)  # Infinite offline Publish queueing
+myAWSIoTMQTTShadowClient.getMQTTConnection().configureOfflinePublishQueueing(10)  # Infinite offline Publish queueing
 myAWSIoTMQTTShadowClient.getMQTTConnection().configureDrainingFrequency(2)  # Draining: 2 Hz
 
 # Create a deviceShadow with persistent subscription
@@ -646,9 +761,9 @@ droneThing = DroneThing()
 # Connect and subscribe to AWS IoT
 if args.mode == 'both' or args.mode == 'subscribe':
     myAWSIoTMQTTShadowClient.getMQTTConnection().subscribe('commands/{}'.format(topic), 1, droneThing.commandCallback)
-    myAWSIoTMQTTShadowClient.getMQTTConnection().subscribe('detect-cars/{}/infer/output'.format(topic), 1,
+    myAWSIoTMQTTShadowClient.getMQTTConnection().subscribe('detections/{}/infer/output'.format(topic), 1,
                                                            droneThing.predictionCallback)
-    # myAWSIoTMQTTShadowClient.getMQTTConnection().subscribe('detect-cars/{}/infer/output'.format(topic), 1, droneThing.frameCallback)
+    # myAWSIoTMQTTShadowClient.getMQTTConnection().subscribe('{}/frames'.format(topic), 1, droneThing.frameCallback)
 time.sleep(2)
 
 # Publish to the same topic in a loop forever

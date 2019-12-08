@@ -572,25 +572,25 @@ class Dashboard extends React.Component {
         });
         subscriptions.push(framesSub);
 
-        var predictionCarsSub = PubSub.subscribe(`detections/${this.state.thingName}/infer/output`).subscribe({
-            next: data => {
-                this.setState({ message: data.value.b64, last_timestamp: data.value.timestamp });
-                // console.log('Image received', data)
-            },
-            error: error => console.error(error),
-            close: () => console.log('Done'),
-        });
-        subscriptions.push(predictionCarsSub);
+        // var predictionCarsSub = PubSub.subscribe(`detections/${this.state.thingName}/infer/output`).subscribe({
+        //     next: data => {
+        //         this.setState({ message: data.value.b64, last_timestamp: data.value.timestamp });
+        //         // console.log('Image received', data)
+        //     },
+        //     error: error => console.error(error),
+        //     close: () => console.log('Done'),
+        // });
+        // subscriptions.push(predictionCarsSub);
 
-        var predictionDronesSub = PubSub.subscribe(`detections/${this.state.thingName}/infer/output`).subscribe({
-            next: data => {
-                this.setState({ message: data.value.b64, last_timestamp: data.value.timestamp });
-                // console.log('Image received', data)
-            },
-            error: error => console.error(error),
-            close: () => console.log('Done'),
-        });
-        subscriptions.push(predictionDronesSub);
+        // var predictionDronesSub = PubSub.subscribe(`detections/${this.state.thingName}/infer/output`).subscribe({
+        //     next: data => {
+        //         this.setState({ message: data.value.b64, last_timestamp: data.value.timestamp });
+        //         // console.log('Image received', data)
+        //     },
+        //     error: error => console.error(error),
+        //     close: () => console.log('Done'),
+        // });
+        // subscriptions.push(predictionDronesSub);
 
         var commandsSub = PubSub.subscribe(`commands/${this.state.thingName}/ack`).subscribe({
             next: data => {

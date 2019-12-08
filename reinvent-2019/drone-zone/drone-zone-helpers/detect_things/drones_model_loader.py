@@ -112,16 +112,6 @@ class DronesMLModel(object):
                 dX = 'FORWARD'
             elif detectionWidth > IMAGE_HEIGHT*0.40:
                 dX = 'BACKWARD'
-
-            # if abs(offsetY) > offsetYPercentage*IMAGE_HEIGHT * 3:
-            #     magnitudeZ = 3.0
-            # if abs(offsetY) > offsetYPercentage*IMAGE_HEIGHT * 2:
-            #     magnitudeZ = 2.0
-                
-            # if abs(offsetX) > offsetXPercentage*IMAGE_WIDTH * 3:
-            #     magnitudeX = 3.0
-            # if abs(offsetX) > offsetXPercentage*IMAGE_WIDTH * 2:
-            #     magnitudeX = 2.0
                 
             cv2.rectangle(_img,(x1,y1),(x2,y2),(245,185,66),2)
             cv2.putText(_img, str(CLASSES[int(results[0][0])]) + ' - ' + str(round(results[0][1],2)), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
@@ -134,5 +124,5 @@ class DronesMLModel(object):
         retval, buffer = cv2.imencode('.jpg', _img)
         new_b64 = base64.b64encode(buffer).decode()
         
-        return new_b64, results, dX, dY, dZ, mX, mY, mZ
+        return results
 

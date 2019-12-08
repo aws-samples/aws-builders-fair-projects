@@ -55,8 +55,6 @@ class CarsMLModel(object):
         img = cv2.cvtColor(_img, cv2.COLOR_BGR2RGB)
 
         image_shape = img.shape
-        IMAGE_HEIGHT = image_shape[0]
-        IMAGE_WIDTH = image_shape[1]
 
         if img is None:
             return []
@@ -78,61 +76,9 @@ class CarsMLModel(object):
         for p in prob:
             plist = p.tolist()
             probs.append(plist)
-            if (plist[0]==target and (plist[4]-plist[2] < 0.25)):
+            if (plist[0]==target):
                 results = [plist]
                 break
         
-        # roll - right axis (left/right)
-        dY = 'HOLD' # direction
-        mY = 1.0    # magnitude
-
-        # pitch - front axis (forward/backward)
-        dX = 'HOLD' # direction
-        mX = 1.0    # magnitude
-        
-        if len(results) > 0 and round(results[0][1],2) > 0.15:
-        
-            x1 = int(results[0][2]*IMAGE_WIDTH)
-            y1 = int(results[0][3]*IMAGE_HEIGHT)
-            x2 = int(results[0][4]*IMAGE_WIDTH)
-            y2 = int(results[0][5]*IMAGE_HEIGHT)
-            offsetX = IMAGE_WIDTH/2-(x1+x2)/2
-            offsetY = IMAGE_HEIGHT/2-(y1+y2)/2
-
-            # proportionately derived from 25/640 and 25/360
-            offsetYPercentage = 0.07
-            offsetXPercentage = 0.04
-        
-            if offsetY < -offsetYPercentage*IMAGE_HEIGHT:
-                dX = 'BACKWARD'
-            elif offsetY > offsetYPercentage*IMAGE_HEIGHT:
-                dX = 'FORWARD'
-
-            if abs(offsetY) > offsetYPercentage*IMAGE_HEIGHT * 3:
-                mX = 3.0
-            if abs(offsetY) > offsetYPercentage*IMAGE_HEIGHT * 2:
-                mX = 2.0
-                
-            if offsetX < -offsetXPercentage*IMAGE_WIDTH:
-                dY = 'RIGHT'
-            elif offsetX > offsetXPercentage*IMAGE_WIDTH:
-                dY = 'LEFT'
-
-            if abs(offsetX) > offsetXPercentage*IMAGE_WIDTH * 3:
-                mY = 3.0
-            if abs(offsetX) > offsetXPercentage*IMAGE_WIDTH * 2:
-                mY = 2.0
-                
-            cv2.rectangle(_img,(x1,y1),(x2,y2),(245,185,66),2)
-            cv2.putText(_img, str(CLASSES[int(results[0][0])]) + ' - ' + str(round(results[0][1],2)), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
-            cv2.putText(_img, str(IMAGE_WIDTH) + ', ' + str(IMAGE_HEIGHT) + ' | ' + str(offsetX) + ', ' + str(offsetY), (0, IMAGE_HEIGHT-10), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
-        
-        localtime = time.asctime( time.localtime(time.time()))
-        
-        cv2.putText(_img, dY + ', ' + dX, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
-        cv2.putText(_img, localtime, (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0), lineType=cv2.LINE_AA)
-        retval, buffer = cv2.imencode('.jpg', _img)
-        new_b64 = base64.b64encode(buffer).decode()
-        
-        return new_b64, results, dX, dY, mX, mY
+        return results
 
