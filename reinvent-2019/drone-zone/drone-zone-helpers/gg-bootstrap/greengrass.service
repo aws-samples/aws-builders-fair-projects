@@ -1,0 +1,18 @@
+# Borrowed/adapted from https://gist.github.com/matthewberryman/fa21ca796c3a2e0dfe8224934b7b055c
+
+[Unit]
+Description=Greengrass
+After=network.target
+
+[Service]
+ExecStart=/greengrass/ggc/core/greengrassd start
+ExecStop=/greengrass/ggc/core/greengrassd stop
+Type=simple
+RestartSec=2
+Restart=always
+User=root
+PIDFile=/var/run/greengrassd.pid
+
+[Install]
+WantedBy=multi-user.target
+
