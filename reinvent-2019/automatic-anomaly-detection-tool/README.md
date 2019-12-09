@@ -55,7 +55,7 @@ Download Lambda Function Zip file and Machine Learning Model from following link
 
 3. In the __Template__ section, select __Template is ready__
 
-4. In the __Specify template__ section, select __Upload a template file__. Upload `sushi_cfn.yml`
+4. In the __Specify template__ section, select __Upload a template file__. Upload `demo_CFn.yml`
 
 5. Click __Next__
 
@@ -69,8 +69,8 @@ Download Lambda Function Zip file and Machine Learning Model from following link
 |__RailControllerCertificateARN__|certificate ARN which created at previous step|
 |__RobotControllerCertificateARN__|certificate ARN which created at previous step|
 |__GreengrassGroupName__|your Greengrass name|
-|InferenceLambdaSourceKey|S3 object key(lambda funcion)|
-|LambdaSourceBucket|S3Bucket(lambda funcion)|
+|InferenceLambdaSourceKey|your S3 object key(lambda funcion zip)|
+|LambdaSourceBucket|S3Bucket(lambda funcion zip)|
 |MLModelURI|ML Model S3 URL|
 
 8. Click __Next__. And click __Next__ again.
@@ -322,7 +322,7 @@ This demo use SageMaker built-in Image Classification template to create model. 
 
 ## Use Object Detection with Image Classification
 
-This demo use OpenCV to detect sushi saucer. But you can use Objecte Detection to detect sushi saucer. SageMaker built-in Object Detection Algorithm is not supported at SageMaker Neo(2019/11). If you want to use Object Detection with Image Classification use MXNet.
+This demo use OpenCV to detect sushi saucer. But you can use Object Detection to detect sushi saucer. SageMaker built-in Object Detection Algorithm is not supported at SageMaker Neo(2019/11). If you want to use Object Detection with Image Classification use MXNet.
 
 ## Authors ##
 - Jun Ichikawa juichika@amazon.com
