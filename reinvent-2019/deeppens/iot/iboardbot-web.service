@@ -1,0 +1,10 @@
+[Unit]
+Description=Service to bring up DeepPens iboardbot-web
+
+[Service]
+ExecStart=/usr/sbin/iboardbot-web
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+[
+  {
+    "svgFilePath": "AWS.svg",
+    "word": ["aws"]
+  },
+  {
+    "svgFilePath": "Amazon_Icon.svg",
+    "word": ["amazon"]
+  },
+  {
+    "svgFilePath": "Amazon_Logo.svg",
+    "word": ["amazon"],
+    "offset": {
+      "offset_x": 5.000002141150996,
+      "offset_y":	4.999782919919994,
+      "scale_x":	0.34788403790915795,
+      "scale_y": 0.34788403790915795
+    }
+  },
+  {
+    "svgFilePath": "Working-lambda.svg",
+    "word": ["serverless"],
+    "offset": {
+      "offset_x":	80.80159786950732,
+"offset_y":	-15,
+"scale_x":	0.45139813581890814,
+"scale_y":	0.45139813581890814
+    }
+  }
+]

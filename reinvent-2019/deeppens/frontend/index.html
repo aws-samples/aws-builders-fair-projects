@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.shoelace.style/1.0.0-beta24/shoelace.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+</head>
+<style>
+    /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+    .flip-card {
+        background-color: transparent;
+        width: 300px;
+        height: 200px;
+
+        perspective: 1000px;
+        /* Remove this if you don't want the 3D effect */
+    }
+
+    /* This container is needed to position the front and back side */
+    .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+    }
+
+    /* Do an horizontal flip when you move the mouse over the flip box container */
+    
+    .flip .flip-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* Position the front and back side */
+    .flip-card-front,
+    .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+    }
+
+    /* Style the front side (fallback if image is missing) */
+    .flip-card-front {
+        background-color: #bbb;
+        color: black;
+    }
+
+    /* Style the back side */
+    .flip-card-back {
+        color: white;
+        transform: rotateY(180deg);
+    }
+</style>
+
+<body>
+
+
+    <section class="hero is-info is-fullheight">
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="../">
+                            <img src="./img/deeppends.png" style="max-height: 3.75rem">
+                        </a>
+                        <span class="navbar-burger burger" data-target="navbarMenu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+                    <div id="navbarMenu" class="navbar-menu">
+                        <div class="navbar-end">
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-home"></i>
+                                    </span>
+                                    <span>Home</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-superpowers"></i>
+                                    </span>
+                                    <span>Examples</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-book"></i>
+                                    </span>
+                                    <span>Documentation</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="">
+                                    <span class="icon">
+                                        <i class="fa fa-github"></i>
+                                    </span>
+                                    <span>View Source</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hero-body">
+            <div class="container has-text-centered flip-card">
+                <div class="column is-10 is-offset-1 flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="box">
+                            <div id="show_hide" class="has-text-right" style="text-decoration: underline; color:navy">
+                                Show/Hide Config</div>
+                            <div style="display:none" id="toggle" class="has-text-left">
+                                Key <input type="text" id="access_id">
+                                Secret<input type="text" id="secret_key">
+                                <label>Region:</label>
+                                <select id="region">
+                                    <option value="us-east-1">US East (N. Virginia)</option>
+                                    <option value="us-east-2">US East (Ohio)</option>
+                                    <option value="us-west-2">US West (Oregon)</option>
+                                    <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                                    <option value="ca-central-1">Canada (Central)</option>
+                                    <option value="eu-west-1">EU (Ireland)</option>
+                                </select>
+                                <select id="port">
+                                    <option value="8080">8080</option>
+                                    <option value="8081">8081</option>
+                                </select>
+                                <select id="language">
+                                    <optgroup label="English">
+                                        <option value="en-GB">British English (en-GB)</option>
+                                        <option value="en-US">US English (en-US)</option>
+
+                                    </optgroup>
+                                    <optgroup label="French">
+                                        <option value="fr-CA">Canadian French (fr-CA)</option>
+                                        <option value="fr-FR">French (fr-FR)</option>
+                                    </optgroup>
+                                    <optgroup label="Spanish">
+                                        <option value="es-US">US Spanish (es-US)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="has-text-left">
+                                <button id="start-button" class="button-xl" title="Start Transcription">
+                                    Start Drawing...
+                                </button>
+                                <button id="stop-button" class="button-xl" title="Stop Transcription" disabled="true"><i
+                                        class="fa fa-stop-circle"></i> Stop
+                                </button>
+                                <button id="reset-button" class="button-xl button-secondary" title="Clear Transcript">
+                                    Restart
+                                </button>
+                                <button id="wipe-button" class="button-xl button-secondary" title="Clear Transcript">
+                                    Wipe
+                                </button>
+                            </div>
+                            <div class="has-text-left">
+                                What you are saying. <strong>"I think it is a...:</strong></div>
+                            <div class="field is-grouped">
+
+                                <textarea id="transcript" placeholder="" rows="20" readonly="readonly"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="box">
+                            <div id="match" style="min-height: 332px;">
+                                <span style="font-weight: bold;font-size:73px;"> You guessed it <span id="howLong"></span><br />
+                                It is a: <span id="theWord" style="color: red;"></span><br /></span>
+                                <span id="tryAgain">Try Again</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+    <script src="dist/main.js"></script>
+    <script src="dist/stopwatch.js"></script>
+</body>
+
+</html>

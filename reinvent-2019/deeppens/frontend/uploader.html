@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.shoelace.style/1.0.0-beta24/shoelace.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+</head>
+<style>
+</style>
+
+<body>
+
+
+    <section class="hero is-info is-fullheight">
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <a class="navbar-item" href="../">
+                            <img src="./img/deeppends.png" style="max-height: 3.75rem">
+                        </a>
+                        <span class="navbar-burger burger" data-target="navbarMenu">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+                    <div id="navbarMenu" class="navbar-menu">
+                        <div class="navbar-end">
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-home"></i>
+                                    </span>
+                                    <span>Home</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-superpowers"></i>
+                                    </span>
+                                    <span>Examples</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="#">
+                                    <span class="icon">
+                                        <i class="fa fa-book"></i>
+                                    </span>
+                                    <span>Documentation</span>
+                                </a>
+                            </span>
+                            <span class="navbar-item">
+                                <a class="button is-white is-outlined" href="">
+                                    <span class="icon">
+                                        <i class="fa fa-github"></i>
+                                    </span>
+                                    <span>View Source</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hero-body">
+            <div class="container has-text-centered ">
+                <div class="column is-10 is-offset-1 ">
+                    <div class="box">
+                        <form id="uploader">
+                            <label for="port">port</label><input type="text" name="port">
+                            <label for="port">offset_x</label><input type="text" name="offset_x">
+                            <label for="port">offset_y</label><input type="text" name="offset_y">
+                            <label for="port">scale_y</label><input type="text" name="scale_y">
+                            <label for="port">scale_x</label><input type="text" name="scale_x">
+                            
+                            <label for="textblock">SVG</label><textarea name="textblock"></textarea>
+
+
+                            <input type="submit">
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+
+        <script>
+                $(document).ready(function() {
+                $("#uploader").submit(function(event){
+                    event.preventDefault(); //prevent default action 
+                   
+
+                    var post_url = $(this).attr("action"); //get form action url
+                    var form_data = $(this).serialize(); //Encode form elements for submission
+                    
+                    $.ajax({
+                        url : `https://api.deeppens.com/upload`,
+                        type: `post`,
+                        data : form_data
+                    }).done(function(response){ //
+                        $("#server-results").html(response);
+                    }); 
+                });});</script>
+</body>

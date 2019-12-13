@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Starting iboardbot-web..."
+source /home/pi/.cargo/env
+cd /home/pi/iboardbot-web && cargo run

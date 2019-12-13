@@ -1,0 +1,73 @@
+body {
+    margin: 20px;
+}
+.container {
+  
+}
+
+
+.menu {
+    border: 1px solid #fff;
+    width: 900px;
+   padding-top: 10px;
+  }
+#transcript {
+   
+    white-space: pre-wrap;
+}
+.row{
+    flex-direction: row;
+    flex-wrap: wrap;
+
+}
+
+.right {
+    flex: 0 0 230px;    /* don't grow, don't shrink, stay fixed at 230px */
+} 
+.sending{
+    font-size:70px;
+    display:none; 
+}
+
+.timer{
+    display: none;
+    font-size:70px
+}
+#start-button,
+#stop-button {
+    margin: 5px 0;
+}
+
+#error {
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.4rem;
+    border-radius: 5px 5px 5px 5px;
+    color: #D8000C;
+    background-color: #FFD2D2;
+    display: none;
+}
+
+.isa_error i {
+    margin: 2px 12px;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+#logo {
+    height: 52px;
+}
+
+#github {
+    fill: #146eb4;
+    color: #fff;
+    position: absolute;
+    top: 0;
+    border: 0;
+    right: 0;
+}
+
+.small-caps {
+    font-variant: small-caps;
+} 
