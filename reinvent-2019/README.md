@@ -11,6 +11,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [Autoponics: Happier Plants](autoponics/thing-app) | Python 3 app for controlling the sensors and actuators of the Autoponics thing |
 | [Clash of the Soccer Bots](soccer-bots) | In this demo, you will see 2 soccer bots (NVidia Jetson Nanos) clash with each other and fight for a soccer ball |
 | [Connected Photo Booth (Cerebro)](connected-photo-booth) | A connected photo booth built using a Raspberry Pi leveraging AWS Services like Rekognition and IOT Core to keep all the Cerebro's connected with Alexa providing the Voice interface |
+| [DeepPens](deeppens) | A voice enabled Internet of Things (IoT) connected robot whiteboard that integrates with Amazon Transcribe for you to guess what is being drawn |
 | [Doodle Challenge](doodlechallenge) | Doodle Challenge is a multi-player game enabling you to compete against your fellow players, to see who can create the best doodles of a given subject |
 | [Drone Zone](drone-zone) | Drone Zone is a multi-drone command and control environment powered by AWS IoT/Greengrass |
 | [IoT Racer](iot-racing-ninja) | IoT Racer is an IoT and Serverless project that displays long-distance command and control capabilities via a 4 player game of tag |
