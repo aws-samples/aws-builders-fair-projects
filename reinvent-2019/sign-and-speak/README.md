@@ -83,11 +83,25 @@ We controlled for factors such as background and lighting by choosing to only su
 
 #### 5.2.2. Video preprocessing
 
-TODO
+Each video recording of a word or phrase is transformed into an image representation for the purpose of performing image classification with the machine learning model. This processing is done through a combination of Bash and Python scripts executed by AWS Lambda. This section explains how the preprocessing generates an image from a video, and describes how to set up your own AWS Lambda function to support the process.
+
+To capture the movement (or time) element of signing a word or phrase, the image representation of a video is created as a 3x3 grid of video frames. [FFmpeg](https://ffmpeg.org/) is used to extract the key (non-blurry) frames from the video, then a Python script selects 9 key frames evenly spread across the length of the video, and FFmpeg is used to arrange these frames into the final grid structure. By selecting the frames according to the length of the video, this method is more robust to different speeds of signing. The image below illustrates the concept (blurred for anonymization only). 
+
+<p align="center"><img src="img/grid_concept.png" /></p>
+
+The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019, but would expect any later build or release to support the required functionality.
+
+TODO - explain how to create a Lambda layer for FFmpeg
 
 #### 5.2.3 Training and deploying a model
 
-TODO
+First, ensure that all training videos have been preprocessed into 3x3 grid images. Upload these images to an Amazon S3 bucket, organizing the images into folders based on their label (e.g. a folder for 'cat', a folder for 'pub', etc).
+
+Follow [these instructions](https://docs.aws.amazon.com/sagemaker/latest/dg/gs-setup-working-env.html) to set up an Amazon SageMaker instance on the smallest instance type (`ml.t3.medium`). If you want to pre-load the Sign & Speak scripts, simply add the URL to this GitHub repository in the 'Git repositories' section of the setup process. 
+
+If you forgot to pre-load the Sign & Speak project, simply wait for the instance to show status `InService`, then click 'Open Jupyter'. In the new tab which opens, click on the 'New' drop-down menu in the top right corner, and choose 'Terminal' at the bottom of the list. From the terminal, you can `git clone` this repository onto the instance.
+
+Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, follow the instructions below to connect it to the UI.
 
 ### 5.3 User Interface
 
