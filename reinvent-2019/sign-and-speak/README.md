@@ -4,7 +4,7 @@
 
 ## 1. Project Overview
 
-TODO
+This repository provides the resources and instructions required to create your own version of the Sign & Speak project, which was on display at the Builder's Fair during re:Invent 2019. Sign & Speak uses machine learning to build a communication tool for users of sign language and users of spoken language.
 
 ## 2. Project Abstract
 
@@ -109,8 +109,6 @@ TODO
 
 ## 6. FAQ
 
-TODO - Add more Q/A
-
 **Q: There is more than one sign language?**
 
 **A:** Yes! By some estimates there are perhaps [300 sign languages](https://en.wikipedia.org/wiki/List_of_sign_languages). Although ASL (American Sign Language) is probably the most well-known of these languages, the Sign & Speak project was built to support [Auslan](https://en.wikipedia.org/wiki/Auslan) (Australian Sign Language).
@@ -125,11 +123,14 @@ TODO - Add more Q/A
 
 **Q: What are the limitations of this method?**
 
-**A:** TODO
+**A:** The method only works for individual signs, or short combinations of signs (e.g. 'pleased to meet you' consists of three signs). Due to the limit of 9 frames it will not support full sentences. Additionally, the demo performed well with 12 different labels, but would require significantly more training data to scale to larger numbers of supported labels. Finally, this method does not capture all the nuances of sign language, such as expression and context. 
 
 **Q: What are the future plans for this project?**
 
-**A:** TODO
+**A:** There are many ideas for improving and extending this project; below is a short, but incomplete list.
+* Add support for full sign language sentences
+* Add support for continuous sign language recognition
+* Add a 3D avatar to turn text into sign language
 
 **Q: What is the animal in your logo?**
 
@@ -139,7 +140,7 @@ TODO - Add more Q/A
 
 Sara 'Moose' van de Moosdijk, AWS ([GitHub](https://github.com/moose-in-australia/) | [LinkedIn](https://www.linkedin.com/in/saravandemoosdijk/))
 
-Eshaan Anand, AWS (GitHub | LinkedIn)
+Eshaan Anand, AWS (GitHub | [LinkedIn](https://sg.linkedin.com/in/eshaan-anand-03396456))
 
 ## 8. License
 
