@@ -91,7 +91,7 @@ To capture the movement (or time) element of signing a word or phrase, the image
 
 The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019, but would expect any later build or release to support the required functionality.
 
-TODO - explain how to create a Lambda layer for FFmpeg
+The video preprocessing code is included in this repository and should be placed in an [AWS Lambda](https://aws.amazon.com/lambda/) function running Python 3.8. To run the correct version of FFmpeg, you need to upload it as an AWS Lambda layer. Keep in mind the [size limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) for AWS Lambda - only the main ffmpeg binary needs to be included in the ZIP package uploaded as a Lambda layer. 
 
 #### 5.2.3 Training and deploying a model
 
