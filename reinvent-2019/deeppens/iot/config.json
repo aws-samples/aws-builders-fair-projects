@@ -1,0 +1,6 @@
+{
+    "listen": "0.0.0.0:8080",
+    "device": "/dev/ttyACM0",
+    "svg_dir": "/home/pi/iboardbot-web/images",
+    "interval_seconds": 900
+}

@@ -1,0 +1,21 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+      nodejs: 10
+  build:
+    commands:
+      - echo Build started on `date`
+      - node -e "console.log('Running Node.js ' + process.version)"
+      - export DOCKER_IMAGE_TAG=$(aws secretsmanager get-secret-value --secret-id DrawingBackend-Tag --region eu-west-1 --query SecretString --output text)
+      - echo $DOCKER_IMAGE_TAG
+      - npm install -g aws-cdk@1.12.0 tslint typescript
+      - npm install
+      - npm run build
+      - cdk bootstrap
+      - cdk synth
+      - cdk deploy --ci --require-approval=never
+  post_build:
+    commands:
+      - echo Build completed on `date`
