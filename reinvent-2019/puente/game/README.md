@@ -1,3 +1,4 @@
+### add API connection url to PuenteAdapter file 
 This project was bootstrapped with Create React App.
 
 Available Scripts
