@@ -10,7 +10,7 @@ AWS Systems Manager runs on each Raspberry Pi, enabling simple centralised comma
 
 ## Architecture ##
 
-![Architecture Diagram](./docs/architecture.png)
+![Architecture Diagram](./docs/Architecture.png)
 
 ## Getting Started ##
 
