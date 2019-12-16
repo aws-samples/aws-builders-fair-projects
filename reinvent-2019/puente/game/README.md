@@ -1,5 +1,5 @@
 ### Note: add API connection url to PuenteAdapter file 
-* Need to create puenteInfer lamdba and rest API before adding connection string *
+* Need to create puenteInfer lambda and rest API before adding connection string *
 
 ### Code Notes
 This project was bootstrapped with Create React App.
