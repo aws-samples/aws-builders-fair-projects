@@ -1,4 +1,4 @@
-# re:Inventing Flexible Working - Hot Desks re:Imagined #
+# Reinventing Flexible Working - Hot Desks Remagined #
 
 Ever looked for a spare unallocated desk at work?, ever needed an ad-hoc meeting and not able to find a room? We use a Raspberry Pi, a motion-sensor, a simple algorithm and IoT Core to try and save you the pain of seeking spare resources.
 
