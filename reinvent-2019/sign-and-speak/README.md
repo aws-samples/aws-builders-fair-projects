@@ -18,15 +18,15 @@ The table below shows the two scripted conversations supported in the demo, wher
 
 | Conversation #1 | Conversation #2 |
 | ------------- | ------------- |
-| A: Hello. | A: Pleased to meet you. |
-| E: Hi! How are you? | E: Likewise. How are you? |
-| A: Good. How are you? | A: Good. How are you? |
-| E: I'm doing well. What are you planning tonight? | E: I'm doing well. What are you up to tonight? |
-| A: Going to the pub. | A: Going to a restaurant. |
-| E: Oh cool, I'd love to join you. What time are you going? | E: Sound great, I'd love to join you. At what time are you going? |
-| A: At 20:00 | A: At 20:00 |
-| E: See you there! | E: See you there! |
-| A: Goodbye | A: Goodbye |
+| **A:** Hello. | **A:** Pleased to meet you. |
+| **E:** Hi! How are you? | **E:** Likewise. How are you? |
+| **A:** Good. How are you? | **A:** Good. How are you? |
+| **E:** I'm doing well. What are you planning tonight? | **E:** I'm doing well. What are you up to tonight? |
+| **A:** Going to the pub. | **A:** Going to a restaurant. |
+| **E:** Oh cool, I'd love to join you. What time are you going? | **E:** Sound great, I'd love to join you. At what time are you going? |
+| **A:** At 20:00 | **A:** At 20:00 |
+| **E:** See you there! | **E:** See you there! |
+| **A:** Goodbye | **A:** Goodbye |
 
 In addition to the two-way conversation, the demo allows for individual participants to test the Auslan transcription model seperately. When testing the Auslan model, participants can choose from the following list of supported words and phrases:
 
@@ -47,10 +47,20 @@ In addition to the two-way conversation, the demo allows for individual particip
 
 The image below shows the full architecture for the two-way communication demo.
 
+### Sign Flow ###
 1. A video recording is made of the Auslan user signing a word or phrase. This video is uploaded to an Amazon S3 bucket.
 1. The video upload triggers an AWS Lambda function which transforms the video into an image (a grid of frames). 
-1. A second AWS Lambda function sends the image to an Amazon SageMaker inference endpoint and waits for the response. It stores the resulting message in Amazon DynamoDB.
-1. TODO - continue describing the process
+1. A second AWS Lambda function sends the image to an Amazon SageMaker inference endpoint and waits for the response. It stores the resulting message in an Amazon DynamoDB table.
+
+
+### Speak Flow
+1. A stream of spoken words is sent to Amazon Transcribe to get a transcript.
+1. This transcript is stored into the DynamoDB as a "Speech" message by a Lambda Function
+
+### UI Flow 
+- When a new Sign UI/Speak UI instance is started up, It makes a persistent connection to the Websocket API on the API Gateway
+- Changes to the DynamoDB table are captured via a DynamoDB Stream and the inserted message is published to the API Gateway endpoint using another Lambda Function
+- The Websocket API on the APIGateway publishes the message back to the Sign UI/ Speak UI which displays the formatted Message
 
 <p align="center"><img src="img/sign-and-speak-architecture.png" /></p>
 
@@ -103,9 +113,36 @@ If you forgot to pre-load the Sign & Speak project, simply wait for the instance
 
 Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, follow the instructions below to connect it to the UI.
 
-### 5.3 User Interface
+### 5.3 Sign & Speak User Interface
 
-TODO
+There are two key screens in the UI - a Sign UI and a Speak UI. Each of them is meant to allow the user to interact with the demo and get a 2-way conversation going. 
+
+Each of the UI will support 4 key functions
+
+- **On load** : Connect to WebSocket API
+- **On unload** : Disconnect from WebSocket API
+- **Receive Message** : On Receiving a message from the WebSocket API, update the Text Chat panel
+- **Capture Intent** : Capture the intent of the user (e.g. capture user video in a Sign UI / capture spoken words from Speak UI)
+
+#### 5.3.1 Sign UI
+The UI has two panels - Sign Panel and a Message Panel
+
+**Sign Panel**
+- Start Sign Button > Starts recording the sign being performed by the user
+- Stop Sign Button > Stops recording 
+- Upload Sign Button > Uploads the recorded video to S3
+
+**Message Panel**
+- Receive Message > Format the message and display in the Message Panel with a caption "Auslan"
+
+#### 5.3.2 Speak UI
+**Sign Panel**
+- Start Speaking > Starts capturing spoken words and stream to Amazon Transcribe endpoint
+- Stop Speaking > Stops capturing spoken words and stop streaming to Amazon Transcribe endpoint
+- Send Message > Sends the transcript of spoken text to an API Gateway endpoint, that saves it to the DynamoDB table using a Lambda function
+
+**Message Panel**
+- Receive Message > Format the message and display in the Message Panel with a caption "English"
 
 ## 6. FAQ
 
@@ -140,7 +177,7 @@ TODO
 
 Sara 'Moose' van de Moosdijk, AWS ([GitHub](https://github.com/moose-in-australia/) | [LinkedIn](https://www.linkedin.com/in/saravandemoosdijk/))
 
-Eshaan Anand, AWS (GitHub | [LinkedIn](https://sg.linkedin.com/in/eshaan-anand-03396456))
+Eshaan Anand, AWS ([GitHub] (https://github.com/ea-coder) | [LinkedIn](https://sg.linkedin.com/in/eshaan-anand))
 
 ## 8. License
 
