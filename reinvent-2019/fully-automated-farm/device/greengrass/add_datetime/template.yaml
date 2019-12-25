@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  add_datetime:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Description: >-
+        Deploy this lambda to a Greengrass core where it will send a hello world
+        message to a topic
+      Handler: lambda.function_handler
+      MemorySize: 128
+      Role: >-
+        arn:aws:iam::894663492354:role/service-role/anomaly_detection-role-bjfivkgi
+      Runtime: python2.7
+      Timeout: 3
