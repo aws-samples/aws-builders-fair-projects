@@ -1,0 +1,10 @@
+[Unit]
+Description = pigpio daemon
+
+[Service]
+ExecStart = /usr/bin/pigpiod
+Type = forking
+WorkingDirectory = /home/pi/agri-device/
+
+[Install]
+WantedBy = multi-user.target

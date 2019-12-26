@@ -1,0 +1,14 @@
+[Unit]
+Description = pump2 daemon
+After = pigpio.service network.target
+
+[Service]
+ExecStart = /home/pi/agri-device/pump.py --pin 4 --thing_name pump2 --area area2 --cert /home/pi/agri-device/certs/pump2/device.crt.pem --key /home/pi/agri-device/certs/pump2/private.key.pem
+Restert = always
+Type = simple
+WorkingDirectory = /home/pi/agri-device/
+User = pi
+Group = pi
+
+[Install]
+WantedBy = multi-user.target

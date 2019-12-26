@@ -1,0 +1,39 @@
+{
+    "args": [
+        {
+            "name": "region",
+            "default": "us-west-2",
+            "help": "Region of your Greengrass endpoint"
+        },
+        {
+            "name": "rootCA",
+            "default": "./certs/rootCA.crt.pem",
+            "help": "Path of root CA cert file"
+        },
+        {
+            "name": "cert",
+            "default": "./certs/device.crt.pem",
+            "help": "Path of device cert file"
+        },
+        {
+            "name": "key",
+            "default": "./certs/private.key.pem",
+            "help": "Path of private key file"
+        },
+        {
+            "name": "area",
+            "default": "area",
+            "help": "Which area this device belongs to"
+        },
+        {
+            "name": "thing_name",
+            "default": "pump",
+            "help": "Targeted thing name"
+        },
+        {
+            "name": "pin",
+            "default": 0,
+            "help": "GPIO pin number for pump"
+        }
+    ]
+}
