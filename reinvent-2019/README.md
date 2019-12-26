@@ -14,6 +14,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [DeepPens](deeppens) | A voice enabled Internet of Things (IoT) connected robot whiteboard that integrates with Amazon Transcribe for you to guess what is being drawn |
 | [Doodle Challenge](doodlechallenge) | Doodle Challenge is a multi-player game enabling you to compete against your fellow players, to see who can create the best doodles of a given subject |
 | [Drone Zone](drone-zone) | Drone Zone is a multi-drone command and control environment powered by AWS IoT/Greengrass |
+| [Fully Automated Farm](fully-automated-farm) | Monitoring and automation solution using AWS IoT/ML to provide an optimal cultivation environment |
 | [Hot Desks re-imagined](iot-hotdesks) | Ever looked for a spare unallocated desk at work? We use a Raspberry Pi, a motion-sensor, a simple algorithm and IoT Core to try and save you the pain of seeking spare resources. |
 | [IoT Racer](iot-racing-ninja) | IoT Racer is an IoT and Serverless project that displays long-distance command and control capabilities via a 4 player game of tag |
 | [Learn Languages with AWS AI/ML](learn-languages-ai-ml) | A casual game to learn languages with AWS AI/ML |
