@@ -370,14 +370,7 @@ Run cerebro\_processor to listen for cerebro commands (from alexa, etc.)
 ```
 pwd
 cd scripts
-./cerebro_start.sh
-```
-
-* Now, trigger the actual slideshow, by using the helper CLI
-
-```
-cd ../py_client
-python3 cerebro_requester.py 'sachin-pi' --profile all
+./cerebro_clean_start.sh
 ```
 	
 ## Usage
@@ -425,7 +418,7 @@ python3 cerebro_requester.py 'sachin-pi' --download_image
 
 ### Use Cerebro with Web Portal
 
-* Start Using the portal byt asking for different profiles - all being a reserved word
+* Start Using the portal by asking for different profiles - empty profile entry shows all selfies available
 * Trigger the create profile first
 * Then ask to take a selfie
 * Ending the session will delete all images from the system

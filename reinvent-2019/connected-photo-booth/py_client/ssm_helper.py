@@ -71,5 +71,6 @@ def retrieve_parameters():
 
 	return ssm_param_list
 
+store_parameters()
 retrieve_parameters()
 
