@@ -1,0 +1,13 @@
+boto3
+requests
+pillow
+piexif
+pyexifinfo
+pygame
+opencv-python
+numpy
+scikit-image
+pyqrcode
+pypng
+AWSIoTPythonSDK
+cups

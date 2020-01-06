@@ -1,0 +1,57 @@
+[Cerebro]
+
+__QUEUE_URL__ = https://queue.amazonaws.com/456038447595/cerebro_client
+__SQS_QUEUE_NAME__ = cerebro_client
+__SQS_BACKEND_QUEUE__ = cerebro_backend
+
+__APIGW_X_API_KEY__ = 2YSoTXerhD4u3iat9CWUM9kn756MTJIp4c4Tgfqk
+__APIGW_X_API_KEY_QR_CODE__ = aLCOemQkKa6EzcOQU6xjI8T2hRzD4Cf050EwWdb1
+
+__APIGW_API__ = https://lqhvtjhlsc.execute-api.us-east-1.amazonaws.com/production/Cerebro_GetImages_S3List
+__APIGW_API_QR_CODE__ = https://lqhvtjhlsc.execute-api.us-east-1.amazonaws.com/production/Cerebro_GetQRCode
+
+__S3_BUCKET__ = project-cerebro
+__CEREBRO_TEMP_DIR__ = /tmp/project_cerebro
+__CEREBRO_MEDIA_DIR__ = /tmp/project_cerebro/media
+__CEREBRO_LOGS_DIR__ = /tmp/project_cerebro/logs
+__CEREBRO_PROFILES_DIR__ = /tmp/project_cerebro/profiles
+__CEREBRO_SYSTEM_DIR__ = /tmp/project_cerebro/system
+
+__CEREBRO_AUDIO_DIR__ = ../assets/audio
+
+__IMAGE_MAX_COUNT__ = 10
+
+__GREEN_LED__ = 27
+__GREEN_BUTTON__ = 17
+__YELLOW_LED__ = 26
+__YELLOW_BUTTON__ = 16
+
+__IOT_TOPIC__ = cerebro
+
+__IOT_HOST__ = aiw42dxvn7vdk.iot.us-east-1.amazonaws.com
+__IOT_ROOT_CA_PATH__ = ../iot-certs/root-CA.crt
+__IOT_CERTIFICATE_PATH__ = ../iot-certs/Cerebro-Ronan.cert.pem
+__IOT_PRIVATE_KEY_PATH__ = ../iot-certs/Cerebro-Ronan.private.key
+
+__IOT_CLIENT_ID_REQUESTER__ = cerebroClientPi-Requester
+__IOT_CLIENT_ID_PROCESSOR__ = cerebroClientPi-Processor
+
+__PUSHBUTTON_DELAY__ = 300
+
+__ACCEPT_INPUT__ = 1
+__CHOOSE_AGAIN__ = 2
+
+__CADENCE__ = 200
+
+__DDB_TABLE__ = cerebro_media
+
+__PRINTER_TYPE__ = selphy
+
+__FILTERED_IMAGE_NAME__ = filtered_image.jpg
+__PIG_NOSE_FILTER__ = ../assets/filters/pig_nose.png
+__FLOWER_CROWN_FILTER__ = ../assets/filters/flower_crown.png
+__EYE_MASK_FILTER__ = ../assets/filters/mustache.png
+__DOG_NOSE_FILTER__ = ../assets/filters/dog_nose.png
+__DOG_LEFT_EAR_FILTER__ = ../assets/filters/dog_left_ear.png
+__DOG_RIGHT_EAR_FILTER__ = ../assets/filters/dog_right_ear.png
+__DOG_TONGUE_FILTER__ = ../assets/filters/dog_tongue.png
