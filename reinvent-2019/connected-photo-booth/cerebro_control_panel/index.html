@@ -1,0 +1,151 @@
+
+<html>
+
+<head>
+
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+
+</head>
+<body>
+<h1> Photo Booth - Control Panel</h1><br>
+<form class="form-inline">
+
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="inputPassword2" class="sr-only">Profile Name</label>
+    <input type="text" class="form-control" id="showProfileInput" placeholder="Profile Name">
+  </div>
+  <button type="submit" id = "showProfileButton" class="btn btn-primary mb-2">Show Profile</button>
+</form>
+<br />
+<form class="form-inline">
+
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="inputPassword2" class="sr-only">Profile Name</label>
+    <input type="text" class="form-control" id="registerProfileInput" placeholder="Profile Name">
+  </div>
+  <button type="submit" id = "registerProfileBtn" class="btn btn-primary mb-2">Register Profile</button>
+</form>
+
+
+<form class="form-inline">
+  <button class="btn btn-primary mb-2" id = "selfieButton">Take Selfie</button>
+  <button type="submit" class="btn btn-primary mb-2" id = "downloadSelfieButton">Download Selfie</button>
+  <button type="submit" class="btn btn-primary mb-2" id = "printImagebutton">Print Image</button>
+  <button type="submit" class="btn btn-primary mb-2" id = "endSessionButton">End Session</button>
+  <button type="submit" class="btn btn-primary mb-2" id = "killButton">Kill Cerebro</button>
+
+</form>
+
+  <div class="mx-sm-3 mb-2">
+  	<label id="resultsLabel" class="mx-sm-3 mb-2">Results</label>
+  </div>
+
+<script>
+
+
+
+$(document).ready(function(event) {
+
+
+$("#showProfileButton").click(function(event){
+
+	event.preventDefault();
+	var profname = $('#showProfileInput').val();
+	payload = {'message':{'action': 'show_profile', 'profile': profname, 'device_id': 'sachin-pi'}}
+	sendRequest(payload, "Show Profile");
+	$('#showProfileInput').val("");
+}); 
+
+
+$("#registerProfileBtn").click(function(event){
+		event.preventDefault();
+		var profname = $('#registerProfileInput').val();
+		if (!profname){
+			alert("Need to provide a profile to register");
+			return;
+		}	
+		payload = {'message':{'action': 'register', 'profile': profname, 'device_id': 'sachin-pi'}}
+		sendRequest(payload, "Register Profile");
+		$('#registerProfileInput').val("");		
+}); 
+
+
+
+$("#selfieButton").click(function(event){
+	event.preventDefault();
+
+		payload = {'message':{'action': 'selfie', 'device_id': 'sachin-pi'}}
+		sendRequest(payload, "Selfie");
+}); 
+
+
+$("#downloadSelfieButton").click(function(event){
+				event.preventDefault();
+
+			payload = {'message':{'action': 'download_image', 'device_id': 'sachin-pi'}}
+			sendRequest(payload, "Download Selfie");
+}); 
+
+
+$("#printImagebutton").click(function(event){
+	event.preventDefault();
+
+			payload = {'message':{'action': 'print_image', 'device_id': 'sachin-pi'}}
+			sendRequest(payload, "Print Image");
+}); 
+
+
+$("#endSessionButton").click(function(event){
+	event.preventDefault();
+
+			payload = {'message':{'action': 'end_session', 'device_id': 'sachin-pi'}}
+			sendRequest(payload, "End Session");
+}); 
+
+
+$("#killButton").click(function(event){
+	event.preventDefault();
+
+			payload = {'message':{'action': 'kill', 'device_id': 'sachin-pi'}}
+			sendRequest(payload, "Kill Cerebro");
+}); 
+
+
+
+
+
+	function sendRequest(payload, eventName=""){
+		console.log("Sending request.." + payload);
+		xhr = new XMLHttpRequest();
+	    var url = "https://szlqqkwc57.execute-api.us-east-1.amazonaws.com/v1";
+	    xhr.open("POST", url, true);
+	    xhr.setRequestHeader("Content-type", "application/json");
+	    xhr.onreadystatechange = function () { 
+	        if (xhr.readyState == 4 && xhr.status == 200) {
+	            var json = JSON.parse(xhr.responseText);
+	            console.log("Finished with the send");
+	            //console.log(json.email + ", " + json.name);
+	        }
+	    }
+	    var data = JSON.stringify(payload);
+	    xhr.send(data);
+	    console.log("Initiated the send");
+	    $('#resultsLabel').text("Sent "+eventName+" request to Cerebro!");
+	}
+
+});
+</script>
+</body>
+</html>
