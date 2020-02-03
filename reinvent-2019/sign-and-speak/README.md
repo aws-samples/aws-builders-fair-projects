@@ -211,7 +211,7 @@ Please follow the below steps after downloading the code to setup
 - Update the WS URL
     - Put the CloudFormation Template Output value for S2SWebSocketURL in  "wsurl" variable
 
-### 6.4 Run Application
+### 6.3 Run Application
 *Use Firefox (We have tested it only on this browser)*
 - Navigate to the page \ui\sign.html
 - Click on Start Sign/Stop Sign to record a sign
@@ -219,7 +219,7 @@ Please follow the below steps after downloading the code to setup
 - Inferred sign message is displayed on the UI
 - If you get an alert message "WebSocket connection is closed. Refresh screen!!!", then reload your UI.
 
-### 6.3 Uninstall
+### 6.4 Uninstall
 
 **[AWS] Before Deleting the CloudFormation Stack**
 - Make sure the S3 Bucket "signs-data-cf" is empty before deleting the Stack, otherwise it will fail.
