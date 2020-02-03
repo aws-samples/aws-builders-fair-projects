@@ -160,7 +160,7 @@ Please follow the below steps after downloading the code to setup
 
 **[AWS] Setup the AWS Resources**
 - Run the CloudFormation template at /CloudFormation/cf.json. (Note: This template has been tested in AWS Sydney region only)
-    - Give the name of the stacka as "S2SAPP"
+    - Give the name of the stack as "S2SAPP"
     - Provide the parameters requested
         - PARAMFFMPEGLayer : ARN with version of the FFMPEG Layer
         - PARAMS2SEndpoint : URL of the S2S Model on Sagemaker
@@ -172,7 +172,7 @@ Please follow the below steps after downloading the code to setup
     - Copy and Store the Access key ID/Secret access key, securely 
 
 
-**[AWS] Lambda Functions**
+**[AWS] Lambda Functions : Update latest code **
 - Copy the updated code for lambda functions. Create the files as necessary 
     - infersign-cf ( index.py )
     - python-video-to-grid-shell-cf( index.py , frame_picker.py , testscript.sh , video_to_grid.sh )
@@ -180,7 +180,7 @@ Please follow the below steps after downloading the code to setup
     - s2s-ws-disconnect-cf( index.py )
     - s2s-ws-sendmessage-node-cf ( index.js )
 
-**[AWS] Update Lambda Trigger : python-video-to-grid-shell**
+**[AWS] Update Lambda Trigger : python-video-to-grid-shell-cf**
 - Open the Lambda Function python-video-to-grid-shell
     - Click on Runtime dropdown, and select "Python3.8"
     - Click on Add Trigger
@@ -191,7 +191,7 @@ Please follow the below steps after downloading the code to setup
     - Ensure "Enable Trigger" is checked
     - Click Add
     
-**[AWS] Update Lambda Trigger : infersign**
+**[AWS] Update Lambda Trigger : infersign-cf**
 - Open the Lambda Function infersign
     - Click on Add Trigger
     - Trigger Configration: select S3
