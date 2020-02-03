@@ -136,7 +136,7 @@ The UI has two panels - Sign Panel and a Message Panel
 - Receive Message > Format the message and display in the Message Panel with a caption "Auslan"
 
 #### 5.3.2 Speak UI
-**Sign Panel**
+**Speak Panel**
 - Start Speaking > Starts capturing spoken words and stream to Amazon Transcribe endpoint
 - Stop Speaking > Stops capturing spoken words and stop streaming to Amazon Transcribe endpoint
 - Send Message > Sends the transcript of spoken text to an API Gateway endpoint, that saves it to the DynamoDB table using a Lambda function
@@ -144,7 +144,92 @@ The UI has two panels - Sign Panel and a Message Panel
 **Message Panel**
 - Receive Message > Format the message and display in the Message Panel with a caption "English"
 
-## 6. FAQ
+**NOTE** : We have not uploaded the codes for the Speak UI, it follows the same behaviour seen at [aws-samples/amazon-transcribe-websocket-static](https://github.com/aws-samples/amazon-transcribe-websocket-static)
+
+## 6. Setup Instructions
+
+### 6.0 Pre-Setup
+
+**Setup the FFMPEG Lambda Layer**
+
+**Setup the S2S Model for infrence** 
+
+### 6.1 Installation
+
+Please follow the below steps after downloading the code to setup
+
+**[AWS] Setup the AWS Resources**
+- Run the CloudFormation template at /CloudFormation/cf.json. (Note: This template has been tested in AWS Sydney region only)
+    - Give the name of the stacka as "S2SAPP"
+    - Provide the parameters requested
+        - PARAMFFMPEGLayer : ARN with version of the FFMPEG Layer
+        - PARAMS2SEndpoint : URL of the S2S Model on Sagemaker
+
+**[AWS] IAM User with AccessKey**
+- Go to IAM User "s2sclientuser" in IAM Console 
+    - Click on the tab "Security Credentials"
+    - Click on "Create Access Key"
+    - Copy and Store the Access key ID/Secret access key, securely 
+
+
+**[AWS] Lambda Functions**
+- Copy the updated code for lambda functions. Create the files as necessary 
+    - infersign-cf ( index.py )
+    - python-video-to-grid-shell-cf( index.py , frame_picker.py , testscript.sh , video_to_grid.sh )
+    - s2s-ws-connect-cf( index.py )
+    - s2s-ws-disconnect-cf( index.py )
+    - s2s-ws-sendmessage-node-cf ( index.js )
+
+**[AWS] Update Lambda Trigger : python-video-to-grid-shell**
+- Open the Lambda Function python-video-to-grid-shell
+    - Click on Runtime dropdown, and select "Python3.8"
+    - Click on Add Trigger
+    - Trigger Configration: select S3
+    - Bucket: signs-data-cf
+    - Event Type : "All object create events"
+    - Prefix : "02_app/upload/"
+    - Ensure "Enable Trigger" is checked
+    - Click Add
+    
+**[AWS] Update Lambda Trigger : infersign**
+- Open the Lambda Function infersign
+    - Click on Add Trigger
+    - Trigger Configration: select S3
+    - Bucket: signs-data-cf
+    - Event Type : "All object create events"
+    - Prefix : "02_app/grid-image/"
+    - Ensure "Enable Trigger" is checked
+    - Click Add
+
+**[LocalMachine] S2S Client UI**
+- Copy the ui folder to a local directory
+
+**[LocalMachine] Update [LocalDir]\ui\static\js\sign.js**
+- update the app_credentials
+    - Put the AccessKeyID/SecretAccessKey in app_credentials
+- set the region
+    - Update the variable "app_region" based on the AWS Region used
+
+**[LocalMachine] Update [LocalDir]\ui\static\js\web-socket-msg.js**
+- Update the WS URL
+    - Put the CloudFormation Template Output value for S2SWebSocketURL in  "wsurl" variable
+
+### 6.4 Run Application
+** Use Firefox (We have tested it only on this browser)
+- Navigate to the page \ui\sign.html
+- Click on Start Sign/Stop Sign to record a sign
+- Click on Upload Sign to trigger the process of inference
+- Inferred Sign message is displayed on the UI
+- If you get an alert message "WebSocket connection is closed. Refresh screen!!!", then reload your UI.
+
+
+### 6.3 Uninstall
+
+**[AWS] Before Deleting the CloudFormation Stack**
+- Make sure the S3 Bucket "signs-data-cf" is empty before deleting the Stack, otherwise it will fail.
+    - Delete the Cloudformation stack - "S2SAPP"
+
+## 7. FAQ
 
 **Q: There is more than one sign language?**
 
@@ -162,23 +247,47 @@ The UI has two panels - Sign Panel and a Message Panel
 
 **A:** The method only works for individual signs, or short combinations of signs (e.g. 'pleased to meet you' consists of three signs). Due to the limit of 9 frames it will not support full sentences. Additionally, the demo performed well with 12 different labels, but would require significantly more training data to scale to larger numbers of supported labels. Finally, this method does not capture all the nuances of sign language, such as expression and context. 
 
+**Q:What platform has the UI been tested on?**
+
+**A:** The UI has been tested to work on Windows 10, with Mozilla Firefox browser. Its tested to work in the AWS Sydney Region.
+
+**Q:** I only see a rotating circle on the UI! Help!
+
+**A:** Check the following steps have been performed correctly
+- Verify that all the lambda function code has been updated correctly
+- Verify that the S3 Bucket triggers for inferSign-cf and python-video-to-grid-shell-cf are created 
+- Verify that you have changed the runtime language of lambda function python-video-to-grid-shell-cf to Python 3.8
+- Check CloudWatch logs for the lambda functions for errors
+
 **Q: What are the future plans for this project?**
 
 **A:** There are many ideas for improving and extending this project; below is a short, but incomplete list.
 * Add support for full sign language sentences
 * Add support for continuous sign language recognition
 * Add a 3D avatar to turn text into sign language
+* Improve the security of the application (e.g. Build in Authentication for UI and APIs)
+
 
 **Q: What is the animal in your logo?**
 
 **A:** It's a [quokka](https://duckduckgo.com/?q=quokka&t=ffnt&atb=v176-1&iax=images&ia=images), a marsupial found only in Australia. We are not professional artists. ;)
 
-## 7. Authors
+## 8. Authors
 
 Sara 'Moose' van de Moosdijk, AWS ([GitHub](https://github.com/moose-in-australia/) | [LinkedIn](https://www.linkedin.com/in/saravandemoosdijk/))
 
-Eshaan Anand, AWS ([GitHub] (https://github.com/ea-coder) | [LinkedIn](https://sg.linkedin.com/in/eshaan-anand))
+Eshaan Anand, AWS ([GitHub](https://github.com/ea-coder) | [LinkedIn](https://sg.linkedin.com/in/eshaan-anand))
 
-## 8. License
+## 9. License
 
 This library is licensed under the Apache 2.0 License.
+
+## 10. References
+
+This project references the following libraries to put together the solution
+
+- [jquery-1.12.4](https://jquery.com/)
+- [aws-sdk.min.js](https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.610.0/aws-sdk.min.js)
+- [bootstrap](https://getbootstrap.com/)
+- [RecordRTC.js](https://github.com/muaz-khan/RecordRTC)
+- [adapter-latest.js](https://github.com/webrtc/adapter)

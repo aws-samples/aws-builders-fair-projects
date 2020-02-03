@@ -1,0 +1,682 @@
+{
+    "Parameters":{
+        "PARAMFFMPEGLayer" : {
+            "Default" : "",
+            "Description" : "ARN with version of the FFMPEG Layer",
+            "Type" : "String"
+        },
+        "PARAMS2SEndpoint" : {
+            "Default" : "",
+            "Description" : "Endpoint of the S2S Model on Sagemaker",
+            "Type" : "String"
+        }
+    },
+    "Resources": {
+        "messagestable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "messages-cf",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "msgid",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "msgid",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                },
+                "StreamSpecification": {
+                    "StreamViewType": "NEW_IMAGE"
+                }
+            }
+        },
+        "messagestablestream": {
+            "Type": "AWS::Lambda::EventSourceMapping",
+            "DependsOn" : ["messagestable", "sendmessages2swslambda"],
+            "Properties": {
+              "BatchSize": 1,
+              "Enabled": true,
+              "EventSourceArn": {"Fn::GetAtt": ["messagestable","StreamArn"]},
+              "FunctionName": {"Fn::GetAtt": ["sendmessages2swslambda","Arn"]},
+              "StartingPosition": "LATEST"
+            }
+        },
+        "wsclientstable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": "ws-clients-cf",
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "connectionId",
+                        "AttributeType": "S"
+                    }
+                ],
+                "KeySchema": [
+                    {
+                        "AttributeName": "connectionId",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            }
+        },
+        "S3Bucket" : {
+            "DependsOn" : ["videotogridlambda","infersignlambda"],
+            "Type" : "AWS::S3::Bucket",
+            "Properties" : {
+                "BucketName" : "signs-data-cf",
+                "CorsConfiguration": {
+                    "CorsRules": [
+                        {
+                            "AllowedHeaders": [
+                                "*"
+                            ],
+                            "AllowedMethods": [
+                                "GET","PUT","POST"
+                            ],
+                            "AllowedOrigins": [
+                                "*"
+                            ],
+                            "Id": "myCORSRuleId1",
+                            "MaxAge": "3600"
+                        }
+                    ]
+                }
+            }
+        },
+        "S3InvokeGridLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn" : ["videotogridlambda","S3Bucket"],
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": { "Ref":  "videotogridlambda" },
+              "Principal": "s3.amazonaws.com",
+              "SourceArn": {"Fn::GetAtt": [ "S3Bucket", "Arn" ] }
+            }
+        },
+        "S3InvokeInferSignLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn" : ["infersignlambda","S3Bucket"],
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": { "Ref":  "infersignlambda" },
+              "Principal": "s3.amazonaws.com",
+              "SourceArn": {"Fn::GetAtt": [ "S3Bucket", "Arn" ] }
+            }
+        },
+        
+        "IAMS2SExecutionRole" : {
+            "Type" : "AWS::IAM::Role",
+            "Properties" : {
+                "RoleName" : {"Fn::Join": ["", [{"Ref": "AWS::Region"}, "s2s-iam-role-cf"]]},
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Policies" : [
+                        {
+                            "PolicyName": "s2s-iam-policy-cf",
+                            "PolicyDocument" : {
+                                "Version": "2012-10-17",
+                                "Statement": [
+                                    {
+                                        "Sid": "sagemakerPolicies",
+                                        "Effect": "Allow",
+                                        "Action": [                                        
+                                            "sagemaker:InvokeEndpoint"
+                                        ],
+                                        "Resource": {
+                                            "Fn::Join":[
+                                                "",
+                                                ["arn:aws:sagemaker:*:*:endpoint/",{"Ref" : "PARAMS2SEndpoint"}]
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "Sid": "OtherPolicies",
+                                        "Effect": "Allow",
+                                        "Action": [
+                                                                                        
+                                            "execute-api:ManageConnections"
+                                        ],
+                                        "Resource": "arn:aws:execute-api:*:*:s2s-ws-cf/Prod/*/*"
+                                    },
+                                    {
+                                        "Sid": "S3Policy",
+                                        "Effect": "Allow",
+                                        "Action": [
+                                            "s3:GetObjectTagging",
+                                            "s3:PutObjectTagging",
+                                            "s3:PutObjectAcl",
+                                            "s3:ListBucket",
+                                            "s3:GetObject*",
+                                            "s3:PutObject",
+                                            "s3:GetObject"                                            
+                                        ],
+                                        "Resource": "arn:aws:s3:::signs-data-cf/*"
+                                    },
+                                    {
+                                        "Sid": "DynamoDBPolicy",
+                                        "Effect": "Allow",
+                                        "Action": [
+                                            "dynamodb:GetShardIterator",
+                                            "dynamodb:GetRecords",
+                                            "dynamodb:DescribeStream",
+                                            "dynamodb:GetItem",                                            
+                                            "dynamodb:Query",                                            
+                                            "dynamodb:Scan",                                            
+                                            "dynamodb:DeleteItem",
+                                            "dynamodb:PutItem",
+                                            "dynamodb:ListStreams"                                            
+                                        ],
+                                        "Resource": [
+                                            "arn:aws:dynamodb:*:*:table/messages-cf",
+                                            "arn:aws:dynamodb:*:*:table/messages-cf/stream/*",
+                                            "arn:aws:dynamodb:*:*:table/ws-clients-cf"
+                                        ]
+                                    },
+                                    {
+                                        "Sid": "AllowLogsPolicy",
+                                        "Effect": "Allow",
+                                        "Action": [
+                                            "logs:CreateLogGroup",                                            
+                                            "logs:DescribeLogStreams",
+                                            "logs:PutLogEvents",
+                                            "logs:CreateLogStream"
+                                        ],
+                                        "Resource": "arn:aws:logs:*:*:*"
+                                    }
+                                ]          
+                            }
+                        }    
+                ],
+                "Description" : "Allows Lambda functions to call AWS services on your behalf. "
+            }
+        },
+        "wsconnectlambda" : {
+            "Type": "AWS::Lambda::Function",
+            "DependsOn" : ["IAMS2SExecutionRole"],            
+            "Properties": {
+                "Description" : "Triggered on s2s ui client connecting to api websocket",
+                "FunctionName" : "s2s-ws-connect-cf",  
+                "Handler": "index.lambda_handler",
+                "Role": {
+                    "Fn::GetAtt": ["IAMS2SExecutionRole","Arn"]
+                },
+                "Environment" : {
+                    "Variables" : {
+                        "messagestable" : {"Ref" :  "messagestable"},
+                        "wsclientstable" : {"Ref" :  "wsclientstable"}
+                    }
+                },
+                "Runtime": "python3.7",
+                "Timeout": 120,
+                "Code" : {
+                    "ZipFile":  { "Fn::Join": ["\n", [
+                        "import boto3 ",
+                        "import json  ",
+                        "from datetime import datetime, timedelta            ",
+                        "import time  ",
+                        "import os",
+                        "def lambda_handler(event, context):  ",
+                        "    msgBody = (event)       ",
+                        "    reqContext = event[\"requestContext\"]          ",
+                        "    connectionId = reqContext[\"connectionId\"]     ",
+                        "    #store to dynamo db     ",
+                        "    ddbclient = boto3.client(\"dynamodb\")          ",
+                        "    nowDTTM = datetime.utcnow().strftime(\"%Y-%m-%d %H:%M:%S\") # \"2019-05-22 06:06:42           ",
+                        "    epocSec = int(time.time())       ",
+                        "    response = ddbclient.put_item(   ",
+                        "    Item={   ",
+                        "        \"connectionId\": { ",
+                        "            \"S\": str(connectionId),",
+                        "        },   ",
+                        "        \"insertdttm\" : {  ",
+                        "            \"S\": nowDTTM  ",
+                        "        },   ",
+                        "        \"epocSecond\" : {  ",
+                        "            \"N\" : str(epocSec)     ",
+                        "        }    ",
+                        "    },",
+                        "    TableName=os.environ[\"wsclientstable\"],     ",
+                        "    ) ",
+                        "    print(response)         ",
+                        "    return { ",
+                        "        \"statusCode\": 200,",
+                        "        \"body\": json.dumps(\"Successful connect\")",
+                        "    } "
+                    ]]}
+                }
+            }
+        },
+        "wsconnectlambdapermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn" : [ "s2swsapi" , "wsconnectlambda" ]  , 
+            "Properties": {    
+                "FunctionName": { "Fn::GetAtt": [ "wsconnectlambda", "Arn" ] },
+                "Action": "lambda:InvokeFunction",    
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": { 
+                    "Fn::Join": [
+                        "", 
+                        [    
+                            "arn:aws:execute-api:",    
+                            { "Ref": "AWS::Region" },
+                            ":",    
+                            { "Ref": "AWS::AccountId" },
+                            ":",    
+                            { "Ref": "s2swsapi" },    
+                            "/*/*"] 
+                        ] 
+                    }
+    
+            }
+    
+        },
+        "s2swsapi": {
+            "Type": "AWS::ApiGatewayV2::Api",
+            "Properties": {
+              "Name": "s2s-ws-cf",
+              "ProtocolType": "WEBSOCKET",
+              "RouteSelectionExpression": "$request.body.action"
+            }
+        },
+        "s2swsapiconnectintegration" : 
+        {
+            "Type" : "AWS::ApiGatewayV2::Integration",
+            "DependsOn" : ["wsconnectlambda","s2swsapi"],
+            "Properties" : {
+                "ApiId" : {
+                    "Ref": "s2swsapi"
+                },
+                "Description" : "s2s Web Socket Connect API Integration",
+                "IntegrationType" : "AWS_PROXY",
+                "IntegrationUri" : {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:apigateway:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":lambda:path/2015-03-31/functions/",
+                            {
+                                "Fn::GetAtt" : [ "wsconnectlambda", "Arn" ]
+                            },
+                            "/invocations"
+                        ]
+                    ]
+                } 
+            }
+        },
+        "s2swsconnectroute" : {
+            "Type" : "AWS::ApiGatewayV2::Route",
+            "DependsOn" : [
+                "s2swsapi", "s2swsapiconnectintegration"
+            ],
+            "Properties" :{ 
+                "ApiId": {
+                  "Ref" : "s2swsapi"
+                },
+                "RouteKey": "$connect",
+                "AuthorizationType": "NONE",
+                "OperationName": "ConnectRoute",
+                "Target": {
+                    "Fn::Join": [
+                        "/",
+                        [
+                            "integrations",
+                            {
+                                "Ref": "s2swsapiconnectintegration"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "s2swsdeployment" : {
+            "Type": "AWS::ApiGatewayV2::Deployment",
+            "DependsOn": [
+                "s2swsconnectroute", "s2swsdisconnectroute"
+            ],
+            "Properties": {
+                "Description": "Deployment of S2S WS API",
+                "ApiId": {
+                    "Ref": "s2swsapi"
+                }
+            }
+        },
+        "s2swsprodstage": {
+            "Type": "AWS::ApiGatewayV2::Stage",
+            "DependsOn": [
+                "s2swsdeployment"
+            ],
+            "Properties": {
+                "StageName": "Prod",
+                "Description": "Prod Stage",
+                "DeploymentId": {
+                    "Ref": "s2swsdeployment"
+                },
+                "ApiId": {
+                    "Ref": "s2swsapi"
+                }
+            }
+        },
+        "wsdisconnectlambda" : {
+            "Type": "AWS::Lambda::Function",
+            "DependsOn" : ["IAMS2SExecutionRole"],            
+            "Properties": {
+                "Description" : "Triggered on s2s ui client disconnecting to api websocket",
+                "FunctionName" : "s2s-ws-disconnect-cf",  
+                "Handler": "index.lambda_handler",
+                "Role": {
+                    "Fn::GetAtt": ["IAMS2SExecutionRole","Arn"]
+                },
+                "Environment" : {
+                    "Variables" : {
+                        "messagestable" : {"Ref" :  "messagestable"},
+                        "wsclientstable" : {"Ref" :  "wsclientstable"}
+                    }
+                },
+                "Runtime": "python3.7",
+                "Timeout": 120,
+                "Code" : {
+                    "ZipFile":  { "Fn::Join": ["\n", [
+                        "import json ",
+                        "import boto3",
+                        "import os",
+                        "def lambda_handler(event, context):",
+                        "    msgBody = (event)",
+                        "    reqContext = event[\"requestContext\"]",
+                        "    connectionId = str(reqContext[\"connectionId\"])",
+                        "    print(\"connectionId is : \" + connectionId)",
+                        "    dynamodb = boto3.resource('dynamodb') ",
+                        "    table = dynamodb.Table(os.environ[\"wsclientstable\"])     ",
+                        "    response = table.delete_item(  ",
+                        "        Key={'connectionId' : connectionId}     ",
+                        "    )       ",
+                        "    return {",
+                        "        'statusCode': 200,         ",
+                        "        'body': json.dumps('Successful disconnect') ",
+                        "    }       "
+
+
+                    ]]}
+                }
+            }
+        },
+        "wsdisconnectlambdapermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn" : [ "s2swsapi" , "wsdisconnectlambda" ]  , 
+            "Properties": {    
+                "FunctionName": { "Fn::GetAtt": [ "wsdisconnectlambda", "Arn" ] },
+                "Action": "lambda:InvokeFunction",    
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": { 
+                    "Fn::Join": [
+                        "", 
+                        [    
+                            "arn:aws:execute-api:",    
+                            { "Ref": "AWS::Region" },
+                            ":",    
+                            { "Ref": "AWS::AccountId" },
+                            ":",    
+                            { "Ref": "s2swsapi" },    
+                            "/*/*"] 
+                        ] 
+                }
+            }
+        },
+        "s2swsapidisconnectintegration" : 
+        {
+            "Type" : "AWS::ApiGatewayV2::Integration",
+            "DependsOn" : ["wsdisconnectlambda","s2swsapi"],
+            "Properties" : {
+                "ApiId" : {
+                    "Ref": "s2swsapi"
+                },
+                "Description" : "s2s Web Socket Disconnect API Integration",
+                "IntegrationType" : "AWS_PROXY",
+                "IntegrationUri" : {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "arn:aws:apigateway:",
+                            {
+                                "Ref": "AWS::Region"
+                            },
+                            ":lambda:path/2015-03-31/functions/",
+                            {
+                                "Fn::GetAtt" : [ "wsdisconnectlambda", "Arn" ]
+                            },
+                            "/invocations"
+                        ]
+                    ]
+                } 
+            }
+        },
+        "s2swsdisconnectroute" : {
+            "Type" : "AWS::ApiGatewayV2::Route",
+            "DependsOn" : [
+                "s2swsapi", "s2swsapidisconnectintegration"
+            ],
+            "Properties" :{ 
+                "ApiId": {
+                    "Ref" : "s2swsapi"
+                },
+                "RouteKey": "$disconnect",
+                "AuthorizationType": "NONE",
+                "OperationName": "DisconnectRoute",
+                "Target": {
+                    "Fn::Join": [
+                        "/",
+                        [
+                            "integrations",
+                            {
+                                "Ref": "s2swsapidisconnectintegration"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "s2sclientuser" : {
+            "Type" : "AWS::IAM::User",
+            "Properties" : {
+                "UserName" : "s2sclientuser",
+                "Policies" : [
+                    {
+                        "PolicyName": "s2s-clientui",
+                        "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                                {
+                                    "Sid": "PutToS3SignBucket",
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:PutObjectTagging",
+                                        "s3:PutObjectAcl"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:s3:::signs-data-cf/*"
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "s2siampolicyclientapp" : {
+            "Type": "AWS::IAM::Policy",
+            "DependsOn" : "IAMS2SExecutionRole",
+            "Properties": {
+                "PolicyName": "s2s-clientui",
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "PutToS3SignBucket",
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:PutObject",
+                                "s3:PutObjectTagging",
+                                "s3:PutObjectAcl"
+                            ],
+                            "Resource": [
+                                "arn:aws:s3:::signs-data-cf/*"
+                            ]
+                        }
+                    ]
+                },
+                "Roles" : [{
+                    "Ref": "IAMS2SExecutionRole"
+                }]
+            }        
+        },
+        "videotogridlambda" : {
+            "Type": "AWS::Lambda::Function",
+            "DependsOn" : ["IAMS2SExecutionRole"],            
+            "Properties": {
+                "Description" : "Convert video to grid image",
+                "FunctionName" : "python-video-to-grid-shell-cf",  
+                "Handler": "index.lambda_handler",
+                "MemorySize" : "2048",
+                "Environment" : {
+                    "Variables" : {
+                        "messagestable" : {"Ref" :  "messagestable"},
+                        "wsclientstable" : {"Ref" :  "wsclientstable"}
+                    }
+                },
+                "Layers" : [{"Ref" :  "PARAMFFMPEGLayer"}],
+                "Role": {
+                    "Fn::GetAtt": ["IAMS2SExecutionRole","Arn"]
+                },
+                "Runtime": "python3.7",
+                "Timeout": 300,
+                "Code" : {
+                    "ZipFile":  { "Fn::Join": ["\n", [
+                        "#Upload all code files from lambda/python-video-to-grid-shell folder"
+                    ]]}
+                }
+            }
+        },
+        "infersignlambda" : {
+            "Type": "AWS::Lambda::Function",
+            "DependsOn" : ["IAMS2SExecutionRole"],            
+            "Properties": {
+                "Description" : "Infer sign from Grid Image by calling sagemaker endpoint",
+                "FunctionName" : "inferSign-cf",  
+                "Handler": "index.lambda_handler",
+                "Role": {
+                    "Fn::GetAtt": ["IAMS2SExecutionRole","Arn"]
+                },
+                "Runtime": "python3.7",
+                "Timeout": 300,
+                "Environment" : {
+                    "Variables" : {
+                        "messagestable" : {"Ref" :  "messagestable"},
+                        "wsclientstable" : {"Ref" :  "wsclientstable"},
+                        "s2smodelendpoint" : {"Ref" : "PARAMS2SEndpoint"}
+                    }
+                },
+                "Code" : {
+                    "ZipFile":  { "Fn::Join": ["", [
+                        "#Upload all code files from lambda/infersign folder"
+                    ]]}
+                }
+            }
+        },
+        "sendmessages2swslambda" : {
+            "Type": "AWS::Lambda::Function",
+            "DependsOn" : ["IAMS2SExecutionRole"],            
+            "Properties": {
+                "Description" : "Update S2S Client UI with inferred sign message",
+                "FunctionName" : "s2s-ws-sendmessage-node-cf",  
+                "Handler": "index.handler",
+                "Role": {
+                    "Fn::GetAtt": ["IAMS2SExecutionRole","Arn"]
+                },
+                "Runtime": "nodejs12.x",
+                "Timeout": 300,
+                "Environment" : {
+                    "Variables" : {
+                        "messagestable" : {"Ref" :  "messagestable"},
+                        "wsclientstable" : {"Ref" :  "wsclientstable"},
+                        "wssurl" : { 
+                            "Fn::Join" : [ 
+                                "", 
+                                [
+                                    {"Ref" : "s2swsapi" }, 
+                                    ".execute-api.",
+                                    {"Ref" :  "AWS::Region"},
+                                    ".amazonaws.com/",
+                                    {"Ref" :  "s2swsprodstage"}
+                                ] 
+                            ] 
+                        }
+                    }
+                },
+                "Code" : {
+                    "ZipFile":  { "Fn::Join": ["", [
+                        "//Upload all code files from lambda/s2s-ws-sendmessage-node"
+                    ]]}
+                }
+            }
+        }
+        
+    },
+    "Outputs" : {
+        "S2SWebSocketURL" : {
+            "Description": "The WSS Protocol URI to connect to for S2S UI Client",
+            "Value" :  { 
+                "Fn::Join" : [ 
+                    "", 
+                    [
+                        "wss://",
+                        {"Ref" : "s2swsapi" }, 
+                        ".execute-api.",
+                        {"Ref" :  "AWS::Region"},
+                        ".amazonaws.com/",
+                        {"Ref" :  "s2swsprodstage"}
+                    ] 
+                ] 
+            }
+        },
+        "ARNTableMessages" : {
+            "Description": "Arn of DynamoDB table MESSAGES to store all signs",
+            "Value" : {"Fn::GetAtt" : [ "messagestable", "Arn" ]}
+        },
+        "ARNTableWsClients" : {
+            "Description": "Arn of DynamoDB table WS-CLIENTS to store client information",
+            "Value" : {"Fn::GetAtt" : [ "wsclientstable", "Arn" ]}
+        },
+        "ARNS3Bucket" : {
+            "Description": "Arn of S3 Bucket SIGNS-DATA to store sign information",
+            "Value" : {"Fn::GetAtt" : [ "S3Bucket", "Arn" ]}
+        }
+    }
+}
