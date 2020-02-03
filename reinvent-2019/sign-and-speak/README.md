@@ -60,7 +60,7 @@ The image below shows the full architecture for the two-way communication demo.
 ### UI Flow 
 - When a new Sign UI/Speak UI instance is started up, It makes a persistent connection to the Websocket API on the API Gateway
 - Changes to the DynamoDB table are captured via a DynamoDB Stream and the inserted message is published to the API Gateway endpoint using another Lambda Function
-- The Websocket API on the APIGateway publishes the message back to the Sign UI/ Speak UI which displays the formatted Message
+- The Websocket API on the APIGateway publishes the message back to the Sign UI/ Speak UI which displays the formatted message
 
 <p align="center"><img src="img/sign-and-speak-architecture.png" /></p>
 
@@ -99,10 +99,6 @@ To capture the movement (or time) element of signing a word or phrase, the image
 
 <p align="center"><img src="img/grid_concept.png" /></p>
 
-The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019, but would expect any later build or release to support the required functionality.
-
-The video preprocessing code is included in this repository and should be placed in an [AWS Lambda](https://aws.amazon.com/lambda/) function running Python 3.8. To run the correct version of FFmpeg, you need to upload it as an AWS Lambda layer. Keep in mind the [size limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) for AWS Lambda - only the main ffmpeg binary needs to be included in the ZIP package uploaded as a Lambda layer. 
-
 #### 5.2.3 Training and deploying a model
 
 First, ensure that all training videos have been preprocessed into 3x3 grid images. Upload these images to an Amazon S3 bucket, organizing the images into folders based on their label (e.g. a folder for 'cat', a folder for 'pub', etc).
@@ -110,8 +106,6 @@ First, ensure that all training videos have been preprocessed into 3x3 grid imag
 Follow [these instructions](https://docs.aws.amazon.com/sagemaker/latest/dg/gs-setup-working-env.html) to set up an Amazon SageMaker instance on the smallest instance type (`ml.t3.medium`). If you want to pre-load the Sign & Speak scripts, simply add the URL to this GitHub repository in the 'Git repositories' section of the setup process. 
 
 If you forgot to pre-load the Sign & Speak project, simply wait for the instance to show status `InService`, then click 'Open Jupyter'. In the new tab which opens, click on the 'New' drop-down menu in the top right corner, and choose 'Terminal' at the bottom of the list. From the terminal, you can `git clone` this repository onto the instance.
-
-Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, follow the instructions below to connect it to the UI.
 
 ### 5.3 Sign & Speak User Interface
 
@@ -121,7 +115,7 @@ Each of the UI will support 4 key functions
 
 - **On load** : Connect to WebSocket API
 - **On unload** : Disconnect from WebSocket API
-- **Receive Message** : On Receiving a message from the WebSocket API, update the Text Chat panel
+- **Receive Message** : On receiving a message from the WebSocket API, update the Text Chat panel
 - **Capture Intent** : Capture the intent of the user (e.g. capture user video in a Sign UI / capture spoken words from Speak UI)
 
 #### 5.3.1 Sign UI
@@ -151,8 +145,12 @@ The UI has two panels - Sign Panel and a Message Panel
 ### 6.0 Pre-Setup
 
 **Setup the FFMPEG Lambda Layer**
+The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019, but would expect any later build or release to support the required functionality.
 
-**Setup the S2S Model for infrence** 
+The video preprocessing code is included in this repository and should be placed in an [AWS Lambda](https://aws.amazon.com/lambda/) function running Python 3.8. To run the correct version of FFmpeg, you need to upload it as an [AWS Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html). Keep in mind the [size limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) for AWS Lambda - only the main ffmpeg binary needs to be included in the ZIP package uploaded as a Lambda layer.
+
+**Setup the Machine Learning model for inference** 
+Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, follow the instructions below to connect it to the UI.
 
 ### 6.1 Installation
 
@@ -171,8 +169,7 @@ Please follow the below steps after downloading the code to setup
     - Click on "Create Access Key"
     - Copy and Store the Access key ID/Secret access key, securely 
 
-
-**[AWS] Lambda Functions : Update latest code **
+**[AWS] Lambda Functions : Update latest code**
 - Copy the updated code for lambda functions. Create the files as necessary 
     - infersign-cf ( index.py )
     - python-video-to-grid-shell-cf( index.py , frame_picker.py , testscript.sh , video_to_grid.sh )
@@ -205,9 +202,9 @@ Please follow the below steps after downloading the code to setup
 - Copy the ui folder to a local directory
 
 **[LocalMachine] Update [LocalDir]\ui\static\js\sign.js**
-- update the app_credentials
+- Update the app_credentials
     - Put the AccessKeyID/SecretAccessKey in app_credentials
-- set the region
+- Set the region
     - Update the variable "app_region" based on the AWS Region used
 
 **[LocalMachine] Update [LocalDir]\ui\static\js\web-socket-msg.js**
@@ -215,13 +212,12 @@ Please follow the below steps after downloading the code to setup
     - Put the CloudFormation Template Output value for S2SWebSocketURL in  "wsurl" variable
 
 ### 6.4 Run Application
-** Use Firefox (We have tested it only on this browser)
+*Use Firefox (We have tested it only on this browser)*
 - Navigate to the page \ui\sign.html
 - Click on Start Sign/Stop Sign to record a sign
 - Click on Upload Sign to trigger the process of inference
-- Inferred Sign message is displayed on the UI
+- Inferred sign message is displayed on the UI
 - If you get an alert message "WebSocket connection is closed. Refresh screen!!!", then reload your UI.
-
 
 ### 6.3 Uninstall
 
@@ -249,11 +245,11 @@ Please follow the below steps after downloading the code to setup
 
 **Q:What platform has the UI been tested on?**
 
-**A:** The UI has been tested to work on Windows 10, with Mozilla Firefox browser. Its tested to work in the AWS Sydney Region.
+**A:** The UI has been tested to work on Windows 10, with Mozilla Firefox browser. It's tested to work in the AWS Sydney Region.
 
 **Q:** I only see a rotating circle on the UI! Help!
 
-**A:** Check the following steps have been performed correctly
+**A:** Check the following steps have been performed correctly:
 - Verify that all the lambda function code has been updated correctly
 - Verify that the S3 Bucket triggers for inferSign-cf and python-video-to-grid-shell-cf are created 
 - Verify that you have changed the runtime language of lambda function python-video-to-grid-shell-cf to Python 3.8
@@ -266,7 +262,6 @@ Please follow the below steps after downloading the code to setup
 * Add support for continuous sign language recognition
 * Add a 3D avatar to turn text into sign language
 * Improve the security of the application (e.g. Build in Authentication for UI and APIs)
-
 
 **Q: What is the animal in your logo?**
 
@@ -284,10 +279,11 @@ This library is licensed under the Apache 2.0 License.
 
 ## 10. References
 
-This project references the following libraries to put together the solution
+This project references the following libraries to put together the solution:
 
 - [jquery-1.12.4](https://jquery.com/)
 - [aws-sdk.min.js](https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.610.0/aws-sdk.min.js)
 - [bootstrap](https://getbootstrap.com/)
 - [RecordRTC.js](https://github.com/muaz-khan/RecordRTC)
 - [adapter-latest.js](https://github.com/webrtc/adapter)
+- [ffmpeg](https://ffmpeg.org/)
