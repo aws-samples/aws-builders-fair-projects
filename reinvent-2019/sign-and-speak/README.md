@@ -145,12 +145,18 @@ The UI has two panels - Sign Panel and a Message Panel
 ### 6.0 Pre-Setup
 
 **Setup the FFMPEG Lambda Layer**
-The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019, but would expect any later build or release to support the required functionality.
 
-The video preprocessing code is included in this repository and should be placed in an [AWS Lambda](https://aws.amazon.com/lambda/) function running Python 3.8. To run the correct version of FFmpeg, you need to upload it as an [AWS Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html). Keep in mind the [size limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) for AWS Lambda - only the main ffmpeg binary needs to be included in the ZIP package uploaded as a Lambda layer.
+The stable release of FFmpeg at time of writing (4.2.1) does not contain all the features required to complete the preprocessing. We recommend downloading a [nightly build](https://johnvansickle.com/ffmpeg/) to access the latest features and bug fixes. We used the build from 26/08/2019 but would expect any later build or release to support the required functionality. To run the correct version of FFmpeg, you need to upload it as an [AWS Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html). Keep in mind the [size limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) for AWS Lambda - only the main ffmpeg binary needs to be included in the ZIP package uploaded as a Lambda layer. Detailed instructions as follows:
+
+1. Download the `ffmpeg-git-amd64-static.tar.xz` from the [nightly build](https://johnvansickle.com/ffmpeg/)
+1. Untar the tar file on your local machine
+1. Create a zip package containing the `ffmpeg` binary file. Name the zip package however you like, but make sure the `ffmpeg` file is at the top level of the package
+1. Navigate to AWS Lambda and upload the zip package as a layer
+1. Make a note of the ARN
 
 **Setup the Machine Learning model for inference** 
-Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, follow the instructions below to connect it to the UI.
+
+Follow the instructions in `scripts/ML Instructions.ipynb` to train and deploy a model with your training data. Once you have an Amazon SageMaker endpoint, make a note of the ARN, and follow the instructions below to connect it to the UI.
 
 ### 6.1 Installation
 
