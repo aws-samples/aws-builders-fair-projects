@@ -49,7 +49,7 @@ def lambda_handler(event, context):
     os.system('cp testscript.sh /tmp/testscript.sh')
     os.system('cp video_to_grid.sh /tmp/video_to_grid.sh')
     os.system('cp frame_picker.py /tmp/frame_picker.py')
-    os.system('cp /opt/ffmpeg-git-20190826-amd64-static2/ffmpeg /tmp/ffmpeg')    
+    os.system('cp /opt/ffmpeg /tmp/ffmpeg')    
     os.system('echo copy done')
 
 
