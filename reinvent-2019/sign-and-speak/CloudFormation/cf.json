@@ -93,28 +93,7 @@
                     ]
                 }
             }
-        },
-        "S3InvokeGridLambdaPermission": {
-            "Type": "AWS::Lambda::Permission",
-            "DependsOn" : ["videotogridlambda","S3Bucket"],
-            "Properties": {
-              "Action": "lambda:InvokeFunction",
-              "FunctionName": { "Ref":  "videotogridlambda" },
-              "Principal": "s3.amazonaws.com",
-              "SourceArn": {"Fn::GetAtt": [ "S3Bucket", "Arn" ] }
-            }
-        },
-        "S3InvokeInferSignLambdaPermission": {
-            "Type": "AWS::Lambda::Permission",
-            "DependsOn" : ["infersignlambda","S3Bucket"],
-            "Properties": {
-              "Action": "lambda:InvokeFunction",
-              "FunctionName": { "Ref":  "infersignlambda" },
-              "Principal": "s3.amazonaws.com",
-              "SourceArn": {"Fn::GetAtt": [ "S3Bucket", "Arn" ] }
-            }
-        },
-        
+        },        
         "IAMS2SExecutionRole" : {
             "Type" : "AWS::IAM::Role",
             "Properties" : {
