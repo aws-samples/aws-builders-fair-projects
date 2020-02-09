@@ -1,0 +1,61 @@
+[API]
+get_images/api_key = 2YSoTXerhD4u3iat9CWUM9kn756MTJIp4c4Tgfqk
+get_qrcode/api_key = aLCOemQkKa6EzcOQU6xjI8T2hRzD4Cf050EwWdb1
+
+get_images/url = https://lqhvtjhlsc.execute-api.us-east-1.amazonaws.com/production/Cerebro_GetImages_S3List
+get_qrcode/url = https://lqhvtjhlsc.execute-api.us-east-1.amazonaws.com/production/Cerebro_GetQRCode
+
+[Queue]
+client/url = https://queue.amazonaws.com/456038447595/cerebro_client
+client/name = cerebro_client
+backend/name = cerebro_backend
+
+[Assets]
+s3/bucket = project-cerebro
+dynamo/table_name = cerebro_media
+
+[Client]
+path/temp = /tmp/project_cerebro
+path/media = /tmp/project_cerebro/media
+path/logs = /tmp/project_cerebro/logs
+path/profiles = /tmp/project_cerebro/profiles
+path/system = /tmp/project_cerebro/system
+path/audio = ../assets/audio
+
+[Settings]
+max_images = 10
+cadence = 200
+
+[RaspberryPi]
+green/led = 27
+green/button = 17
+yellow/led = 26
+yellow/button = 16
+
+pushbutton/delay = 300
+pushbutton/accept_input = 1
+pushbutton/choose_another_input = 2
+
+[IOT]
+topic/name = cerebro
+
+host/name = aiw42dxvn7vdk.iot.us-east-1.amazonaws.com
+path/root_ca = ../iot-certs/root-CA.crt
+path/cert = ../iot-certs/Cerebro-Ronan.cert.pem
+path/private_key = ../iot-certs/Cerebro-Ronan.private.key
+
+client_id/requester = cerebroClientPi-Requester
+client_id/processor = cerebroClientPi-Processor
+
+[Printer]
+name = selphy
+
+[Filters]
+filtered_image/name = filtered_image.jpg
+filter/pig_nose = ../assets/filters/pig_nose.png
+filter/flower_crown = ../assets/filters/flower_crown.png
+filter/eye_mask = ../assets/filters/mustache.png
+filter/dog_nose = ../assets/filters/dog_nose.png
+filter/dog_left_ear = ../assets/filters/dog_left_ear.png
+filter/dog_right_ear = ../assets/filters/dog_right_ear.png
+filter/dog_tongue = ../assets/filters/dog_tongue.png
