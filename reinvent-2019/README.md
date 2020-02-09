@@ -21,6 +21,7 @@ A collection of templates, sample code and documentation from the re:Invent 2019
 | [Polyglot Bot](polyglot-bot) | A greeter bot that recognizes your greeting language and wish you back in the same language with hand gesture |
 | [Puente](puente) | Puente is a machine learning model that recognizes static American Sign Language letters |
 | [Rhythm Cloud](rhythm-cloud) | Learn to play the drums and learn AWS IoT |
+| [Sign & Speak](sign-and-speak) | A communication tool for users of sign language and users of spoken language, allowing for simple conversation through the use of AI/ML |
 | [Skittles Sorter](skittle-sorter) | The Skittles Sorter automagically sorts your favorite snack based on their color, powered by the AWS IoT suite of services |
 | [Smart Garage](smart-garage) | Control your garage using Alexa using Raspberry Pi |
 | [Sports Scoring using Machine Learning](sports-scoring-using-machine-learning) | Track and display the score of a Cornhole game using a camera and Amazon SageMaker |

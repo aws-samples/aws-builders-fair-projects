@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign&Speak</title>
+</head>
+<body class="bg-light w-100 h-100 ">        
+    
+<!-- Top Nav Bar : Repeated on all pages-->
+<div class="navbar-light d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 class="my-0 mr-md-auto font-weight-normal"><a class="text-dark" href="index.html">Sign&Speak</a></h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text=dark " id="btn-resetui" href="#">Reset</a>
+        <!-- <a class="p-2 text-dark" href="speech.html">Speech</a> -->
+        <a class="p-2 text-dark" href="sign.html">Sign</a>
+    </nav>                          
+    <!-- <button class="btn  btn-warning " id="btn-resetui">Reset</button> -->
+</div>
+<!-- Top Nav Bar : Repeated on all pages-->
+<div class="container-fluid">
+    <div class=row>
+        <div class="col-6">
+            <div class="row ">
+                <div class="col ml-4 mr-4 border rounded" >
+                    <div class="row ">
+                            <h5 class="w-100 text-center font-weight-bold bg-dark text-white p-2 rounded">Sign Panel</h5>
+                    </div>
+                    <div class="row">
+                        <button class="btn btn-warning text-left ml-1" id="btn-start-recording">Start Sign</button>                        
+                        <button class="btn btn-warning text-left ml-1  " id="btn-stop-recording" disabled="disabled">Stop Sign</button>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm">
+                            <video id="videoplayer" style="width:400px;height:300px;" controls autoplay></video>
+                            <video id="sec-videoplayer" style="width:400px;height:300px;" class="d-none" controls autoplay></video>
+                        </div>
+                        <div class = "col-sm">
+                            <img id="imgSignGrid" class="rounded img-thumbnail"  >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="ml-6"> 
+                                <button class="btn btn-warning text-left ml-5 " id="btn-send-sign" >Upload Sign</button>
+                            </div> 
+                        </div>                            
+                    </div>
+                </div> 
+            </div>
+            <br>                           
+        </div>
+        <div class="col-6">
+                <div class="col mr-4 border rounded">
+                        <div class="row ">
+                            <h5 class="w-100  mx-auto text-center font-weight-bold bg-dark text-white p-2 rounded">Message Panel</h5>
+                        </div>
+                        <div class="row p-2 ">
+                            <label>Language : </label>
+                            <select id="polly_language" class="ml-2">
+                                <optgroup label="English">
+                                    <option value="en-US">US English (en-US)</option>
+                                    <option value="en-AU">Australian English (en-AU)</option>
+                                    <option value="en-GB">British English (en-GB)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="row p-2 ">
+                            <label>Voice : </label>
+                            <select id="polly_voice" class="ml-2">
+                                <optgroup label="English">
+                                    <option value="Brian">Brian</option>
+                                    <option value="Emma">Emma</option>
+                                    <option value="Matthew">Matthew</option>
+                                    <option value="Nicole">Nicole</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <div id="divAudioPanel" class="d-none">x
+                            <audio id="audioPlayback" controls>
+                                <source id="audioSource" type="audio/mp3" src="">
+                            </audio>
+                        </div>
+                        <div id="divtranscript"></div>
+                        <div class="loader" id="divSpinner" ></div>
+                    </div>   
+        </div>
+    </div>
+</div>
+
+
+
+ <!-- Script Resources-->
+ <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.610.0/aws-sdk.min.js"></script>
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+ <script src="https://www.webrtc-experiment.com/RecordRTC.js"></script>
+ <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+ 
+ <script type="text/javascript" src="static/js/sign.js"></script>
+ <script type="text/javascript" src="static/js/web-socket-msg.js"></script>
+
+
+ <!-- CSS Resources-->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+ <link rel="stylesheet" href="static/css/signspeak.css">
+</body>
+</html>
