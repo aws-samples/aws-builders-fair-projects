@@ -5,13 +5,13 @@
         }
     },
     "coreThing" : {
-        "thingArn" : "arn:aws:iot:us-east-1:242804768852:thing/SmartGarden_core",
+        "thingArn" : "arn:aws:iot:us-east-1:ACCOUNT:thing/SmartGarden_core",
         "caPath" : "root.ca.pem",
         "certPath" : "SmartGarden_core.pem",
         "ggHost" : "greengrass.iot.us-east-1.amazonaws.com",
-        "iotHost" : "a2ofvdpzvw8exx.iot.us-east-1.amazonaws.com",
+        "iotHost" : "IDENDPOINT.iot.us-east-1.amazonaws.com",
         "keepAlive" : 600,
-        "keyPath" : "SmartGarden_core.key"
+        "keyPath" : "NAME.key"
     },
     "managedRespawn" : false
 }
