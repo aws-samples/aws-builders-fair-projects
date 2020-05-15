@@ -1,0 +1,66 @@
+author: moongose-os
+description: HiGrow Plant Sensor
+version: 1.0
+manifest_version: 2017-05-18
+
+libs_version: ${mos.version}
+modules_version: ${mos.version}
+mongoose_os_version: ${mos.version}
+
+config_schema:
+  - ["i2c.enable", true]
+  - ["higrow", "o", {title: "HiGrow Sensor"}]
+  - ["higrow.deviceId", "s", "", {title: "esp32smartgarden"}]
+  - ["higrow.temperature", "d", 0.0, {title: "Temperature"}]
+  - ["higrow.humidity", "d", 0.0, {title: "Humidity"}]
+  - ["higrow.light", "i", 0, {title: "Light"}]
+  - ["higrow.water", "i", 0, {title: "Water"}]
+  - ["higrow.connected", "b", false, {title: "Connected"}]
+  - ["aws", "o", {title: "AWS settings"}]
+  - ["aws.thing_name", "s", "", {title: "esp32smartgarden"}]
+  - ["device.id", "esp32smartgarden"]
+  - ["client.id", "esp32smartgarden"]
+  - ["mqtt", "o", {title: "MQTT settings"}]
+  - ["mqtt.enable", "b", false, {title: "Enable MQTT"}]
+  - ["mqtt.server", "s", "192.168.43.194:8883", {title: "MQTT server"}]
+  - ["mqtt.client_id", "s", "", {title: "esp32smartgarden"}]
+  - ["mqtt.reconnect_timeout_min", "d", 2.0, {title: "Starting reconnect timeout"}]
+  - ["mqtt.reconnect_timeout_max", "d", 60.0, {title: "Maximum reconnect timeout"}]
+  - ["mqtt.ssl_cert", "s", "", {title: "ID-certificate.pem.crt"}]
+  - ["mqtt.ssl_key", "s", "", {title: "ID-private.pem.key"}]
+  - ["mqtt.ssl_ca_cert", "s", "", {title: "gg-ca.pem"}]
+  - ["mqtt.keep_alive", "i", 60, {title: "Keep alive interval"}]
+  - ["mqtt.cloud_events", "b", true, {title: "Trigger cloud events when connected / disconnected"}]
+  - ["sys.tz_spec", "s", "", {title: "See formats for the TZ env var: \"man tzset\". Formats like \":/path/to/file\" are not supported"}]
+  - ["sntp", "o", {title: "SNTP settings"}]
+  - ["sntp.enable", "b", true, {title: "Enable SNTP"}]
+  - ["sntp.server", "s", "time.google.com", {title: "Server address"}]
+  - ["sntp.retry_min", "i", 1, {title: "Minimum retry interval"}]
+  - ["sntp.retry_max", "i", 30, {title: "Maximum retry interval"}]
+  - ["sntp.update_interval", "i", 7200, {title: "Update interval. If 0, performs a one-off sync"}]
+cdefs:
+  MG_ENABLE_MQTT: 1
+
+filesystem:
+  - fs
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/ca-bundle
+  - origin: https://github.com/mongoose-os-libs/bt-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/rpc-uart
+  - origin: https://github.com/mongoose-os-libs/rpc-mqtt
+  - origin: https://github.com/mongoose-os-libs/wifi
+  - origin: https://github.com/mongoose-os-libs/dht
+  - origin: https://github.com/mongoose-os-libs/mjs
+  - origin: https://github.com/mongoose-os-libs/adc
+  - origin: https://github.com/mongoose-os-libs/aws
+  - origin: https://github.com/mongoose-os-libs/sntp
+
+tags:
+  - js
+  - hw
+  - higrow
+  - esp32
+  - plant

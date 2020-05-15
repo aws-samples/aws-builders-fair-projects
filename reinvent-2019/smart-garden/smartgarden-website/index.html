@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+    <title>Smart Garden</title>
+    <!--  bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+     <script src="bootstrap.min.js"></script>
+  </head>
+  <body style="background-color:#00cc00;">
+    <div class="container"><!-- main container -->
+      <div class="jumbotron" style="background-color:black;">
+        <div class="container" style="background-color:black;">
+          <h1><font color="white"><b><a href="<PUT LINK TO TIMELAPSE MP4 HERE>">Smart Garden</a></b></font></h1>
+          <font color="white"><b>Click above and download the Smart Garden timelapse</b><br></font>
+          <a href='#interactions'><b>Click here and see the interactions with Alexa, Lex and IoT Button</b></a>
+      </div>
+      </div>
+
+      <div class="row">
+              <div class=".col-xs-1 .col-sm-2">
+                <img src="SmartGarden.jpg" class="img-fluid" style="width:400px; height:250px; margin-left:20px;" alt="Smart Garden"/>
+                <!--THIS QRCODE DRIVES TO EXISTING SMART GARDEN WEBSITE-->
+                <img src="qr_code.png" class="img-fluid" style="width:250px; height:250px; margin-left:10px;" alt="QR Code" id="qrcode"/>
+              </div>
+      </div>
+
+      <div class="row">
+        <br>
+      </div>
+
+      <div class="row">
+              <div class=".col-xs-1 .col-sm-5">
+                <img src="builderslogo.png" class="img-fluid" style="width:400px; height:250px; margin-left:200px;" alt="Builders Fair" id="buildersfair"/>
+              </div>
+      </div>
+
+        <br>
+        <hr/><hr/>
+        <br>
+        <div id='interactions' style='margin-left:50px;'>
+          <div class="row">
+                  <div class=".col-xs-1 .col-sm-5">
+                  </div>
+          </div>
+          <div class="row">
+                  <div class=".col-xs-1 .col-sm-5">
+                    <ul>
+                      <font color="blue"><b>Interact with Alexa:</b></font>
+                      <font color="white"><li><b>Alexa, Smart Garden</b></li></font>
+                    </ul>
+                    <br>
+                    <ul>
+                      <font color="blue"><b>Try in Alexa or in the Lex chatbot chat (voice or typing):</b><font>
+                      <font color="white"><li>I am Groot</li>
+                      <li>Water Groot</li>
+                      <li>Water Flowers</li>
+                      <li>Water Garden</li>
+                      <li>Soil Mositure</li>
+                      <li>Temperature</li>
+                      <li>Timelapse</li></font>
+                    </ul>
+                    <br>
+                    <ul>
+                      <font color="blue"><b>Iot Button:</b></font>
+                      <font color="white"><li>1 click: water Groot</li>
+                      <li>2 click water Flowes</li>
+                      <li>Long click: water garden (both)</li></font>
+                    </ul>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                  </div>
+          </div>
+        </div>
+    </div>
+
+    <script src="<PUT YOUR LEX UI ADDRESS HERE> https://lex-web-ui-codebuilddeploy... ... lex-web-ui-loader.min.js" PUT YOUR LEX UI ADDRESS HERE></script>
+<script>
+  var loaderOpts = {
+    baseUrl: '<PUT YOUR LEX UI ADDRESS HERE> https://lex-web-ui-codebuilddeploy-<ID>webappbucket-<ID>.s3.amazonaws.com/ <PUT YOUR LEX UI ADDRESS HERE>'
+  };
+  var loader = new ChatBotUiLoader.IframeLoader(loaderOpts);
+  loader.load()
+    .catch(function (error) { console.error(error); });
+
+  if(detectar_mobile()) {
+    document.getElementById("qrcode").style.display = 'none';
+    document.getElementById("buildersfair").style.margin = '0px 0px 0px 20px';
+  }
+
+  function detectar_mobile() {
+     if( navigator.userAgent.match(/Android/i)
+     || navigator.userAgent.match(/webOS/i)
+     || navigator.userAgent.match(/iPhone/i)
+     || navigator.userAgent.match(/iPad/i)
+     || navigator.userAgent.match(/iPod/i)
+     || navigator.userAgent.match(/BlackBerry/i)
+     || navigator.userAgent.match(/Windows Phone/i)
+     ){
+        return true;
+      }
+     else {
+        return false;
+      }
+    }
+</script>
+  </body>
+</html>
