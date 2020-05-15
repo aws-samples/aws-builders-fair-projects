@@ -35,3 +35,15 @@ To use Alexa skills you need to create the Alexa skill in your Alexa developer a
 https://developer.amazon.com/alexa/console/ask
 
 There's Alexa and Lex interactions you can use to create the tenets of the solution (same mentioned in backend lambdas).
+
+The Lambdas to run in the edge (Raspberry PI running Greengrass) can be found in lambdasGreengrass-Edge or in this git: https://github.com/tibernardinelli/plant-watering
+
+Other helpful content:
+
+ESP32 is the thing you ar going to Connect into Greengrass.
+
+You can use FreeRTOS or Mooongose to program ESP32: https://aws.amazon.com/pt/freertos/
+https://github.com/mongoose-os-libs/aws
+
+To test the relay using Python in Raspberry PI: https://github.com/skiwithpete/relaypi/blob/master/4port/script4.py
+ 
