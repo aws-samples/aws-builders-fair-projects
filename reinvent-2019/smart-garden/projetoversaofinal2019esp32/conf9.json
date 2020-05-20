@@ -1,0 +1,33 @@
+{
+  "device": {
+    "id": "esp32smartgarden"
+  },
+  "mqtt": {
+    "enable": true,
+    "server": "IP:PORT",
+    "client_id": "thing_name",
+    "ssl_cert": "ID-certificate.pem.crt",
+    "ssl_key": "ID-private.pem.key",
+    "ssl_ca_cert": "gg-ca.pem",
+    "max_qos": 0
+  },
+  "aws": {
+    "thing_name": "thing_name",
+    "greengrass": {
+      "enable": true
+    }
+  },
+  "bt": {
+    "enable": false
+  },
+  "wifi": {
+    "ap": {
+      "enable": false
+    },
+    "sta": {
+      "enable": true,
+      "ssid": "ID",
+      "pass": "password"
+    }
+  }
+}

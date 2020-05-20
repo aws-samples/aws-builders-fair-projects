@@ -1,0 +1,17 @@
+{
+    "runtime" : {
+        "cgroup" : {
+            "useSystemd" : "yes"
+        }
+    },
+    "coreThing" : {
+        "thingArn" : "arn:aws:iot:us-east-1:ACCOUNT:thing/SmartGarden_core",
+        "caPath" : "root.ca.pem",
+        "certPath" : "SmartGarden_core.pem",
+        "ggHost" : "greengrass.iot.us-east-1.amazonaws.com",
+        "iotHost" : "IDENDPOINT.iot.us-east-1.amazonaws.com",
+        "keepAlive" : 600,
+        "keyPath" : "NAME.key"
+    },
+    "managedRespawn" : false
+}

@@ -1,0 +1,19 @@
+To use Mongoose and create conf9.json manually (if it’s not reading the file for any reason):
+mos config-set --no-reboot device.id=‘thing id’
+mos config-set --no-reboot mqtt.enable=true
+mos config-set --no-reboot mqtt.server=“IP:PORT”
+mos config-set --no-reboot mqtt.client_id=‘thing id’
+mos config-set --no-reboot mqtt.ssl_cert=‘ID-certificate.pem.crt'
+mos config-set --no-reboot mqtt.ssl_key=‘ID-private.pem.key'
+mos config-set --no-reboot mqtt.ssl_ca_cert='gg-ca.pem'
+mos config-set --no-reboot mqtt.max_qos=0
+mos config-set --no-reboot aws.thing_name=‘thing id’
+mos config-set --no-reboot aws.greengrass.enable=true
+mos config-set sntp.enable=true
+
+mos call Config.save
+
+
+JSON data Schema:
+
+{"water_level":0,"humidity":86,"deviceId":"00000000be9a0795","temperature":20,"timestp":"2019-07-17T20:01:50.189Z","timestp_glue":"2019-07-17 20:01:50"}

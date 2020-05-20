@@ -1,0 +1,111 @@
+# Greeengrass Group definition file
+Group:
+  name: SmartGarden
+Cores:
+  - name: SmartGarden_core
+    key_path: ./certs
+    config_path: ./config
+    SyncShadow: True
+
+Lambdas:
+  - name: MoistureHandler
+    handler: moistureHandler.pinned_handler
+    package: lambdas/Moisture
+    alias: dev
+    greengrassConfig:
+      MemorySize: 128000 # kb
+      Timeout: 60 # seconds
+      Pinned: True
+      Environment:
+        AccessSysfs: True
+        ResourceAccessPolicies:
+          - ResourceId: RaspberryGPIO
+            Permission: 'rw'
+  - name: WaterRelease
+    handler: handler.release_water
+    package: lambdas/WaterPumpControl
+    alias: dev
+    greengrassConfig:
+      MemorySize: 128000 # kb
+      Timeout: 60 # seconds
+      Pinned: False
+      Environment:
+        AccessSysfs: True
+        ResourceAccessPolicies:
+          - ResourceId: RaspberryGPIO
+            Permission: 'rw'
+  - name: DeviceBoot
+    handler: pinned.pinned_handler
+    package: lambdas/WaterPumpControl
+    alias: dev
+    greengrassConfig:
+      MemorySize: 128000 # kb
+      Timeout: 300 # seconds
+      Pinned: True
+      Environment:
+        AccessSysfs: True
+        ResourceAccessPolicies:
+          - ResourceId: RaspberryGPIO
+            Permission: 'rw'
+          - ResourceId: DataFolder
+            Permission: 'rw'
+  - name: Camera
+    handler: pinned.pinned_handler
+    package: lambdas/Camera
+    alias: dev
+    greengrassConfig:
+      MemorySize: 128000 # kb
+      Timeout: 30 # seconds
+      Pinned: True
+      Environment:
+        AccessSysfs: True
+        ResourceAccessPolicies:
+          - ResourceId: PiCamera
+            Permission: 'rw'
+Subscriptions:
+  - Source: GGShadowService
+    Subject: '$aws/things/SmartGarden_core/shadow/get/#'
+    Target: cloud
+  - Source: GGShadowService
+    Subject: '$aws/things/SmartGarden_core/shadow/update/#'
+    Target: cloud
+  - Source: cloud
+    Subject: '$aws/things/SmartGarden_core/shadow/get/#'
+    Target: GGShadowService
+  - Source: cloud
+    Subject: '$aws/things/SmartGarden_core/shadow/update/#'
+    Target: GGShadowService
+  - Source: cloud
+    Subject: 'SmartGarden/WaterRelease'
+    Target: Lambda::WaterRelease
+  - Source: Lambda::MoistureHandler
+    Subject: 'SmartGarden/MoistureLevel'
+    Target: cloud
+
+# Resource as defined at http://boto3.readthedocs.io/en/latest/reference/services/greengrass.html#Greengrass.Client.create_resource_definition_version
+Resources:
+  - Name: RaspberryGPIO
+    Id: RaspberryGPIO
+    LocalDeviceResourceData:
+      SourcePath: /dev/gpiomem
+      GroupOwnerSetting:
+        AutoAddGroupOwner: True
+  - Name: DataFolder
+    Id: DataFolder
+    LocalVolumeResourceData:
+      SourcePath: /home/ggc_user/
+      DestinationPath: /home/ggc_user/
+      GroupOwnerSetting:
+        AutoAddGroupOwner: True
+  - Name: PiCamera
+    Id: PiCamera
+    LocalDeviceResourceData:
+      SourcePath: /dev/video0
+      GroupOwnerSetting:
+        AutoAddGroupOwner: True
+  - Name: PiCamera2
+    Id: PiCamera2
+    LocalDeviceResourceData:
+      SourcePath: /dev/vchiq
+      GroupOwnerSetting:
+        AutoAddGroupOwner: True
