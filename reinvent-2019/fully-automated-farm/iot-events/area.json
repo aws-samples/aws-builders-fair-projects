@@ -1,0 +1,254 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "init",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "to_no",
+                            "condition": "true",
+                            "actions": [],
+                            "nextState": "no_water"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "total_sensor",
+                                        "value": "3"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "0"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "less_threshold",
+                                        "value": "2"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "no_water",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "moist",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Moist\" && $variable.moist_count < $variable.total_sensor",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count + 1"
+                                    }
+                                },
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "testcmd"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "drying",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Drying\" && $variable.moist_count > 0",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count - 1"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "to_less",
+                            "condition": "$variable.moist_count >= $variable.less_threshold",
+                            "actions": [],
+                            "nextState": "less_water"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "no_water_init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/area/no_water"
+                                    }
+                                },
+                                {
+                                    "iotEvents": {
+                                        "inputName": "area_state"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "less_water",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "drying",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Drying\" && $variable.moist_count > 0",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count - 1"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "moist",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Moist\" && $variable.moist_count < $variable.total_sensor",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count + 1"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "to_no",
+                            "condition": "$variable.moist_count == 0",
+                            "actions": [],
+                            "nextState": "no_water"
+                        },
+                        {
+                            "eventName": "to_full",
+                            "condition": "$variable.moist_count >= $variable.total_sensor",
+                            "actions": [],
+                            "nextState": "full_water"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "less_water_init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/area/less_water"
+                                    }
+                                },
+                                {
+                                    "iotEvents": {
+                                        "inputName": "area_state"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "full_water",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "moist",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Moist\" && $variable.moist_count < $variable.total_sensor",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count + 1"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "drying",
+                            "condition": "$input.moisture_state.payload.state.stateName == \"Drying\" && $variable.moist_count > 0",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "moist_count",
+                                        "value": "$variable.moist_count - 1"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "to_less",
+                            "condition": "$variable.moist_count < $variable.total_sensor",
+                            "actions": [],
+                            "nextState": "less_water"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "full_water_init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/area/full_water"
+                                    }
+                                },
+                                {
+                                    "iotEvents": {
+                                        "inputName": "area_state"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "init"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "area",
+    "evaluationMethod": "SERIAL",
+    "key": "payload.state.variables.area",
+    "roleArn": "arn:aws:iam::894663492354:role/service-role/iot-events-moisture-model-role"
+}

@@ -1,0 +1,307 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "Sensor-Down",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "Down_to_Dry",
+                            "condition": "$input.moisture_sensor.moisture < $variable.threshold",
+                            "actions": [],
+                            "nextState": "Drying"
+                        },
+                        {
+                            "eventName": "Down_to_Moist",
+                            "condition": "$input.moisture_sensor.value >= $variable.threshold\n",
+                            "actions": [],
+                            "nextState": "Moist"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "state/agri/moisture"
+                                    }
+                                },
+                                {
+                                    "clearTimer": {
+                                        "timerName": "sensor_timeout"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "publish",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/moisture/down"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "Init",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "Init_to_Dry",
+                            "condition": "$input.moisture_sensor.moisture < $variable.threshold",
+                            "actions": [],
+                            "nextState": "Drying"
+                        },
+                        {
+                            "eventName": "Init_to_Moist",
+                            "condition": "$input.moisture_sensor.moisture >= $variable.threshold\n",
+                            "actions": [],
+                            "nextState": "Moist"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "area",
+                                        "value": "$input.moisture_sensor.area"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "value",
+                                        "value": "$input.moisture_sensor.moisture"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "threshold",
+                                        "value": "200"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "state",
+                                        "value": "\"init\""
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "Moist",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "moist_update",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "value",
+                                        "value": "$input.moisture_sensor.moisture"
+                                    }
+                                },
+                                {
+                                    "resetTimer": {
+                                        "timerName": "sensor_timeout"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "Moist_to_Dry",
+                            "condition": "$input.moisture_sensor.moisture < $variable.threshold",
+                            "actions": [],
+                            "nextState": "Drying"
+                        },
+                        {
+                            "eventName": "Moist_to_Down",
+                            "condition": "timeout(\"sensor_timeout\")",
+                            "actions": [],
+                            "nextState": "Sensor-Down"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "moist_init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "value",
+                                        "value": "$input.moisture_sensor.moisture"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "area",
+                                        "value": "$input.moisture_sensor.area"
+                                    }
+                                },
+                                {
+                                    "setTimer": {
+                                        "timerName": "sensor_timeout",
+                                        "seconds": 60,
+                                        "durationExpression": null
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "moist_publish",
+                            "condition": "$variable.state != \"Moist\"",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/moisture/moist"
+                                    }
+                                },
+                                {
+                                    "iotEvents": {
+                                        "inputName": "moisture_state"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "state",
+                                        "value": "\"Moist\""
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "Drying",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "drying_update",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "value",
+                                        "value": "$input.moisture_sensor.moisture"
+                                    }
+                                },
+                                {
+                                    "resetTimer": {
+                                        "timerName": "sensor_timeout"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "Dry_to_Moist",
+                            "condition": "$input.moisture_sensor.moisture >= $variable.threshold",
+                            "actions": [],
+                            "nextState": "Moist"
+                        },
+                        {
+                            "eventName": "Dry_to_Down",
+                            "condition": "timeout(\"sensor_timeout\")",
+                            "actions": [],
+                            "nextState": "Sensor-Down"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "drying_init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "value",
+                                        "value": "$input.moisture_sensor.moisture"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "area",
+                                        "value": "$input.moisture_sensor.area"
+                                    }
+                                },
+                                {
+                                    "setTimer": {
+                                        "timerName": "sensor_timeout",
+                                        "seconds": 60,
+                                        "durationExpression": null
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "drying_publish",
+                            "condition": "$variable.state != \"Drying\"",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_state/agri/moisture/dry"
+                                    }
+                                },
+                                {
+                                    "iotEvents": {
+                                        "inputName": "moisture_state"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "state",
+                                        "value": "\"Drying\""
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "Init"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "moisture",
+    "evaluationMethod": "BATCH",
+    "key": "sensor",
+    "roleArn": "arn:aws:iam::894663492354:role/service-role/iot-events-moisture-model-role"
+}
