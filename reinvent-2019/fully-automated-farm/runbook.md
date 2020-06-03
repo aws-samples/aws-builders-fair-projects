@@ -6,7 +6,7 @@
 1. Create [add_datetime Lambda function](./device/greengrass/add_datetime)
 1. Create Greengrass Group
     1. Add add_datetime Lambda function to this group
-!. Create dashboard
+1. Create dashboard
     1. See [dashboard/README.md](./dashboard/README.md) and setup dashboard
 
 ## Software
