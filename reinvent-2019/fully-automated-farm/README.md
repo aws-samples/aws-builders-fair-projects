@@ -33,10 +33,10 @@ AWS IoT Events is used to control and manage devices and its state in this demo.
 
 
 ## BOM
-[Link](./BOM.md)
+[Check here](./BOM.md)
 
 ## Runbook
-[Link](./runbook.md)
+[Check here](./runbook.md)
 
 ## Authors
 - Shota Iizuka: [iizus@amazon.co.jp](iizus@amazon.co.jp)
