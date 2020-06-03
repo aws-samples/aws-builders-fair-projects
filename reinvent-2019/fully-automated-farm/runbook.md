@@ -32,3 +32,9 @@
     1. Connect pumps to mechanical relay
     1. Connect mechanical relay to Raspberry Pi
     1. Connect hose to the pumps and put hose into each field
+
+![](./images/demo1.jpeg)
+
+![](./images/demo2.jpeg)
+
+![](./images/demo3.jpeg)
