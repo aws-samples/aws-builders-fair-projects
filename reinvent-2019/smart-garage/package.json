@@ -10,6 +10,7 @@
     "aws-iot-device-sdk": "^2.2.1",
     "aws-sdk": "^2.524.0",
     "dotenv": "^8.1.0",
+    "minimist": ">=0.2.1",
     "winston": "^3.2.1",
     "winston-cloudwatch": "^2.0.9"
   },
