@@ -2,6 +2,10 @@
 
 .DS_Store
 
+# Deps
+
+node_modules/
+
 # VS Code
 
 .vscode/*
