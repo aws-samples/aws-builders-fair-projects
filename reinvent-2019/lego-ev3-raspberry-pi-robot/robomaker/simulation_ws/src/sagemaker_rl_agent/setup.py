@@ -19,13 +19,13 @@ setup(
         'minio==4.0.5',
         'numpy==1.13.3',
         'pandas==0.20.2',
-        'Pillow==6.2.0',
+        'Pillow==7.1.0',
         'pygame==1.9.3',
         'PyYAML==4.2b1',
         'redis==2.10.6',
         'rospkg==1.1.7',
         'scipy==0.19.0',
-        'tensorflow==1.12.2',
+        'tensorflow==1.15.2',
         'rl-coach-slim==0.11.1'
     ],
     entry_points = {
