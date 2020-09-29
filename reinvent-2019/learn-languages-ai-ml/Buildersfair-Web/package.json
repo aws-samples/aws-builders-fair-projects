@@ -30,6 +30,7 @@
     "minimist": ">=1.2.3",
     "ngx-webcam": "^0.2.6",
     "rxjs": "~6.4.0",
+    "selfsigned": "^1.10.8",
     "serialize-javascript": ">=2.1.1",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
