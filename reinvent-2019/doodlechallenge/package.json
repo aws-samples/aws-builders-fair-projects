@@ -18,6 +18,7 @@
     "react-motion": "^0.5.2",
     "react-scripts": "^3.2.0",
     "react-transition-group": "^4.3.0",
+    "selfsigned": "^1.10.8",
     "uuidv4": "^6.0.0"
   },
   "scripts": {
