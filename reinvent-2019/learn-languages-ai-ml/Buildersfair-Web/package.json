@@ -33,6 +33,7 @@
     "selfsigned": "^1.10.8",
     "serialize-javascript": ">=2.1.1",
     "tslib": "^1.10.0",
+    "yargs-parser": "^13.1.2",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
