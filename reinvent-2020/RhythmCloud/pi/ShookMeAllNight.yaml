@@ -1,0 +1,80 @@
+tempo: 128
+song:
+- loop:
+  - repeat: 21
+    bar:
+    - combo:
+        - hit: highhat
+        - hit: kickdrum
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: snaredrum
+    - hit: highhat
+    - hit: highhat
+    - combo:
+        - hit: highhat
+        - hit: kickdrum
+    - combo:
+        - hit: highhat
+        - hit: snaredrum
+    - hit: highhat
+- bar:
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - hit: highhat
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - combo:
+    - hit: crash
+    - hit: kickdrum
+- bar:
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - combo:
+    - hit: crash
+    - hit: kickdrum
+- bar:
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - hit: highhat
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - combo:
+    - hit: highhat
+    - hit: kickdrum
+  - combo:
+    - hit: highhat
+    - hit: snaredrum
+  - combo:
+    - hit: highhat
+    - hit: kickdrum

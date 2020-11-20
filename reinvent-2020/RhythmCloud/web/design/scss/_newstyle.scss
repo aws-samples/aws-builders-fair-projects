@@ -1,0 +1,340 @@
+$primary: #E8F260 !important;
+
+  /*===== custom common classes  =====*/
+body { 
+  background-color: #545454; 
+  padding-bottom: 2rem;
+}
+
+.text-primary {
+  color: $primary;
+}
+
+.minor {
+  color: white;
+  opacity: .5;
+  font-size: 1.05rem;
+}
+
+#main_nav {
+  padding: 1rem;
+  background: black;
+  color: white;
+  max-width: 1140px;
+  height: 3.5rem;
+  margin: 2rem auto;
+  display: flex;
+  position: relative;
+  list-style: none;
+
+  li {
+    flex: 1;
+    text-align: center;
+    a {
+      color: white;
+      &.active {
+        color: $primary;
+      }
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+  
+  #logo_nav {
+    background-image: url('../images/rhythm_cloud_logo3.png');
+    width: 300px;
+    height: 150px;
+    background-size: 150px;
+    background-position: 0 28px;
+    // background-size: 180px;
+    // background-position: 0 18px;
+    background-repeat: no-repeat;
+    top: -4.5rem;
+    position: relative;
+    flex: 3;
+  }
+}
+
+
+#song_library {
+
+  thead, tfoot {
+    position: relative;
+    &:before {
+      content: '';
+      height: 3rem;
+      width: 3rem;
+      background-color: black;
+      position: absolute;
+      margin-left: -3rem;
+      border-radius: 2rem 0 0 2rem;
+      // margin-top: 1px;
+      background-image: url('../images/favicon.png');
+      // background-size: contain;
+      background-size: 40px;
+      background-repeat: no-repeat;
+      background-position: right;
+    }
+    th {
+      color: #fff;
+      background-color: #000;
+      // border-color: #454d55;
+      border: none;
+      &:last-of-type {
+        border-radius: 0 .5rem 0 0;
+        min-width: 250px;
+      }
+    }
+    
+  }
+  tfoot {
+    th {
+      &:last-of-type {
+        border-radius: 0 0 .5rem 0;
+      }
+    }
+  }
+  tbody {
+    background: white;
+  }
+
+  .dynamicControl, .myTurnControl {
+    background: #2423c9;
+    color: white;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.view_results {
+
+&:hover {
+  cursor: pointer;
+}
+}
+#song_filters {
+  background: rgba(0, 0, 0, .5);
+  padding: 0rem;
+  color: white;
+  margin-top: 4rem;
+
+  .filter_section {
+    display: inline-block;
+    margin: 0 0rem 3rem 0;
+    color: #fff;
+    opacity: .5;
+    padding: 1rem;
+    flex: 1;
+    text-align: center;
+    background: black;
+
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    &.active {
+      color: $primary;
+      opacity: 1;
+      background: none;
+    }
+  }
+}
+
+.control_col { 
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  
+  .max, .min {
+    left: 0!important;
+  }
+  .max {
+    min-height: 24px;
+  }
+}
+
+#song_library_wrapper {
+  .row {
+    &:first-of-type {
+      background: rgba(0,0,0,0.5);
+      padding: 1rem;
+      color: white;
+      margin-left: 0;
+      margin-right: 0;
+
+      div {
+        flex: 0;
+      }
+    }
+  }
+
+  .dataTables_filter {
+    text-align: left;
+  }
+}
+
+#song_library_length {
+  width: 417px;
+}
+
+#dataTables_filter {
+  [type="search"] {
+    width: 23rem;
+  }
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: .5rem .75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #fff;
+  background-color: #000;
+  border: 1px solid #545454;
+}
+
+.page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #2424c9;
+  border-color: #e8f260;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  cursor: auto;
+  background-color: #000;
+  border-color: #545454;
+}
+
+#intro_block {
+  // background: rgba(0,0,0,0.5);
+  padding: 1rem;
+  color: white;
+  background: rgba(17, 16, 76,1);
+  // background: black;
+  // background: #2a2b8e;
+  a {
+    text-decoration: underline;
+  }
+}
+
+.body_section {
+  display: none;
+}
+
+#filter_header {
+  display: flex;
+}
+
+.show {
+  display: block;
+}
+
+.hide {
+  display: none!important;
+}
+
+#upload_body {
+  display: flex;
+
+  .control_col {
+    margin: auto;
+  }
+}
+
+#uploadMaSong {
+  padding: 1rem;
+}
+
+#dashboard {
+  margin-top: 2rem;
+}
+
+.chosen_song {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+.delay_time_holder {
+  text-align: right;
+  position: relative;
+  .delay_time {
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 15px;
+    text-align: center;
+    top: -2.8rem;
+  }
+}
+
+.myTurnTimer {
+  display: inline-block;
+  margin: 0 1rem;
+}
+
+.stage_name_holder {
+  padding: 0 30px;
+  max-width: 200px;
+  display: inline-block;
+
+  .stage_name {
+    height: calc(1.5em + .5rem + 2px);
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    border: none;
+    margin-left: 0.5em;
+  }
+}
+
+.messageBox {
+  top: 20%;
+  position: fixed;
+  left: 50%;
+  z-index: 99;
+
+  &::after {
+    content: '';
+    width: 100%;
+    background: rgba(255,255,255,0.5);
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+  
+  .messageBoxInner {
+    position: absolute;
+    padding: 20px;
+    left: calc(50% - 250px);
+    top: 100px;
+    width: 500px;
+    background: rgba(55, 86, 197, 85%);
+    color: white;
+    z-index: 1;
+    max-height: 500px;
+  }
+
+  .close_modal {
+    margin: 2rem -20px -20px;
+    background: black;
+    text-align: center;
+    padding: .5rem;
+    font-weight: bold;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

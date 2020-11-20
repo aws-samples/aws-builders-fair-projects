@@ -1,0 +1,43 @@
+[
+  {
+    "ApplicationName": "",
+    "ApplicationDescription": "",
+    "RuntimeEnvironment": "FLINK-1_8",
+    "ServiceExecutionRole": "",
+    "ApplicationConfiguration": {
+      "ApplicationCodeConfiguration": {
+        "CodeContent": {
+          "S3ContentLocation": {
+            "BucketARN": "",
+            "FileKey": ""
+          }
+        },
+        "CodeContentType": "ZIPFILE"
+      },
+      "EnvironmentProperties": {
+        "PropertyGroups": [
+          {
+            "PropertyGroupId": "SYSTEMHIT",
+            "PropertyMap": {
+              "aws.region": "us-east-1",
+              "flink.stream.initpos": "LATEST",
+              "flink.shard.getrecords.intervalmillis": "1000",
+              "input.stream.name": "rhythm-cloud-system-hit-stream",
+              "AggregationEnabled": "false"
+            }
+          },
+          {
+            "PropertyGroupId": "USERHIT",
+            "PropertyMap": {
+              "aws.region": "us-east-1",
+              "flink.stream.initpos": "LATEST",
+              "flink.shard.getrecords.intervalmillis": "1000",
+              "input.stream.name": "rhythm-cloud-user-hit-stream",
+              "AggregationEnabled": "false"
+            }
+          }
+        ]
+      }
+    }
+  }
+]

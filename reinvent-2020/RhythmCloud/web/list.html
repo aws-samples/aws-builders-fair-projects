@@ -1,0 +1,195 @@
+  <div id="wrap">
+
+            <h3 class='text-primary'>
+              RhythmCloud Song List
+            </h3>
+
+            <div class="col-md-12  ">
+              <div class="wrapper">
+                <h4> tempo (bpm): </h4>
+                <div class="tempo"></div>
+                <div class="min"></div>
+                <div class="max"></div>
+              </div>
+            </div>
+            <div class="col-md-12  ">
+              <div class="wrapper">
+                <h4> duration (seconds): </h4>
+                <div class="duration"></div>
+                <div class="min"></div>
+                <div class="max"></div>
+              </div>
+            </div>
+
+            <table id="example"
+                   class="display table table-striped table-bordered"
+                   style="width:100%">
+
+              <thead>
+                  <tr>
+                      <th>Song</th>
+                      <th>id</th>
+                      <th>file</th>
+                      <th>Type</th>
+                      <th>Action</th>
+
+                  </tr>
+              </thead>
+
+              <tfoot>
+                  <tr>
+                    <th>Song</th>
+                    <th>id</th>
+                    <th>file</th>
+                    <th>Type</th>
+                    <th>Action</th>
+
+                  </tr>
+              </tfoot>
+
+        </table>
+
+        <script type="text/javascript">
+
+            $('#example').DataTable( {
+
+                "ajax": 'https://4v55eqpwo0.execute-api.us-east-1.amazonaws.com/Prod/song',
+                "paging": true,
+                deferRender:    true,
+                scroller:       true,
+                "columnDefs": [
+                  {
+                    "targets": [1,2],
+                    "visible": false,
+                    "searchable": false
+                  },
+                  {
+                    "targets": 4,
+                    "render": function ( data, type, row, meta ) {
+                      var playLink = '<a class="dynamicControl" href="https://4v55eqpwo0.execute-api.us-east-1.amazonaws.com/Prod/playsong?songId='+row[1]+'&tempo=115&duration=-1">Play</a>';
+
+
+                      return playLink
+                    }
+                  }
+                ],
+
+                "drawCallback": function( settings ) {
+
+                     var sliderExists = $('.ui-slider').length;
+                     if(sliderExists){
+
+                       var currentTempoValue = $( ".tempo" ).slider("option", "value");
+                       var currentDurationValue =  $( ".duration" ).slider("option", "value");
+
+                       var $myLinks = $('a.dynamicControl');
+                       $myLinks.each(function(){
+                         var $currentAnchorTag = $(this)
+                         var old_link = $currentAnchorTag.attr('href');
+                         var old_addr_parts = old_link.split('?');
+                         var tobereplaced = ['tempo','duration'];
+                         var replacements = [currentTempoValue, currentDurationValue ];
+                         var new_query_string = replaceQueryString( old_addr_parts[1], tobereplaced, replacements );
+                         $currentAnchorTag.attr('href',old_addr_parts[0] + '?' + new_query_string);
+
+                       });
+
+
+
+
+                     }
+                 },
+
+                "initComplete": function(settings, json) {
+
+                  $( ".tempo" ).slider({
+                    max: 255,
+                    value: 60,
+                    slide: function(event, ui) {
+                      var delay = function() {
+                          var handleIndex = $(ui.handle).data('index.uiSliderHandle');
+                          var label = handleIndex == 0 ? '.min' : '.max';
+                          $(label).html(ui.value).position({
+                              my: 'center top',
+                              at: 'center bottom',
+                              of: ui.handle,
+                              offset: "0, 10"
+                          });
+
+                          var $myLinks = $('a.dynamicControl');
+                          $myLinks.each(function(){
+                            var $currentAnchorTag = $(this)
+                            var old_link = $currentAnchorTag.attr('href');
+                            var old_addr_parts = old_link.split('?');
+                            var tobereplaced = ['tempo'];
+                            var replacements = [ui.value];
+                            var new_query_string = replaceQueryString( old_addr_parts[1], tobereplaced, replacements );
+                            $currentAnchorTag.attr('href',old_addr_parts[0] + '?' + new_query_string);
+
+                          });
+
+
+
+                      };
+
+                      // wait for the ui.handle to set its position
+                      setTimeout(delay, 5);
+
+
+
+
+
+                    }
+
+                  });
+
+                  $( ".duration" ).slider({
+                    max: 300,
+                    value: 0,
+                    slide: function(event, ui) {
+                      var delay = function() {
+                          var handleIndex = $(ui.handle).data('index.uiSliderHandle');
+                          var label = handleIndex == 0 ? '.min' : '.max';
+                          $(label).html(ui.value).position({
+                              my: 'center top',
+                              at: 'center bottom',
+                              of: ui.handle,
+                              offset: "0, 10"
+                          });
+
+                          var $myLinks = $('a.dynamicControl');
+                          $myLinks.each(function(){
+                            var $currentAnchorTag = $(this)
+                            var old_link = $currentAnchorTag.attr('href');
+                            var old_addr_parts = old_link.split('?');
+                            var tobereplaced = ['duration'];
+                            var replacements = [ui.value];
+                            var new_query_string = replaceQueryString( old_addr_parts[1], tobereplaced, replacements );
+                            $currentAnchorTag.attr('href',old_addr_parts[0] + '?' + new_query_string);
+
+                          });
+
+
+
+                      };
+
+                      // wait for the ui.handle to set its position
+                      setTimeout(delay, 5);
+
+
+                    }
+
+                  });
+
+
+
+
+
+
+                }
+
+            } );
+
+
+
+        </script>

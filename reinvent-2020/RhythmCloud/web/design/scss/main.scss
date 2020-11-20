@@ -1,0 +1,21 @@
+//https://getbootstrap.com/docs/4.3/getting-started/theming/
+// Global Variables
+$font-family-base: "Helvetica Neue",
+Helvetica,
+Arial,
+sans-serif;
+//== Colors
+$theme-colors: ("primary": #FF9900,"secondary":#000, "info": #417488);
+//== font
+$lead-font-size: 1.125rem;
+//== Links
+$link-hover-color:#9aca3c !important;
+//== Input on Foucs / Active
+$input-focus-box-shadow:none !important;
+//== Button on Foucs / Active
+$btn-focus-box-shadow:none !important;
+$btn-active-box-shadow:none !important;
+
+@import "../node_modules/bootstrap/scss/bootstrap"; //import bootstrap file
+@import 'style'; //import _style.scss file
+@import 'newstyle'; //import _newsyle.scss file
