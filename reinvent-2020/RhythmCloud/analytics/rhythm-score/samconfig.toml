@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "rhythm-score"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-14r2zj8e31xlf"
+s3_prefix = "rhythm-score"
+region = "us-east-1"
+profile = "rhythm"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true

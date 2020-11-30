@@ -1,0 +1,74 @@
+The TES example package contains a Lambda function that, when run,
+will attempt to retrieve AWS credentials. The goal of TES is to allow
+users to retrieve credentials without having them hard-coded on the
+system itself. 
+
+Assuming no credentials exist on the system, when the Lambda function 
+is run, temporary credentials will be sourced from the cloud. They 
+will be formatted as <Access Key, Secret Key, Session Key, Expiration Date>.
+
+The code sample performs logger initialization and credential retrieval
+is outside of the function handler. This means that a pinned lambda 
+should be used to test functionality. 
+
+In case you would like to use an On-Demand Lambda function, you will then 
+need to create a subscription to invoke the Lambda function
+(so that the handler is executed).
+
+### SETUP ###
+1. In order to use this example, you will need to include greengrasssdk, boto3, 
+botocore and any of the dependencies those libraries require in the zip file before
+uploading it.
+
+2. After creating a zip file, create a Lambda function
+in the Lambda Console.
+
+    Handler: lambda_function.lambda_handler
+    Runtime: python2.7
+    Timeout: 3s
+    Role: any basic execution role can be used here
+
+3. Create a group that contains your Greengrass Core and the Lambda 
+function you've just created.
+
+4. Deploy the latest Greengrass release to your device.
+
+5. Ensure that your logging configuration includes either a logging 
+configuration for CW, the FileSystem, or both. For example:
+
+    "Logging": {
+            "Content": [
+                {
+                    "Type": "FileSystem",
+                    "Component": "GreengrassSystem",
+                    "Level": "DEBUG",
+                    "Space": 25600
+                },
+                {
+                    "Type": "FileSystem",
+                    "Component": "Lambda",
+                    "Level": "DEBUG",
+                    "Space": 25600
+                },
+                {
+                    "Type": "AWSCloudWatch",
+                    "Component": "Lambda",
+                    "Level": "DEBUG"
+                },
+                {
+                    "Type": "AWSCloudWatch",
+                    "Component": "GreengrassSystem",
+                    "Level": "DEBUG"
+                }
+            ]
+        }
+
+6. Make a deployment to your Greengrass Core, then start your Greengrass
+Core. The core will check for any new deployments and will proceed to 
+download the newest configuration file (group.json) as well as the Lambda
+function you've created. 
+
+7. Check either the local logs or  CloudWatch logs for output from the function.
+
+    Local Path: /greengrass/var/log/user/<REGION>/<ACCOUNT>/<FUNCTION_NAME>.log
+    CloudWatch: /aws/greengrass/Lambda/<REGION>/<ACCOUNT>/<FUNCTION_NAME>

@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'rhythm-score
+
+  SAM Template for rhythm-score
+
+  '
+Globals:
+  Function:
+    Timeout: 20
+Resources:
+  GetScoreFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetScoreFunction
+      Handler: com.amazonaws.rhythmCloud.App::handleRequest
+      Runtime: java8
+      MemorySize: 512
+      Policies:
+      - Statement:
+        - Sid: TimestreamReaderPolicy
+          Effect: Allow
+          Action:
+          - timestream:DescribeDatabase
+          - timestream:ListMeasures
+          - timestream:DescribeEndpoints
+          - timestream:ListTables
+          - timestream:ListDatabases
+          - timestream:Select
+          - timestream:ListTagsForResource
+          - timestream:DescribeTable
+          - timestream:SelectValues
+          Resource: '*'
+      Events:
+        GetScore:
+          Type: Api
+          Properties:
+            Path: /getscore
+            Method: get
+Outputs:
+  GetScoreApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/getscore/
+  GetScoreFunction:
+    Description: Hello World Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - GetScoreFunction
+      - Arn
+  GetScoreFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - GetScoreFunctionRole
+      - Arn
