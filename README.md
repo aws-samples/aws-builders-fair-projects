@@ -15,6 +15,7 @@ For most projects you will require an AWS account. If you haven't already done s
 | Title | Description |
 |---------|-------------|
 | [re:Invent 2019](reinvent-2019) | Las Vegas, NV - December 2019 |
+| [re:Invent 2020](reinvent-2020) | Virtual - December 2020 |
 
 # License
 
