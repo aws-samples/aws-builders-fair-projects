@@ -1,9 +1,11 @@
 # Rock-a-bye-baby - Smart Baby Sleep Assistant
 
-## Features
+## Features And Architecture
 1. Monitoring
 2. Automation
 3. Analytics
+![Features](/architecture/features.png)
+![Architecture](/architecture/architecture.png)
 
 ## Hardware Resources
 1. Raspberry Pi (eg: https://www.amazon.com/s?k=raspberry+pi)
