@@ -4,8 +4,8 @@
 1. Monitoring
 2. Automation
 3. Analytics
-![Features](/architecture/features.png)
-![Architecture](/architecture/architecture.png)
+
+The architecture diagram is available under /architecture folder.
 
 ## Hardware Resources
 1. Raspberry Pi (eg: https://www.amazon.com/s?k=raspberry+pi)
