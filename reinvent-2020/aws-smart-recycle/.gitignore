@@ -1,0 +1,8 @@
+/target/
+/cfnparameters
+/.idea
+.DS_Store
+*.bak
+
+
+/cr_zip_upload_to_s3.sh
