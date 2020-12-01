@@ -1,0 +1,4 @@
+Create Timestream Database and Table
+----
+aws timestream-write create-database --database-name eventsDB
+aws timestream-write create-table --database-name eventsDB --table-name sleepEvents

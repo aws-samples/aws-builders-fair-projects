@@ -1,0 +1,42 @@
+{
+  "Comment": "An example of the Amazon States Language using a parallel state to execute two branches at the same time.",
+  "StartAt": "Wait for Timestamp",
+  "States": {
+    "Wait for Timestamp": {
+      "Type": "Wait",
+      "SecondsPath": "$.timer_seconds",
+      "Next": "Parallel"
+    },
+    "Parallel": {
+      "Type": "Parallel",
+      "Next": "Update State",
+      "Branches": [
+        {
+          "StartAt": "Stop Music",
+          "States": {
+            "Stop Music": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:StopMusic",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "Turnoff Switch",
+           "States": {
+            "Turnoff Switch": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:TurnOffCradle",
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "Update State": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{REGION}:{ACCOUNT_ID}:function:TurnOffEventTracker",
+      "End": true
+    }
+  }
+}

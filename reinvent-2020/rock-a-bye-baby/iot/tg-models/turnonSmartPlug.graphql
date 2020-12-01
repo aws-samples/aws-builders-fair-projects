@@ -1,0 +1,19 @@
+query turnonSmartSwitchLambda @service(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:turnonSmartSwitchLambda") {
+  AwsLambda {
+    turnonSmartSwitchLambda(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:turnonSmartSwitchLambda") {
+      Action(name: "turnonsmartswitch") {
+        InvokeCloudLambda {
+          Request(arn: "$macro(arn:aws:lambda:${systemConfig.awsRegion}:${systemConfig.awsAccountId}:function:turnoncradle:1)")
+        }
+      }
+    }
+  }
+}
+
+type turnonSmartSwitchLambda @capabilityType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:turnonSmartSwitchLambda") {
+  turnonsmartswitch: turnonsmartswitchAction @action(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:turnonsmartswitchAction")
+}
+
+type turnonsmartswitchAction @actionType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:turnonsmartswitchAction") {
+  ignore: void
+}

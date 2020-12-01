@@ -1,0 +1,19 @@
+query startWatchLambda @service(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:startWatchLambda") {
+  AwsLambda {
+    startWatchLambda(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:startWatchLambda") {
+      Action(name: "startwatch") {
+        InvokeCloudLambda {
+          Request(arn: "$macro(arn:aws:lambda:${systemConfig.awsRegion}:${systemConfig.awsAccountId}:function:CallWatchStepFunction:1)")
+        }
+      }
+    }
+  }
+}
+
+type startWatchLambda @capabilityType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:startWatchLambda") {
+  startwatch: startwatchAction @action(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:startwatchAction")
+}
+
+type startwatchAction @actionType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:startwatchAction") {
+  ignore: void
+}

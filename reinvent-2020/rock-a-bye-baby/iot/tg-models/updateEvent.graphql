@@ -1,0 +1,22 @@
+query updateEventLambda @service(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:updateEventLambda") {
+  AwsLambda {
+    updateEventLambda(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:updateEventLambda") {
+      Action(name: "updateevent") {
+        InvokeCloudLambda {
+          Request(arn: "$macro(arn:aws:lambda:${systemConfig.awsRegion}:${systemConfig.awsAccountId}:function:ingestEventData:5)")
+          Response {
+            responsePayload(property: "urn:tdm:aws:property:int32")
+          }
+        }
+      }
+    }
+  }
+}
+
+type updateEventLambda @capabilityType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:updateEventLambda") {
+  updateevent: updateEventAction @action(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:updateEventAction")
+}
+
+type updateEventAction @actionType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:updateEventAction") {
+  return: activityStatusResponse @property(id: "urn:tdm:aws:property:int32")
+}
