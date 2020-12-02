@@ -1,0 +1,80 @@
+type motionflow @systemType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:System:motionflow", description: "test flow") {
+  raspberryPiCamera: RaspberryPiCamera @thing(id: "urn:tdm:aws/examples:device:RaspberryPiCamera")
+  hCSR501MotionSensor: HCSR501MotionSensor @thing(id: "urn:tdm:aws/examples:device:HCSR501MotionSensor")
+  motionflow: motionflow @workflow(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Workflow:motionflow")
+}
+
+query motionflow($raspberryPiCamera: string!) @workflowType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Workflow:motionflow") @triggers(definition: "{hCSR501MotionSensor(description: \"\") @position(x: 755.8331909179688, y: 646.6077880859375) {\n  condition(expr: \"devices[name == \\\"hCSR501MotionSensor\\\"].events[name == \\\"StateChanged\\\"].lastEvent.isMotionDetected == true\")\n  action(expr: \"ThingsGraph.startFlow(\\\"motionflow\\\", bindings[name == \\\"raspberryPiCamera\\\"].deviceId)\")\n}}") @annotation(type: "tgc:FlowEvent", id: "startFlow", x: 1251, y: 814) @annotation(type: "tgc:FlowEvent", id: "sledgedca5441cc25047a797e8bf59fc0cce5b", x: 1393, y: 664) @annotation(type: "tgc:FlowEvent", id: "reStartFlow", x: 1255.5532701343584, y: 1158.1065590020924) {
+  variables {
+    cameraResult @property(id: "urn:tdm:aws/examples:property:CameraStateProperty")
+    getActivityResult @property(id: "urn:tdm:aws:property:int32")
+  }
+  steps {
+    step(name: "Step1RaspberryPiCamera", inEvent: ["startFlow"]) @position(x: 1448.2139892578125, y: 785.38623046875) {
+      DeviceActivity(deviceModel: "urn:tdm:aws/examples:deviceModel:Camera", deviceId: "${raspberryPiCamera}", out: "cameraResult") @device(id: "urn:tdm:aws/examples:device:RaspberryPiCamera") {
+        capture
+      }
+    }
+    step(name: "Step2playMusicLambda", inEvent: ["startFlow"]) @position(x: 1451.288330078125, y: 863.6441650390625) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:playMusicLambda") {
+        playmusic(musicfile: "music1.mp3")
+      }
+    }
+    step(name: "Step3turnonSmartSwitchLambda", inEvent: ["startFlow"]) @position(x: 1453, y: 955) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:turnonSmartSwitchLambda") {
+        turnonsmartswitch
+      }
+    }
+    step(name: "ActivityStatusResult", inEvent: ["sledgedca5441cc25047a797e8bf59fc0cce5b"]) @position(x: 833, y: 941) {
+      ChoiceActivity {
+        rule(name: "Start", expr: "${getActivityResult == 0}") {
+          setEvent(name: "startFlow")
+        }
+        rule(name: "InProgress", expr: "${getActivityResult == 1}") {
+          setEvent(name: "stopFlow")
+        }
+        rule(name: "Restart", expr: "${getActivityResult == 2}") {
+          setEvent(name: "reStartFlow")
+        }
+        default {
+          setEvent(name: "stopFlow")
+        }
+      }
+    }
+    step(name: "Step5updateEventLambda", outEvent: ["sledgedca5441cc25047a797e8bf59fc0cce5b"]) @position(x: 1114, y: 649) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:updateEventLambda", out: "getActivityResult") {
+        updateevent
+      }
+    }
+    step(name: "Step6startWatchLambda", inEvent: ["startFlow"]) @position(x: 1453.3082706766916, y: 1046.1278195488721) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:startWatchLambda") {
+        startwatch
+      }
+    }
+    step(name: "Step7sendSmsLambda", inEvent: ["reStartFlow"]) @position(x: 1456.5, y: 1167) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:sendSmsLambda") {
+        sendsms
+      }
+    }
+    step(name: "Step8RaspberryPiCamera", inEvent: ["reStartFlow"]) @position(x: 1456.1916436307752, y: 1248.0844906825164) {
+      DeviceActivity(deviceModel: "urn:tdm:aws/examples:deviceModel:Camera", deviceId: "${raspberryPiCamera}", out: "cameraResult") @device(id: "urn:tdm:aws/examples:device:RaspberryPiCamera") {
+        capture
+      }
+    }
+    step(name: "Step9playMusicLambda", inEvent: ["reStartFlow"]) @position(x: 1457.2648353028078, y: 1319.9883327087023) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:playMusicLambda") {
+        playmusic(musicfile: "music1.mp3")
+      }
+    }
+    step(name: "Step10turnonSmartSwitchLambda", inEvent: ["reStartFlow"]) @position(x: 1461.227516150249, y: 1398.6267093052747) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:turnonSmartSwitchLambda") {
+        turnonsmartswitch
+      }
+    }
+    step(name: "Step11startWatchLambda", inEvent: ["reStartFlow"]) @position(x: 1464.831804629252, y: 1482.2563766285145) {
+      WebserviceActivity(webservice: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:startWatchLambda") {
+        startwatch
+      }
+    }
+  }
+}

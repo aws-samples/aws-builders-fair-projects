@@ -1,0 +1,19 @@
+query sendSmsLambda @service(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:sendSmsLambda") {
+  AwsLambda {
+    sendSmsLambda(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:sendSmsLambda") {
+      Action(name: "sendsms") {
+        InvokeCloudLambda {
+          Request(arn: "$macro(arn:aws:lambda:${systemConfig.awsRegion}:${systemConfig.awsAccountId}:function:SendSMS:2)")
+        }
+      }
+    }
+  }
+}
+
+type sendSmsLambda @capabilityType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:sendSmsLambda") {
+  sendsms: sendSmsAction @action(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:sendSmsAction")
+}
+
+type sendSmsAction @actionType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:sendSmsAction") {
+  ignore: void
+}

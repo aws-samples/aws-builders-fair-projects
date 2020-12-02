@@ -1,0 +1,26 @@
+query playMusicLambda @service(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:Service:playMusicLambda") {
+  AwsLambda {
+    playMusicLambda(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:playMusicLambda") {
+      Action(name: "playmusic") {
+        params {
+          param(name: "musicfile", property: "urn:tdm:aws:property:String")
+        }
+        InvokeCloudLambda {
+          Request(arn: "$macro(arn:aws:lambda:${systemConfig.awsRegion}:${systemConfig.awsAccountId}:function:playmusic:4)") {
+            params {
+              param(name: "musicfile", property: "urn:tdm:aws:property:String", value: "music1.mp3")
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+type playMusicLambda @capabilityType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:capability:playMusicLambda") {
+  playmusic: playMusicAction @action(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:playMusicAction")
+}
+
+type playMusicAction @actionType(id: "urn:tdm:{REGION}/{ACCOUNT_ID}/default:action:playMusicAction") {
+  musicfile: String @property(id: "urn:tdm:aws:property:String")
+}
