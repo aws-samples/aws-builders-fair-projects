@@ -1,0 +1,145 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "OFF",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "water_state",
+                            "condition": "$input.area_state.payload.detector.detectorModelName == \"area\"",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "water_state",
+                                        "value": "$input.area_state.payload.state.stateName"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "weather_state",
+                            "condition": "$input.light_sensor.weather != \"\"",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "weather_state",
+                                        "value": "$input.light_sensor.weather"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "pump_on",
+                            "condition": "$variable.water_state == \"no_water\" && $variable.weather_state == \"fine\"",
+                            "actions": [],
+                            "nextState": "ON"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "timeout_sec",
+                                        "value": "120"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "weather_state",
+                                        "value": "\"fine\""
+                                    }
+                                },
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_cmd/agri/pump/off"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "ON",
+                "onInput": {
+                    "events": [
+                        {
+                            "eventName": "water_state",
+                            "condition": "$input.area_state.payload.detector.detectorModelName == \"area\"",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "water_state",
+                                        "value": "$input.area_state.payload.state.stateName"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "weather_state",
+                            "condition": "$input.light_sensor.weather != \"\"",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "weather_state",
+                                        "value": "$input.light_sensor.weather"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "transitionEvents": [
+                        {
+                            "eventName": "pump_off",
+                            "condition": "timeout(\"pump_timeout\") || $variable.weather_state == \"rainy\" || $variable.water_state == \"full_water\"",
+                            "actions": [],
+                            "nextState": "OFF"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "init",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setTimer": {
+                                        "timerName": "pump_timeout",
+                                        "seconds": 120,
+                                        "durationExpression": null
+                                    }
+                                },
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "_cmd/agri/pump/on"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "OFF"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "pump",
+    "evaluationMethod": "SERIAL",
+    "key": "payload.detector.keyValue",
+    "roleArn": "arn:aws:iam::894663492354:role/service-role/iot-events-moisture-model-role"
+}
