@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@aws-amplify/pubsub": "^1.1.2",
-    "apexcharts": "^3.8.6",
+    "apexcharts": "^3.24.0",
     "aws-amplify": "^1.1.40",
     "moment": "^2.24.0",
     "node-forge": "^0.10.0",
