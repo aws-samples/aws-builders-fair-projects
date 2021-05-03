@@ -2,4 +2,4 @@ chardet==3.0.4
 idna==2.8
 pytemperature==1.0
 requests==2.22.0
-urllib3==1.25.3
+urllib3==1.25.8
