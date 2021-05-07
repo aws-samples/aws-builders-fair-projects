@@ -1121,7 +1121,7 @@ declare namespace SecurityHub {
      */
     Version?: AwsLambdaLayerVersionNumber;
     /**
-     * The layer's compatible runtimes. Maximum number of five items. Valid values: nodejs10.x | nodejs12.x | java8 | java11 | python2.7 | python3.6 | python3.7 | python3.8 | dotnetcore1.0 | dotnetcore2.1 | go1.x | ruby2.5 | provided 
+     * The layer's compatible runtimes. Maximum number of five items. Valid values: nodejs14.x | nodejs12.x | java8 | java11 | python2.7 | python3.6 | python3.7 | python3.8 | dotnetcore1.0 | dotnetcore2.1 | go1.x | ruby2.5 | provided 
      */
     CompatibleRuntimes?: NonEmptyStringList;
     /**
