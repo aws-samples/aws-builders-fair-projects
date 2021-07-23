@@ -243,4 +243,4 @@ def gameData():
                             )
 
 if __name__ == "__main__":
-     application.run(debug = True, port=serverPort, host='0.0.0.0')
+     application.run(debug = os.getenv('FLASK_DEBUG',False), port=serverPort, host='0.0.0.0')
