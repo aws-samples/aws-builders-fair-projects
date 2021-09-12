@@ -9,7 +9,7 @@
     "react-dom": "^16.14.0",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^4.0.3",
     "react-webcam": "^3.1.1",
     "redux": "^4.0.4",
     "selfsigned": "^1.10.8"
