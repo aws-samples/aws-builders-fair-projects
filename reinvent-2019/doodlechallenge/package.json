@@ -17,7 +17,7 @@
     "react-dom": "^16.14.0",
     "react-ga": "^2.7.0",
     "react-motion": "^0.5.2",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^4.0.3",
     "react-transition-group": "^4.3.0",
     "selfsigned": "^1.10.8",
     "uuidv4": "^6.2.6"
