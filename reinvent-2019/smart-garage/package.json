@@ -12,7 +12,7 @@
     "dotenv": "^8.1.0",
     "minimist": ">=0.2.1",
     "winston": "^3.2.1",
-    "winston-cloudwatch": "^2.0.9"
+    "winston-cloudwatch": "^2.5.2"
   },
   "scripts": {
     "refresh": "npm run package && npm run deploy",
