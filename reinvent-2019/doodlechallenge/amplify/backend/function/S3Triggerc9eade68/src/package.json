@@ -7,6 +7,6 @@
   "dependencies": {
     "aws-appsync": "^3.0.2",
     "graphql-tag": "^2.10.1",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^3.1.1"
   }
 }
