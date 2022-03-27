@@ -27,7 +27,7 @@
     "isexe": "^2.0.0",
     "js-audio-recorder": "^0.5.2",
     "kind-of": ">=6.0.3",
-    "minimist": ">=1.2.3",
+    "minimist": ">=1.2.6",
     "ngx-webcam": "^0.2.6",
     "rxjs": "~6.4.0",
     "selfsigned": "^1.10.8",
