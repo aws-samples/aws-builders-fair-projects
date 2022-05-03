@@ -59,9 +59,6 @@ cp env-sample .env
   # install required services
   sudo apt install yarn git vim htop python3-pip wiringpi -y
 
-  # clone this repo
-  git clone https://github.com/kienpham2000/garage.git
-
   # Disable the ACT LED on the Pi Zero, edit file: /boot/config.txt
   dtparam=act_led_trigger=none
   dtparam=act_led_activelow=on
