@@ -17,7 +17,7 @@ setup(
         'gym==0.10.5',
         'kubernetes==7.0.0',
         'minio==4.0.5',
-        'numpy==1.13.3',
+        'numpy==1.21.0',
         'pandas==0.20.2',
         'Pillow==8.3.2',
         'pygame==1.9.3',
