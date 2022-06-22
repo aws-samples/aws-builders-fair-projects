@@ -20,7 +20,7 @@ setup(
         'gym==0.10.5',
         'matplotlib==2.0.2',
         'netifaces==0.10.7',
-        'numpy==1.13.3',
+        'numpy==1.22.0',
         'pandas==0.20.2',
         'Pillow==8.3.2',
         'PyYAML==5.4',
