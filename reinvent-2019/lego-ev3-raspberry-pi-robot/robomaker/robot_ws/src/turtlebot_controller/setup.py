@@ -22,7 +22,7 @@ setup(
         'netifaces==0.10.7',
         'numpy==1.13.3',
         'pandas==0.20.2',
-        'Pillow==8.3.2',
+        'Pillow==9.0.1',
         'PyYAML==5.4',
         'scipy==0.19.0',
         'scikit-image==0.13.0',
